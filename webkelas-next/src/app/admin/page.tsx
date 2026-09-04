@@ -3100,10 +3100,10 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Day Filter Pills (Scrollable on Mobile, Wrapped on Window/Desktop) */}
+                {/* Day Filter Pills */}
                 <div className="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 sm:mx-0 sm:px-0 sm:flex-wrap">
-                    <span className="text-xs font-bold text-slate-400 mr-1 flex-shrink-0">Tampilkan:</span>
+                    <span className="text-xs font-bold text-slate-400 mr-1 flex-shrink-0">Filter Hari:</span>
                     {['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map((day) => {
                       const isTodayDay = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === day;
                       const isSelected = selectedPiketDay === day;
@@ -3111,15 +3111,15 @@ export default function AdminDashboardPage() {
                         <button
                           key={day}
                           onClick={() => setSelectedPiketDay(day)}
-                          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
+                          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
                             isSelected
                               ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 ring-2 ring-blue-400/50'
                               : 'bg-white/5 text-slate-300 hover:bg-white/15 hover:text-white border border-white/5'
                           }`}
                         >
-                          <span>{day === 'Semua' ? 'Semua Hari (Kanban)' : day}</span>
+                          <span>{day === 'Semua' ? 'Semua Hari' : day}</span>
                           {isTodayDay && (
-                            <span className="px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-950 text-[9px] font-black uppercase">
+                            <span className="px-1.5 py-0.5 rounded-full bg-emerald-400 text-slate-950 text-[9px] font-black uppercase">
                               Hari Ini
                             </span>
                           )}
@@ -3127,106 +3127,112 @@ export default function AdminDashboardPage() {
                       );
                     })}
                   </div>
-
-                  {selectedPiketDay === 'Semua' && (
-                    <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                      <span>💡 Geser horizontal untuk melihat seluruh hari</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* VIEW 1: SINGLE DAY FOCUS MODE (Spacious Multi-column responsive layout) */}
-              {selectedPiketDay !== 'Semua' ? (
-                <div className="max-w-5xl mx-auto w-full pb-8">
-                  {(() => {
-                    const hari = selectedPiketDay;
-                    const items = piketList.filter((p) => p.hari === hari);
-                    const pj = items[0]?.pj || 'Belum Ditentukan';
-                    const isToday = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === hari;
-                    const completedCount = items.filter((item) => piketCompleted[item.id]).length;
-                    const percentComplete = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0;
+              {/* VIEW: Fully responsive layout (Big cards on window/desktop, long vertical flow on mobile) */}
+              <div className="w-full pb-10">
+                <div
+                  className={
+                    selectedPiketDay !== 'Semua'
+                      ? 'max-w-4xl mx-auto w-full'
+                      : 'grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 lg:gap-8 items-start'
+                  }
+                >
+                  {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']
+                    .filter((hari) => selectedPiketDay === 'Semua' || selectedPiketDay === hari)
+                    .map((hari) => {
+                      const items = piketList.filter((p) => p.hari === hari);
+                      const pj = items[0]?.pj || 'Belum Ditentukan';
+                      const isToday = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === hari;
+                      const completedCount = items.filter((item) => piketCompleted[item.id]).length;
+                      const percentComplete = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0;
 
-                    const themeColor =
-                      hari === 'Senin'
-                        ? { bg: 'from-emerald-500 to-teal-700', text: 'text-emerald-700', light: 'bg-emerald-50', border: 'border-emerald-200', ring: 'ring-emerald-500' }
-                        : hari === 'Selasa'
-                        ? { bg: 'from-blue-600 to-cyan-700', text: 'text-blue-700', light: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-500' }
-                        : hari === 'Rabu'
-                        ? { bg: 'from-violet-600 to-purple-700', text: 'text-violet-700', light: 'bg-violet-50', border: 'border-violet-200', ring: 'ring-violet-500' }
-                        : hari === 'Kamis'
-                        ? { bg: 'from-amber-500 to-orange-600', text: 'text-amber-700', light: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-500' }
-                        : { bg: 'from-rose-500 to-pink-700', text: 'text-rose-700', light: 'bg-rose-50', border: 'border-rose-200', ring: 'ring-rose-500' };
+                      // Color themes with high visual richness
+                      const themeColor =
+                        hari === 'Senin'
+                          ? { bg: 'from-emerald-500 via-emerald-600 to-teal-700', text: 'text-emerald-700', light: 'bg-emerald-50', border: 'border-emerald-200', ring: 'ring-emerald-500' }
+                          : hari === 'Selasa'
+                          ? { bg: 'from-blue-600 via-blue-700 to-cyan-700', text: 'text-blue-700', light: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-500' }
+                          : hari === 'Rabu'
+                          ? { bg: 'from-violet-600 via-purple-600 to-purple-800', text: 'text-violet-700', light: 'bg-violet-50', border: 'border-violet-200', ring: 'ring-violet-500' }
+                          : hari === 'Kamis'
+                          ? { bg: 'from-amber-500 via-orange-500 to-orange-700', text: 'text-amber-700', light: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-500' }
+                          : { bg: 'from-rose-500 via-pink-600 to-rose-700', text: 'text-rose-700', light: 'bg-rose-50', border: 'border-rose-200', ring: 'ring-rose-500' };
 
-                    return (
-                      <div className={`bg-white rounded-3xl border ${themeColor.border} shadow-lg overflow-hidden flex flex-col`}>
-                        {/* Day Card Header Banner */}
-                        <div className={`bg-gradient-to-r ${themeColor.bg} p-6 sm:p-7 text-white relative overflow-hidden`}>
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="text-2xl sm:text-3xl font-black tracking-wide">
-                                  Piket Hari {hari}
-                                </h3>
+                      return (
+                        <div
+                          key={hari}
+                          className={`w-full bg-white rounded-3xl border ${themeColor.border} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative ${
+                            isToday ? `ring-2 ${themeColor.ring} shadow-lg shadow-blue-500/10` : ''
+                          }`}
+                        >
+                          {/* Day Card Header Banner (Large & Spacious) */}
+                          <div className={`bg-gradient-to-r ${themeColor.bg} p-5 sm:p-6 text-white relative overflow-hidden`}>
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2.5">
+                                <span className="text-xl sm:text-2xl font-black tracking-wide">
+                                  {hari}
+                                </span>
                                 {isToday && (
-                                  <span className="px-3 py-1 rounded-full bg-white text-slate-900 font-black text-xs shadow-md animate-pulse">
+                                  <span className="px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-extrabold text-[10px] sm:text-xs shadow-sm animate-pulse">
                                     ⭐ HARI INI
                                   </span>
                                 )}
                               </div>
-                              <div className="mt-2 flex items-center gap-2 text-sm text-white/95 font-semibold">
-                                <Crown className="w-4 h-4 text-amber-300 fill-amber-300 flex-shrink-0" />
-                                <span>Penanggung Jawab (PJ): <strong className="text-white underline decoration-amber-300 underline-offset-4">{pj}</strong></span>
+
+                              <button
+                                onClick={() => openAddPiketModal(hari as any)}
+                                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-xs flex-shrink-0"
+                              >
+                                <UserPlus className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">+ Petugas</span>
+                              </button>
+                            </div>
+
+                            {/* Penanggung Jawab (PJ) Pill */}
+                            <div className="mt-2.5 flex items-center gap-2 text-xs sm:text-sm text-white/95 font-semibold">
+                              <Crown className="w-4 h-4 text-amber-300 fill-amber-300 flex-shrink-0" />
+                              <span className="truncate">Penanggung Jawab: <strong>{pj}</strong></span>
+                            </div>
+
+                            {/* Progress bar */}
+                            <div className="mt-4">
+                              <div className="flex justify-between text-xs text-white/90 font-bold mb-1.5">
+                                <span>Kebersihan: {completedCount}/{items.length} Selesai</span>
+                                <span className="font-mono bg-black/20 px-2 py-0.5 rounded-md">{percentComplete}%</span>
+                              </div>
+                              <div className="w-full h-2.5 bg-black/20 rounded-full overflow-hidden p-0.5">
+                                <div
+                                  className="h-full bg-white transition-all duration-500 ease-out rounded-full shadow-sm"
+                                  style={{ width: `${percentComplete}%` }}
+                                />
                               </div>
                             </div>
-
-                            <button
-                              onClick={() => openAddPiketModal(hari as any)}
-                              className="self-start sm:self-auto px-4 py-2.5 rounded-2xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer backdrop-blur-xs"
-                            >
-                              <UserPlus className="w-4 h-4" />
-                              <span>+ Tambah Petugas {hari}</span>
-                            </button>
                           </div>
 
-                          {/* Progress bar */}
-                          <div className="mt-5 max-w-xl">
-                            <div className="flex justify-between text-xs text-white/90 font-bold mb-1.5">
-                              <span>Progress Kebersihan: {completedCount} dari {items.length} Siswa Selesai</span>
-                              <span className="font-mono bg-black/20 px-2 py-0.5 rounded-md">{percentComplete}%</span>
-                            </div>
-                            <div className="w-full h-3 bg-black/25 rounded-full overflow-hidden p-0.5">
-                              <div
-                                className="h-full bg-white transition-all duration-500 ease-out rounded-full shadow-sm"
-                                style={{ width: `${percentComplete}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* List of Duty Students: Responsive 1 col (mobile), 2 cols (tablet), 3 cols (desktop) */}
-                        <div className="p-5 sm:p-6">
-                          {items.length === 0 ? (
-                            <div className="py-16 text-center text-slate-400 text-sm">
-                              Belum ada petugas piket untuk hari {hari}.
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                              {items.map((item, idx) => {
+                          {/* List of Duty Students (Full-width vertical stack on mobile, spacious rows on window) */}
+                          <div className="p-4 sm:p-5 space-y-2.5 flex-1">
+                            {items.length === 0 ? (
+                              <div className="py-12 text-center text-slate-400 text-xs sm:text-sm">
+                                Belum ada petugas piket untuk hari {hari}.
+                              </div>
+                            ) : (
+                              items.map((item, idx) => {
                                 const isDone = !!piketCompleted[item.id];
                                 const photoUrl = getStudentPhotoByName(item.nama_siswa);
 
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3 group ${
+                                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3 group ${
                                       isDone
-                                        ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-xs'
-                                        : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-md text-slate-800'
+                                        ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-2xs'
+                                        : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-blue-300 hover:shadow-sm text-slate-800'
                                     }`}
                                   >
+                                    {/* Left: Avatar & Full Name */}
                                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                                      {/* Student Photo Avatar */}
                                       <div className="relative w-11 h-11 rounded-full overflow-hidden bg-red-600 border-2 border-white shadow-sm flex-shrink-0">
                                         <Image
                                           src={photoUrl}
@@ -3237,13 +3243,13 @@ export default function AdminDashboardPage() {
                                       </div>
                                       <div className="min-w-0 flex-1">
                                         <div
-                                          className={`text-sm font-bold truncate ${isDone ? 'line-through text-slate-400' : 'text-slate-800'}`}
+                                          className={`text-sm sm:text-base font-bold text-slate-800 leading-snug break-words ${isDone ? 'line-through text-slate-400' : ''}`}
                                           title={item.nama_siswa}
                                         >
                                           {item.nama_siswa}
                                         </div>
                                         <div className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
-                                          <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">
+                                          <span className="px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">
                                             #{idx + 1}
                                           </span>
                                           <span>{isDone ? 'Sudah Selesai' : 'Belum Piket'}</span>
@@ -3251,24 +3257,24 @@ export default function AdminDashboardPage() {
                                       </div>
                                     </div>
 
-                                    {/* Action buttons */}
+                                    {/* Right: Big Interactive Button & Edit/Delete */}
                                     <div className="flex items-center gap-1.5 flex-shrink-0">
                                       <button
                                         onClick={() => togglePiketStatus(item.id)}
-                                        className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer active:scale-95 ${
+                                        className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm font-bold cursor-pointer active:scale-95 ${
                                           isDone
-                                            ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/30'
-                                            : 'bg-slate-100 border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300'
+                                            ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
+                                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
                                         }`}
                                         title={isDone ? 'Batalkan Status Selesai' : 'Tandai Sudah Piket'}
                                       >
-                                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                        <Check className="w-4 h-4 stroke-[3]" />
                                         <span>{isDone ? 'Selesai' : 'Piket'}</span>
                                       </button>
 
                                       <button
                                         onClick={() => openEditPiketModal(item)}
-                                        className="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                                        className="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
                                         title="Edit Petugas"
                                       >
                                         <Edit className="w-4 h-4" />
@@ -3276,158 +3282,10 @@ export default function AdminDashboardPage() {
 
                                       <button
                                         onClick={() => handleDeletePiket(item.id)}
-                                        className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                        className="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                                         title="Hapus dari Piket"
                                       >
                                         <Trash2 className="w-4 h-4" />
-                                      </button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              ) : (
-                /* VIEW 2: SEMUA HARI (Spacious Horizontal Kanban Carousel - never squished!) */
-                <div className="w-full pb-8 overflow-hidden">
-                  <div className="flex gap-5 overflow-x-auto pb-6 pt-1 px-1 no-scrollbar snap-x items-start">
-                    {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map((hari) => {
-                      const items = piketList.filter((p) => p.hari === hari);
-                      const pj = items[0]?.pj || 'Belum Ditentukan';
-                      const isToday = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === hari;
-                      const completedCount = items.filter((item) => piketCompleted[item.id]).length;
-                      const percentComplete = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0;
-
-                      // Color variants
-                      const themeColor =
-                        hari === 'Senin'
-                          ? { bg: 'from-emerald-500 to-teal-700', text: 'text-emerald-700', light: 'bg-emerald-50', border: 'border-emerald-200', ring: 'ring-emerald-500' }
-                          : hari === 'Selasa'
-                          ? { bg: 'from-blue-600 to-cyan-700', text: 'text-blue-700', light: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-500' }
-                          : hari === 'Rabu'
-                          ? { bg: 'from-violet-600 to-purple-700', text: 'text-violet-700', light: 'bg-violet-50', border: 'border-violet-200', ring: 'ring-violet-500' }
-                          : hari === 'Kamis'
-                          ? { bg: 'from-amber-500 to-orange-600', text: 'text-amber-700', light: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-500' }
-                          : { bg: 'from-rose-500 to-pink-700', text: 'text-rose-700', light: 'bg-rose-50', border: 'border-rose-200', ring: 'ring-rose-500' };
-
-                      return (
-                        <div
-                          key={hari}
-                          className={`w-[320px] sm:w-[350px] flex-shrink-0 snap-start bg-white rounded-3xl border ${themeColor.border} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative ${
-                            isToday ? `ring-2 ${themeColor.ring} shadow-lg shadow-blue-500/10` : ''
-                          }`}
-                        >
-                          {/* Day Card Header */}
-                          <div className={`bg-gradient-to-r ${themeColor.bg} p-4 sm:p-5 text-white relative overflow-hidden`}>
-                            <div className="flex items-center justify-between">
-                              <span className="text-lg sm:text-xl font-black tracking-wide flex items-center gap-1.5">
-                                {hari}
-                              </span>
-                              {isToday && (
-                                <span className="px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-extrabold text-[10px] shadow-sm animate-pulse">
-                                  ⭐ HARI INI
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Penanggung Jawab (PJ) Pill */}
-                            <div className="mt-2 flex items-center gap-1.5 text-xs text-white/90 font-semibold">
-                              <Crown className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
-                              <span className="truncate">PJ: {pj}</span>
-                            </div>
-
-                            {/* Progress bar */}
-                            <div className="mt-3.5">
-                              <div className="flex justify-between text-[11px] text-white/85 font-bold mb-1">
-                                <span>Kebersihan: {completedCount}/{items.length} Selesai</span>
-                                <span className="font-mono">{percentComplete}%</span>
-                              </div>
-                              <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-white transition-all duration-500 ease-out rounded-full"
-                                  style={{ width: `${percentComplete}%` }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* List of Duty Students with Spacious Content */}
-                          <div className="p-3 sm:p-4 space-y-2 flex-1 max-h-[580px] overflow-y-auto no-scrollbar">
-                            {items.length === 0 ? (
-                              <div className="py-8 text-center text-slate-400 text-xs">
-                                Belum ada petugas piket untuk hari ini.
-                              </div>
-                            ) : (
-                              items.map((item, idx) => {
-                                const isDone = !!piketCompleted[item.id];
-                                const photoUrl = getStudentPhotoByName(item.nama_siswa);
-
-                                return (
-                                  <div
-                                    key={item.id}
-                                    className={`p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5 group ${
-                                      isDone
-                                        ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900 shadow-2xs'
-                                        : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-blue-300 text-slate-700'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                      {/* Order / Photo Avatar */}
-                                      <div className="relative w-9 h-9 rounded-full overflow-hidden bg-red-600 border border-white shadow-2xs flex-shrink-0">
-                                        <Image
-                                          src={photoUrl}
-                                          alt={item.nama_siswa}
-                                          fill
-                                          className="object-cover object-top"
-                                        />
-                                      </div>
-                                      <div className="min-w-0 flex-1">
-                                        <div
-                                          className={`text-xs font-bold truncate ${isDone ? 'line-through text-slate-400' : 'text-slate-800'}`}
-                                          title={item.nama_siswa}
-                                        >
-                                          {item.nama_siswa}
-                                        </div>
-                                        <div className="text-[10px] text-slate-400 font-medium">
-                                          Tugas #{idx + 1}
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    {/* Actions: Interactive Checkbox & Edit/Delete */}
-                                    <div className="flex items-center gap-1 flex-shrink-0">
-                                      <button
-                                        onClick={() => togglePiketStatus(item.id)}
-                                        className={`px-2 py-1.5 rounded-xl transition-all flex items-center gap-1 text-[11px] font-bold cursor-pointer active:scale-95 ${
-                                          isDone
-                                            ? 'bg-emerald-600 text-white animate-check-pop shadow-xs shadow-emerald-600/30'
-                                            : 'bg-white border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-300'
-                                        }`}
-                                        title={isDone ? 'Batalkan Status Selesai' : 'Tandai Sudah Piket'}
-                                      >
-                                        <Check className="w-3 h-3 stroke-[3]" />
-                                        <span className="hidden sm:inline">{isDone ? 'Selesai' : 'Piket'}</span>
-                                      </button>
-
-                                      <button
-                                        onClick={() => openEditPiketModal(item)}
-                                        className="p-1.5 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
-                                        title="Edit Petugas"
-                                      >
-                                        <Edit className="w-3.5 h-3.5" />
-                                      </button>
-
-                                      <button
-                                        onClick={() => handleDeletePiket(item.id)}
-                                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                                        title="Hapus dari Piket"
-                                      >
-                                        <Trash2 className="w-3.5 h-3.5" />
                                       </button>
                                     </div>
                                   </div>
@@ -3437,21 +3295,20 @@ export default function AdminDashboardPage() {
                           </div>
 
                           {/* Card Footer: Add button */}
-                          <div className="p-3 bg-slate-50/80 border-t border-slate-100 text-center">
+                          <div className="p-3.5 bg-slate-50 border-t border-slate-100 text-center">
                             <button
                               onClick={() => openAddPiketModal(hari as any)}
-                              className="w-full py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 border border-dashed border-slate-200 hover:border-blue-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                              className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 border border-dashed border-slate-200 hover:border-blue-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
-                              <UserPlus className="w-3.5 h-3.5" />
-                              <span>+ Petugas {hari}</span>
+                              <UserPlus className="w-4 h-4" />
+                              <span>+ Tambah Petugas {hari}</span>
                             </button>
                           </div>
                         </div>
                       );
                     })}
-                  </div>
                 </div>
-              )}
+              </div>
 
               {/* MODAL: Tambah / Edit Petugas Piket */}
               <AdminModalPortal isOpen={modalPiketOpen} onClose={() => setModalPiketOpen(false)}>
@@ -3663,12 +3520,12 @@ export default function AdminDashboardPage() {
                 })}
               </div>
 
-              {/* 3. Schedule Grid Columns (Mobile 1 col, Tablet 2 cols, Laptop 3 cols, 2XL 5 cols) */}
+              {/* 3. Schedule Grid Columns (Mobile full-width vertical stack, Desktop/Window big cards) */}
               <div
                 className={
                   selectedJadwalDay === 'Semua'
-                    ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-5 items-start'
-                    : 'max-w-3xl mx-auto space-y-4'
+                    ? 'grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 lg:gap-8 items-start pb-10'
+                    : 'max-w-4xl mx-auto w-full space-y-5 pb-10'
                 }
               >
                 {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']
