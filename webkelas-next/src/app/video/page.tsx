@@ -24,14 +24,23 @@ export default function VideoPage() {
   const [selectedVideo, setSelectedVideo] = useState<VideoKelas | null>(null);
 
   useEffect(() => {
+    // Helper: reject blob URLs (only valid in current browser session)
+    const isValidUrl = (url: string) => !!url && !url.startsWith('blob:');
+
     const loadVideos = () => {
       const savedVideos = localStorage.getItem('class_videos_list');
       if (savedVideos) {
         try {
           const parsed = JSON.parse(savedVideos);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setVideosList(parsed);
-            return;
+            const valid = parsed.filter((v: VideoKelas) => isValidUrl(v.url_video));
+            if (valid.length > 0) {
+              setVideosList(valid);
+              return;
+            } else {
+              // Corrupt blob URLs - clear and reset to seed
+              localStorage.removeItem('class_videos_list');
+            }
           }
         } catch (e) {
           console.error(e);
@@ -45,8 +54,14 @@ export default function VideoPage() {
     // Live sync from Supabase cloud database
     getVideos().then((data) => {
       if (data && data.length > 0) {
-        setVideosList(data);
-        try { localStorage.setItem('class_videos_list', JSON.stringify(data)); } catch (e) {}
+        const valid = data.filter((v) => isValidUrl(v.url_video));
+        if (valid.length > 0) {
+          setVideosList(valid);
+          try { localStorage.setItem('class_videos_list', JSON.stringify(valid)); } catch (e) {}
+        } else {
+          localStorage.removeItem('class_videos_list');
+          setVideosList(initialVideos);
+        }
       }
     });
 

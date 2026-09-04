@@ -45,13 +45,23 @@ export default function GaleriPage() {
   }, [selectedPhoto]);
 
   React.useEffect(() => {
+    // Helper: reject blob URLs (only valid in current browser session)
+    const isValidUrl = (url: string) => !!url && !url.startsWith('blob:');
+
     const loadMediaData = () => {
       const savedVideos = localStorage.getItem('class_videos_list');
       if (savedVideos) {
         try {
           const parsed = JSON.parse(savedVideos);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setVideosList(parsed);
+            const valid = parsed.filter((v: VideoKelas) => isValidUrl(v.url_video));
+            if (valid.length > 0) {
+              setVideosList(valid);
+            } else {
+              // All entries are corrupt blob URLs — clear and reset
+              localStorage.removeItem('class_videos_list');
+              setVideosList(initialVideos);
+            }
           }
         } catch (e) {
           console.error(e);
@@ -63,7 +73,14 @@ export default function GaleriPage() {
         try {
           const parsed = JSON.parse(savedGallery);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setGalleryList(parsed);
+            const valid = parsed.filter((g: GalleryItem) => isValidUrl(g.image));
+            if (valid.length > 0) {
+              setGalleryList(valid);
+            } else {
+              // All entries are corrupt blob URLs — clear and reset
+              localStorage.removeItem('class_gallery_list');
+              setGalleryList(initialGallery);
+            }
           }
         } catch (e) {
           console.error(e);
@@ -76,15 +93,28 @@ export default function GaleriPage() {
     // Live sync from Supabase cloud database
     getGallery().then((data) => {
       if (data && data.length > 0) {
-        setGalleryList(data);
-        try { localStorage.setItem('class_gallery_list', JSON.stringify(data)); } catch (e) {}
+        const valid = data.filter((g) => isValidUrl(g.image));
+        if (valid.length > 0) {
+          setGalleryList(valid);
+          try { localStorage.setItem('class_gallery_list', JSON.stringify(valid)); } catch (e) {}
+        } else {
+          // Supabase has only corrupt entries, reset to seed
+          localStorage.removeItem('class_gallery_list');
+          setGalleryList(initialGallery);
+        }
       }
     });
 
     getVideos().then((data) => {
       if (data && data.length > 0) {
-        setVideosList(data);
-        try { localStorage.setItem('class_videos_list', JSON.stringify(data)); } catch (e) {}
+        const valid = data.filter((v) => isValidUrl(v.url_video));
+        if (valid.length > 0) {
+          setVideosList(valid);
+          try { localStorage.setItem('class_videos_list', JSON.stringify(valid)); } catch (e) {}
+        } else {
+          localStorage.removeItem('class_videos_list');
+          setVideosList(initialVideos);
+        }
       }
     });
 
