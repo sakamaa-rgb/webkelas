@@ -888,7 +888,8 @@ export default function JadwalPage() {
           </div>
 
           {/* List of piket students with real avatars & interactive checkmark */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+          {/* Mobile: 2-col grid with vertical portrait cards. Desktop: 3-col horizontal cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5">
             {filteredPiket.map((piket) => {
               const isDone = !!piketCompleted[piket.id];
               const photoUrl = getStudentPhotoByName(piket.nama_siswa);
@@ -897,9 +898,9 @@ export default function JadwalPage() {
                 <div
                   key={piket.id}
                   onClick={() => togglePiket(piket.id)}
-                  className={`p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3 shadow-xs select-none ${
+                  className={`rounded-2xl border transition-all duration-200 shadow-xs select-none overflow-hidden ${
                     isAdmin
-                      ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+                      ? 'cursor-pointer hover:shadow-lg hover:-translate-y-0.5'
                       : 'cursor-pointer hover:border-slate-300'
                   } ${
                     isDone
@@ -909,48 +910,55 @@ export default function JadwalPage() {
                   title={
                     isAdmin
                       ? `Klik untuk ${isDone ? 'batalkan' : 'centang'} tugas piket`
-                      : 'Hanya Admin yang dapat mencentang tugas piket (Klik untuk info)'
+                      : 'Hanya Admin yang dapat mencentang tugas piket'
                   }
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    {/* Student Avatar (Portrait aspect ratio + object-top to show full face & hair perfectly) */}
-                    <div className="relative w-11 h-14 sm:w-12 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex-shrink-0">
-                      <Image
-                        src={photoUrl}
-                        alt={piket.nama_siswa}
-                        fill
-                        sizes="64px"
-                        className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className={`text-sm font-bold truncate ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
-                        {piket.nama_siswa}
+                  {/* Portrait Photo - full width, 4:5 aspect ratio */}
+                  <div className="relative w-full aspect-[4/5] bg-slate-100">
+                    <Image
+                      src={photoUrl}
+                      alt={piket.nama_siswa}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover object-top"
+                    />
+                    {/* Overlay gradient + done badge */}
+                    {isDone && (
+                      <div className="absolute inset-0 bg-emerald-600/30 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg">
+                          <Check className="w-7 h-7 stroke-[3]" />
+                        </div>
                       </div>
-                      <div className="text-[11px] text-slate-400 font-medium">
-                        Tugas #{piket.urutan}
-                      </div>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-1.5">
-                    {!isAdmin && !isDone && (
-                      <span title="Terkunci (Khusus Admin)">
-                        <Lock className="w-3.5 h-3.5 text-slate-300" />
-                      </span>
-                    )}
+                  {/* Card Footer */}
+                  <div className="p-2.5 flex items-center justify-between gap-1">
+                    <div className="min-w-0 flex-1">
+                      <div className={`text-xs font-bold truncate leading-tight ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+                        {piket.nama_siswa}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+                        #{piket.urutan}
+                      </div>
+                    </div>
+
                     <button
                       type="button"
                       aria-label={`Status piket ${piket.nama_siswa}`}
-                      className={`p-2 rounded-xl transition-all ${
+                      className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${
                         isDone
-                          ? 'bg-emerald-600 text-white animate-check-pop shadow-md shadow-emerald-600/30'
+                          ? 'bg-emerald-500 text-white shadow-sm'
                           : isAdmin
-                          ? 'bg-slate-100 text-slate-400 hover:bg-slate-200 cursor-pointer'
-                          : 'bg-slate-100/80 text-slate-300 cursor-pointer'
+                          ? 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                          : 'bg-slate-100/80 text-slate-300'
                       }`}
                     >
-                      <Check className="w-4 h-4 stroke-[3]" />
+                      {isDone ? (
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      ) : (
+                        <Lock className="w-3 h-3" />
+                      )}
                     </button>
                   </div>
                 </div>
