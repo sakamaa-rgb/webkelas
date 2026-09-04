@@ -110,7 +110,7 @@ export default function StructureDetailPage({ params }: PageProps) {
                 alt={member.name}
                 fill
                 priority
-                className="object-cover"
+                className="object-cover object-top"
               />
             </div>
 

@@ -69,7 +69,7 @@ export default function StrukturPage() {
           src={member.photo}
           alt={member.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/95 text-blue-600 shadow-sm flex items-center gap-1">

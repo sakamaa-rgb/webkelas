@@ -875,10 +875,67 @@ export default function AdminDashboardPage() {
   };
 
   const getStudentPhotoByName = (name: string) => {
-    const student = studentsList.find((s) =>
-      s.name.toLowerCase().includes(name.toLowerCase()) ||
-      name.toLowerCase().includes(s.name.toLowerCase().split(' ')[0])
-    );
+    const norm = name.trim().toLowerCase();
+    const nicknameMap: Record<string, string> = {
+      'nurul': '045',
+      'm. aditya': '019',
+      'aditya': '019',
+      'raffi udin': '033',
+      'raffi': '033',
+      'rizky': '039',
+      'alif': '021',
+      'niko': '030',
+      'salwa': '042',
+      'ainun': '041',
+      'salsa': '040',
+      'refan': '026',
+      'revand': '038',
+      'candra': '022',
+      'noval': '024',
+      'hafiyz': '023',
+      'rajib': '025',
+      'anzas': '020',
+      'dema': '010',
+      'davin': '009',
+      'bramantyo': '007',
+      'bagus': '006',
+      'faris': '012',
+      'habib': '013',
+      'ilham': '014',
+      'intan': '015',
+      'khaira': '016',
+      'lulu': '017',
+      'maisi': '018',
+      'mutia': '027',
+      'nadine': '028',
+      'nazhril': '029',
+      'nursyifa': '031',
+      'oktavia': '032',
+      'rafli': '034',
+      'ranty': '035',
+      'reisya': '036',
+      'restu': '037',
+      'taruna': '044',
+      'azzam': '043',
+      'crisna': '008',
+      'asyifa': '005',
+      'andini': '004',
+      'alivia': '003',
+      'aisyah': '002',
+      'abyan': '001',
+      'faneza': '011',
+    };
+
+    const directId = nicknameMap[norm];
+    if (directId) {
+      const s = studentsList.find((st) => st.id === directId || Number(st.id) === Number(directId));
+      if (s && s.photo) return s.photo;
+    }
+
+    const student = studentsList.find((s) => {
+      const sNorm = s.name.toLowerCase();
+      return sNorm === norm || sNorm.includes(norm);
+    });
     return student?.photo || '/assets/uploads/students/student_001_1778723200.png';
   };
 
@@ -3419,11 +3476,12 @@ export default function AdminDashboardPage() {
                                   >
                                     {/* Left: Avatar & Full Name */}
                                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                                      <div className="relative w-11 h-11 rounded-full overflow-hidden bg-red-600 border-2 border-white shadow-sm flex-shrink-0">
+                                      <div className="relative w-11 h-14 sm:w-12 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex-shrink-0">
                                         <Image
                                           src={photoUrl}
                                           alt={item.nama_siswa}
                                           fill
+                                          sizes="64px"
                                           className="object-cover object-top"
                                         />
                                       </div>
