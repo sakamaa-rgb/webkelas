@@ -3487,7 +3487,7 @@ export default function AdminDashboardPage() {
                               className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 border border-dashed border-slate-200 hover:border-blue-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
                               <UserPlus className="w-4 h-4" />
-                              <span>+ Tambah Petugas {hari}</span>
+                              <span>Tambah Petugas {hari}</span>
                             </button>
                           </div>
                         </div>
@@ -3597,33 +3597,33 @@ export default function AdminDashboardPage() {
           {activeTab === 'jadwal' && (
             <div className="space-y-6">
               {/* 1. Hero Banner */}
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-900 text-white p-6 sm:p-8 shadow-xl border border-slate-800">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-900 text-white p-4 sm:p-7 shadow-xl border border-slate-800">
                 <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
                 <div className="absolute left-1/2 -top-24 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                  <div className="space-y-3 max-w-2xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold backdrop-blur-xs">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-6">
+                  <div className="space-y-2 sm:space-y-3 max-w-2xl">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[11px] sm:text-xs font-semibold backdrop-blur-xs">
                       <Calendar className="w-3.5 h-3.5 text-blue-400" />
                       <span>Agenda Pembelajaran XI PPLG 3</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
+                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
                       Kelola Jadwal Pelajaran
                     </h2>
 
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <p className="hidden sm:block text-xs sm:text-sm text-slate-300 leading-relaxed">
                       Atur susunan mata pelajaran, jam kegiatan belajar mengajar, sesi istirahat, serta guru pengampu untuk setiap hari sekolah secara terstruktur.
                     </p>
 
                     {/* Quick Stats Pill Strip */}
-                    <div className="flex flex-wrap items-center gap-2.5 pt-2 text-xs">
-                      <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold flex items-center gap-1.5 backdrop-blur-xs">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5 pt-0.5 sm:pt-2 text-[10px] sm:text-xs overflow-x-auto no-scrollbar pb-0.5">
+                      <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold flex items-center gap-1.5 backdrop-blur-xs flex-shrink-0">
                         <BookOpen className="w-3.5 h-3.5 text-blue-300" />
-                        <span>Total <strong>{jadwalList.length}</strong> Sesi Terjadwal</span>
+                        <span>Total <strong>{jadwalList.length}</strong> Sesi</span>
                       </div>
 
-                      <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold flex items-center gap-1.5 backdrop-blur-xs">
+                      <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold flex items-center gap-1.5 backdrop-blur-xs flex-shrink-0">
                         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                         <span>
                           <strong>
@@ -3643,9 +3643,9 @@ export default function AdminDashboardPage() {
                         const todayName = daysIndo[new Date().getDay()];
                         const todaySessions = jadwalList.filter((j) => j.hari === todayName).length;
                         return (
-                          <div className="px-3 py-1.5 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-200 font-bold flex items-center gap-1.5 backdrop-blur-xs">
+                          <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-200 font-bold flex items-center gap-1.5 backdrop-blur-xs flex-shrink-0">
                             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot" />
-                            <span>Hari Ini: {todayName} ({todaySessions} Sesi)</span>
+                            <span>{todayName} ({todaySessions} Sesi)</span>
                           </div>
                         );
                       })()}
@@ -3653,14 +3653,14 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Right side: Add Button */}
-                  <div className="flex items-center justify-between md:justify-end gap-3 flex-shrink-0 w-full md:w-auto">
+                  <div className="flex items-center justify-between md:justify-end gap-3 flex-shrink-0 w-full md:w-auto pt-1 sm:pt-0">
                     <div className="hidden md:flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 items-center justify-center text-white shadow-lg shadow-blue-500/30 animate-book-flip">
                       <BookOpen className="w-7 h-7" />
                     </div>
 
                     <button
                       onClick={() => openAddJadwalModal(selectedJadwalDay === 'Semua' ? 'Senin' : selectedJadwalDay)}
-                      className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                      className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
                       <Plus className="w-4 h-4 stroke-[3]" />
                       <span>Tambah Jam Pelajaran</span>
