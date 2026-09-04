@@ -682,10 +682,14 @@ export default function AdminDashboardPage() {
   const handlePhotoChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setStructureList((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, photo: previewUrl } : m))
-      );
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result as string;
+        setStructureList((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, photo: dataUrl } : m))
+        );
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -832,16 +836,22 @@ export default function AdminDashboardPage() {
   const handleAddPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setAddPhoto(previewUrl);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setAddPhoto(ev.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleEditPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setEditPhoto(previewUrl);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setEditPhoto(ev.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -1214,9 +1224,12 @@ export default function AdminDashboardPage() {
   const handleVideoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const videoUrl = URL.createObjectURL(file);
-      setVideoFormUrl(videoUrl);
-      setVideoFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setVideoFormUrl(ev.target?.result as string);
+        setVideoFileName(file.name);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -1324,8 +1337,11 @@ export default function AdminDashboardPage() {
   const handleVideoThumbUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setVideoFormThumbnail(previewUrl);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setVideoFormThumbnail(ev.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -1351,9 +1367,12 @@ export default function AdminDashboardPage() {
   const handleGalleryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setGalleryFormImage(previewUrl);
-      setGalleryFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setGalleryFormImage(ev.target?.result as string);
+        setGalleryFileName(file.name);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -1501,9 +1520,12 @@ export default function AdminDashboardPage() {
   const handleProjectPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setProjectFormImage(previewUrl);
-      setProjectFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setProjectFormImage(ev.target?.result as string);
+        setProjectFileName(file.name);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
