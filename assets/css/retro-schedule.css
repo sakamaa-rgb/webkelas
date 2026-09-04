@@ -1,0 +1,806 @@
+/* ===================================================
+   RETRO COMPUTER WINDOW & MODERN SCHEDULE / VIDEO CSS
+   Aesthetic: 2000s Retro Computer Window + Vibrant Class Theme
+   =================================================== */
+
+/* ── Retro Landscape Theme Canvas / Container ────── */
+.retro-page-header {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    position: relative;
+}
+
+.retro-hero-banner {
+    position: relative;
+    background: linear-gradient(180deg, #38bdf8 0%, #60a5fa 45%, #93c5fd 60%, #86efac 60%, #22c55e 100%);
+    border-radius: var(--radius-lg, 1.25rem);
+    padding: 2.5rem 2rem;
+    color: #ffffff;
+    box-shadow: 0 12px 36px -8px rgba(37, 99, 235, 0.25);
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    border: 3px solid #ffffff;
+}
+
+.retro-hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    background: #fef08a;
+    border-radius: 50%;
+    box-shadow: 0 0 30px #fef08a;
+    opacity: 0.85;
+}
+
+.retro-hero-clouds {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    gap: 3rem;
+    pointer-events: none;
+    animation: floatClouds 18s ease-in-out infinite alternate;
+}
+
+@keyframes floatClouds {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(30px); }
+}
+
+.retro-hero-content {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.retro-hero-content h1 {
+    font-size: 2.25rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.retro-hero-content p {
+    font-size: 1.05rem;
+    opacity: 0.95;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+/* ── Filter Tabs ────────────────────────────────── */
+.schedule-filter-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    padding: 0.5rem;
+    background: #ffffff;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04));
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.schedule-filter-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-btn {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.filter-btn:hover {
+    color: var(--primary, #2563eb);
+    background: #eff6ff;
+}
+
+.filter-btn.active {
+    background: var(--primary, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* ── Retro Computer Window Cards ─────────────────── */
+.retro-window-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.retro-window {
+    position: relative;
+    background: #ffffff;
+    border: 2px solid #0f172a;
+    border-radius: 0.75rem;
+    box-shadow: 6px 6px 0px rgba(15, 23, 42, 0.9), 0 10px 25px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.retro-window:hover {
+    transform: translateY(-4px);
+    box-shadow: 8px 8px 0px rgba(37, 99, 235, 0.9), 0 15px 30px rgba(37, 99, 235, 0.12);
+}
+
+/* Window Title Bar */
+.retro-window-header {
+    background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff;
+    border-top-left-radius: 0.6rem;
+    border-top-right-radius: 0.6rem;
+    border-bottom: 2px solid #0f172a;
+    user-select: none;
+}
+
+.retro-window-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.retro-window-title i {
+    font-size: 1rem;
+    color: #93c5fd;
+}
+
+.retro-window-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.win-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid #1e293b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    cursor: default;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.win-btn.win-min { background: #cbd5e1; }
+.win-btn.win-max { background: #cbd5e1; }
+.win-btn.win-close { background: #ef4444; color: #fff; border-color: #991b1b; }
+
+/* Window Body */
+.retro-window-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #fafafa;
+}
+
+/* Window Landscape Accents / Wallpaper Footer inside body */
+.retro-window-body::after {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(90deg, #38bdf8 0%, #22c55e 100%);
+    border-radius: 4px;
+    margin-top: 1.25rem;
+}
+
+/* ── Paper Clip & Stationery Accents ────────────── */
+.paper-clip-decor {
+    position: absolute;
+    top: -14px;
+    right: 24px;
+    width: 20px;
+    height: 38px;
+    border: 3px solid #94a3b8;
+    border-radius: 10px;
+    background: transparent;
+    z-index: 10;
+    transform: rotate(12deg);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    pointer-events: none;
+}
+
+.stationery-decor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed #cbd5e1;
+}
+
+.stationery-decor i {
+    color: var(--primary, #2563eb);
+}
+
+/* ── Piket Student List ─────────────────────────── */
+.piket-student-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.piket-student-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.piket-student-item:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    transform: translateX(4px);
+}
+
+.student-order-num {
+    width: 24px;
+    height: 24px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #334155;
+    flex-shrink: 0;
+}
+
+.student-name-text {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #1e293b;
+    flex: 1;
+}
+
+/* Red Badge for PJ */
+.pj-badge-box {
+    margin-top: auto;
+    padding: 0.85rem 1rem;
+    background: #fef2f2;
+    border: 1.5px dashed #ef4444;
+    border-radius: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.pj-badge {
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 0.25rem 0.55rem;
+    border-radius: 0.35rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+    flex-shrink: 0;
+}
+
+.pj-names {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #991b1b;
+}
+
+/* ── Jadwal Pelajaran Timetable Cards ─────────────── */
+.lesson-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 0.5rem;
+}
+
+.lesson-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0.9rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--primary, #2563eb);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.lesson-item.is-break {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+    border-color: #fef3c7;
+}
+
+.lesson-item.is-special {
+    background: #f0fdf4;
+    border-left-color: #10b981;
+    border-color: #dcfce7;
+}
+
+.lesson-time {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    font-family: var(--font-mono, monospace);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.25rem;
+}
+
+.lesson-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+
+.lesson-teacher {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.lesson-teacher i {
+    color: #3b82f6;
+    font-size: 0.75rem;
+}
+
+/* ── Sticky Note Card (NOTE!!) ───────────────────── */
+.sticky-note-card {
+    position: relative;
+    background: #fef08a;
+    border: 2px solid #ca8a04;
+    border-radius: 0.75rem;
+    box-shadow: 6px 6px 0px rgba(161, 98, 7, 0.8), 0 10px 20px rgba(0,0,0,0.06);
+    padding: 1.75rem 1.5rem;
+    color: #713f12;
+    transform: rotate(-1deg);
+    transition: transform 0.3s ease;
+}
+
+.sticky-note-card:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.sticky-tape {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px dashed #ca8a04;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.sticky-note-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #854d0e;
+    margin-bottom: 1rem;
+    border-bottom: 2px dashed #eab308;
+    padding-bottom: 0.5rem;
+}
+
+.sticky-note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.sticky-note-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 0.4rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.sticky-day {
+    color: #854d0e;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    background: #fde047;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+}
+
+.sticky-activity {
+    color: #1e293b;
+    font-weight: 800;
+}
+
+/* ── Video Kelas Grid & Player ───────────────────── */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.video-card {
+    background: #ffffff;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-lg, 1.25rem);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04));
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.video-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg, 0 20px 40px rgba(0,0,0,0.1));
+    border-color: #bfdbfe;
+}
+
+.video-thumb-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #0f172a;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.video-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.video-card:hover .video-thumb-img {
+    transform: scale(1.05);
+}
+
+.video-play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.video-card:hover .video-play-overlay {
+    background: rgba(15, 23, 42, 0.2);
+}
+
+.play-circle-btn {
+    width: 54px;
+    height: 54px;
+    background: #ef4444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.25rem;
+    padding-left: 3px;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-card:hover .play-circle-btn {
+    transform: scale(1.15);
+    box-shadow: 0 0 28px rgba(239, 68, 68, 0.85);
+}
+
+.video-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.video-date-chip {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary, #2563eb);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.video-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.video-desc {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    flex: 1;
+}
+
+.btn-watch-video {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--primary, #2563eb);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 0.6rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-watch-video:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* ── Video Modal Dialog ──────────────────────────── */
+.video-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.video-modal-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.video-modal-container {
+    width: 100%;
+    max-width: 860px;
+    background: #0f172a;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.video-modal-backdrop.is-open .video-modal-container {
+    transform: scale(1);
+}
+
+.video-modal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background: #1e293b;
+    color: #ffffff;
+}
+
+.video-modal-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.video-modal-close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.35rem;
+    transition: all 0.2s;
+}
+
+.video-modal-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.video-modal-iframe-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000000;
+}
+
+.video-modal-iframe-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ── Section Dividers / Section Header for Index ── */
+.home-section-retro {
+    padding: 4.5rem 5%;
+    border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.home-section-retro.bg-alt {
+    background: #f8fafc;
+}
+
+.retro-section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    background: #eff6ff;
+    color: var(--primary, #2563eb);
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    margin-bottom: 0.75rem;
+    border: 1px solid #dbeafe;
+}
+
+/* ── Animations ─────────────────────────────────── */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive Styling ─────────────────────────── */
+@media (max-width: 768px) {
+    .retro-window-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+    .retro-hero-banner {
+        padding: 2rem 1.25rem;
+    }
+    .retro-hero-content h1 {
+        font-size: 1.75rem;
+    }
+    .schedule-filter-bar {
+        justify-content: flex-start;
+        width: 100%;
+        padding: 0.4rem;
+        -webkit-overflow-scrolling: touch;
+    }
+    .filter-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.82rem;
+    }
+    .home-section-retro {
+        padding: 3rem 4%;
+    }
+}
+
+@media (max-width: 480px) {
+    .retro-window {
+        box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.9), 0 6px 16px rgba(0,0,0,0.05);
+    }
+    .retro-window:hover {
+        transform: none;
+        box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.9);
+    }
+    .retro-window-body {
+        padding: 1rem;
+    }
+    .paper-clip-decor {
+        top: -10px;
+        right: 14px;
+        width: 16px;
+        height: 30px;
+    }
+    .retro-window-title {
+        font-size: 0.82rem;
+    }
+    .piket-student-item {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.85rem;
+    }
+    .student-order-num {
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+    }
+    .sticky-note-card {
+        padding: 1.25rem 1rem;
+    }
+    .sticky-note-header {
+        font-size: 0.88rem;
+    }
+    .home-section-retro {
+        padding: 2.5rem 3%;
+    }
+}

@@ -1,0 +1,723 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --secondary: #0ea5e9;
+  --accent: #8b5cf6;
+  --dark: #0f172a;
+  --dark-2: #1e293b;
+  --text: #475569;
+  --text-light: #94a3b8;
+  --light-bg: #f8fafc;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #475569;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Authentic Hero Animations */
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.animate-pulse-dot {
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 40% { opacity: 1; }
+  50%, 90% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-cursor-blink {
+  animation: cursorBlink 0.9s infinite;
+}
+
+@keyframes textShimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: textShimmer 4s linear infinite;
+}
+
+@keyframes floatHero {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-16px) rotate(2deg); }
+  66% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+.animate-float-hero {
+  animation: floatHero 7s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+.animate-ring-pulse {
+  animation: ringPulse 4s ease-in-out infinite;
+}
+
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(8deg); }
+}
+
+.animate-float-badge {
+  animation: floatBadge 5s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  75% { transform: rotate(-5deg); }
+}
+
+.animate-icon-float {
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+/* Hero Entrance Animations (Smooth bounce-in with spring overshoot) */
+@keyframes heroEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) translateY(24px);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.04) translateY(-4px);
+  }
+  85% {
+    transform: scale(0.98) translateY(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes logoPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-12deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.12) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes badgePopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(15px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.18) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-hero-entrance {
+  animation: heroEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-logo-entrance {
+  animation: logoPopIn 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+.animate-badge-pop-1 {
+  animation: badgePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+.animate-badge-pop-2 {
+  animation: badgePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s both;
+}
+
+.animate-badge-pop-3 {
+  animation: badgePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
+}
+
+.animate-badge-pop-4 {
+  animation: badgePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s both;
+}
+
+/* Piket & Duty Animations */
+@keyframes sweepBroom {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-12deg) scale(1.05); }
+  75% { transform: rotate(8deg) scale(1.02); }
+}
+
+.animate-sweep-broom {
+  animation: sweepBroom 3.5s ease-in-out infinite;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.animate-check-pop {
+  animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2s infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Schedule / Lesson Animations */
+@keyframes bookFlip {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-4deg) scale(1.05); }
+}
+
+.animate-book-flip {
+  animation: bookFlip 3s ease-in-out infinite;
+}
+
+@keyframes livePulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.animate-live-pulse {
+  animation: livePulseDot 1.8s infinite;
+}
+
+/* Cinema & Video Animations */
+@keyframes filmReel {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-film-reel {
+  animation: filmReel 12s linear infinite;
+}
+
+@keyframes playPulseGlow {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.6); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 14px rgba(168, 85, 247, 0); }
+}
+
+.animate-play-pulse {
+  animation: playPulseGlow 2.4s infinite;
+}
+
+@keyframes cinemaBeam {
+  0%, 100% { opacity: 0.25; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.55; transform: scale(1.08) rotate(3deg); }
+}
+
+.animate-cinema-beam {
+  animation: cinemaBeam 5s ease-in-out infinite;
+}
+
+/* Gallery Studio Animations */
+@keyframes cameraShutter {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(15deg) scale(1.1); }
+  50% { transform: rotate(-10deg) scale(0.95); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.animate-camera-shutter {
+  animation: cameraShutter 4s ease-in-out infinite;
+}
+
+@keyframes galleryShimmer {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(250%) skewX(-20deg); }
+}
+
+.animate-gallery-shimmer {
+  animation: galleryShimmer 3s ease-in-out infinite;
+}
+
+@keyframes photoCardHoverGlow {
+  0%, 100% { box-shadow: 0 4px 20px -2px rgba(59, 130, 246, 0.15); }
+  50% { box-shadow: 0 8px 30px 4px rgba(99, 102, 241, 0.3); }
+}
+
+.animate-photo-glow {
+  animation: photoCardHoverGlow 3s ease-in-out infinite;
+}
+
+/* Project & Comment Studio Animations */
+@keyframes terminalGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(6, 182, 212, 0); }
+}
+
+.animate-terminal-glow {
+  animation: terminalGlow 2.5s infinite;
+}
+
+@keyframes commentBubblePop {
+  0% { transform: scale(0.92); opacity: 0.8; }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-bubble-pop {
+  animation: commentBubblePop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes codeScanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+.animate-code-scanline {
+  animation: codeScanline 6s linear infinite;
+}
+
+/* Contact & Profile Studio & Activity Log Animations */
+@keyframes radarPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.animate-radar-pulse {
+  animation: radarPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes liveCardShine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: liveCardShine 6s ease infinite;
+}
+
+@keyframes logItemSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-log-slide {
+  animation: logItemSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Special Admin Dashboard Animations (Desktop Rich, Mobile Lightweight) */
+@keyframes adminTabFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-admin-tab {
+  animation: adminTabFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes adminBadgeGlow {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)); }
+}
+
+.animate-admin-badge {
+  animation: adminBadgeGlow 3s ease-in-out infinite;
+}
+
+/* =========================================================
+   DESKTOP (WINDOW) SPECIAL HIGH-FIDELITY ANIMATIONS
+   Active on screens > 768px (Laptop / Desktop PC)
+   ========================================================= */
+@media (min-width: 769px) {
+  /* Desktop 3D Card Hover Lift & Ambient Soft Glow */
+  .desktop-card-hover {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s ease;
+    will-change: transform, box-shadow;
+  }
+  .desktop-card-hover:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 20px 35px -10px rgba(37, 99, 235, 0.16), 
+                0 10px 15px -5px rgba(0, 0, 0, 0.04);
+    border-color: rgba(59, 130, 246, 0.35);
+  }
+
+  /* Desktop Shimmer Sweep for Buttons */
+  .desktop-shimmer-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .desktop-shimmer-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -150%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      60deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 80%
+    );
+    transform: rotate(25deg);
+    transition: none;
+    pointer-events: none;
+  }
+  .desktop-shimmer-btn:hover::after {
+    left: 150%;
+    transition: all 0.85s ease-in-out;
+  }
+
+  /* Desktop Ambient Halo Glow */
+  @keyframes desktopGlowHalo {
+    0%, 100% {
+      filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.2));
+    }
+    50% {
+      filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.4));
+    }
+  }
+  .animate-desktop-halo {
+    animation: desktopGlowHalo 6s ease-in-out infinite;
+  }
+
+  /* Desktop Magnetic Micro Lift */
+  .desktop-btn-lift {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+  .desktop-btn-lift:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  /* Desktop Multi-Axis Hero Float */
+  @keyframes desktopHeroFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-14px) rotate(1.5deg); }
+    50% { transform: translateY(-6px) rotate(-1deg); }
+    75% { transform: translateY(-18px) rotate(0.8deg); }
+  }
+  .animate-desktop-hero {
+    animation: desktopHeroFloat 8s ease-in-out infinite;
+  }
+
+  /* Desktop Vinyl Ambient Pulse */
+  @keyframes desktopVinylPulse {
+    0%, 100% { box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.35); }
+    50% { box-shadow: 0 15px 35px 2px rgba(59, 130, 246, 0.55); }
+  }
+  .animate-desktop-vinyl-pulse {
+    animation: desktopVinylPulse 3s ease-in-out infinite;
+  }
+}
+
+/* =========================================================
+   MOBILE LAG-FREE MODE (DAMPENED & OPTIMIZED)
+   Active on screens <= 768px (Smartphones & Small Tablets)
+   ========================================================= */
+@media (max-width: 768px) {
+  /* 1. Hardware accelerated gentle float for Hero illustration */
+  .animate-float-hero,
+  .animate-desktop-hero {
+    animation: mobileGentleFloat 4s ease-in-out infinite !important;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+
+  @keyframes mobileGentleFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -6px, 0); }
+  }
+
+  /* 2. Lightweight floating badges on mobile (GPU-only micro-float) */
+  @keyframes mobileBadgeFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -4px, 0); }
+  }
+
+  .animate-float-badge {
+    animation: mobileBadgeFloat 3.2s ease-in-out infinite !important;
+    will-change: transform;
+  }
+
+  .animate-icon-float {
+    animation: mobileBadgeFloat 3.8s ease-in-out 0.4s infinite !important;
+    will-change: transform;
+  }
+
+  /* 3. Lightweight live indicators & glow pulse (pure opacity & transform, zero repaint) */
+  @keyframes mobilePureGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.06); }
+  }
+
+  .animate-live-pulse,
+  .animate-glow-pulse,
+  .animate-play-pulse,
+  .animate-radar-pulse {
+    animation: mobilePureGlow 2s ease-in-out infinite !important;
+    box-shadow: none !important;
+    will-change: opacity, transform;
+  }
+
+  /* 4. Tactile, springy touch feedback on buttons, cards, and links (iOS/Android feel) */
+  button, a, [role="button"], .desktop-card-hover {
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation;
+  }
+
+  button:active, a:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .desktop-card-hover {
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, border-color 0.18s ease !important;
+  }
+
+  .desktop-card-hover:active {
+    transform: scale(0.98) translate3d(0, 1px, 0) !important;
+    box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.14) !important;
+    border-color: #93c5fd !important;
+  }
+
+  /* 5. Smooth lightweight entrance for tabs & cards */
+  @keyframes mobileCardEntrance {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 8px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .animate-admin-tab,
+  .animate-log-slide {
+    animation: mobileCardEntrance 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: opacity, transform;
+  }
+
+  /* 6. Mobile music player: smooth vinyl spin and active ring */
+  .animate-vinyl-spin {
+    animation: vinylSpin 7s linear infinite !important;
+    will-change: transform;
+  }
+
+  @keyframes mobileVinylBorder {
+    0%, 100% { border-color: rgba(147, 197, 253, 0.4); }
+    50% { border-color: rgba(59, 130, 246, 0.85); }
+  }
+
+  .animate-desktop-vinyl-pulse {
+    animation: mobileVinylBorder 2.8s ease-in-out infinite !important;
+    box-shadow: none !important;
+  }
+
+  /* 7. Subtle shimmer on call-to-action buttons */
+  @keyframes mobileShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .desktop-shimmer-btn {
+    background-size: 200% auto !important;
+    animation: mobileShimmer 4s linear infinite !important;
+  }
+
+  /* 8. Optimized blur filters on mobile */
+  [class*="blur-3xl"] {
+    filter: blur(12px) !important;
+    opacity: 0.15 !important;
+  }
+}
+
+/* Floating Pill Music Player Animations (Desktop & Mobile Optimized) */
+@keyframes musicMarquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-music-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: musicMarquee 9s linear infinite;
+  will-change: transform;
+}
+
+.animate-music-marquee-paused {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: musicMarquee 9s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes vinylSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-vinyl-spin {
+  animation: vinylSpin 6s linear infinite;
+}
+
+@keyframes pillEntrance {
+  0% { opacity: 0; transform: translateY(16px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-pill-entrance {
+  animation: pillEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes soundwaveBar {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+
+.animate-soundwave-1 {
+  animation: soundwaveBar 0.8s ease-in-out infinite;
+}
+.animate-soundwave-2 {
+  animation: soundwaveBar 1.1s ease-in-out 0.2s infinite;
+}
+.animate-soundwave-3 {
+  animation: soundwaveBar 0.9s ease-in-out 0.4s infinite;
+}
+
+/* Contact Cards Animations (Vibrant Pop & Ambient Floating) */
+@keyframes contactCardPop {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.92);
+  }
+  60% {
+    transform: translateY(-6px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-pop-1 {
+  animation: contactCardPop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.animate-card-pop-2 {
+  animation: contactCardPop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.animate-card-pop-3 {
+  animation: contactCardPop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+@keyframes fadeInQuick {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeInQuick 0.25s ease-out forwards;
+}
+
+/* Hero Headline & Engineering Hub Animations */
+@keyframes heroTitleFade {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-hero-title {
+  animation: heroTitleFade 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes engineeringGlow {
+  0%, 100% {
+    color: #5865F2;
+    text-shadow: 0 0 25px rgba(88, 101, 242, 0.28);
+    filter: drop-shadow(0 2px 8px rgba(88, 101, 242, 0.15));
+  }
+  50% {
+    color: #6366f1;
+    text-shadow: 0 0 35px rgba(99, 102, 241, 0.45);
+    filter: drop-shadow(0 4px 14px rgba(99, 102, 241, 0.28));
+  }
+}
+
+.animate-engineering-hub {
+  animation: 
+    heroTitleFade 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both,
+    engineeringGlow 4s ease-in-out infinite;
+}
+
+
