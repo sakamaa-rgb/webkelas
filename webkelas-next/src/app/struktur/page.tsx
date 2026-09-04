@@ -10,6 +10,7 @@ import {
 import { initialStructure } from '@/data/seedData';
 import { StructureMember } from '@/types/database';
 import { useClassProfile } from '@/context/ClassProfileContext';
+import { getStructure } from '@/lib/supabase/dataService';
 
 export default function StrukturPage() {
   const { profile } = useClassProfile();
@@ -33,6 +34,15 @@ export default function StrukturPage() {
     };
 
     loadStructure();
+
+    // Live sync from Supabase cloud database
+    getStructure().then((data) => {
+      if (data && data.length > 0) {
+        setStructureList(data);
+        try { localStorage.setItem('class_web_structure', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadStructure);
     window.addEventListener('class_structure_updated', loadStructure);
     return () => {
@@ -40,6 +50,7 @@ export default function StrukturPage() {
       window.removeEventListener('class_structure_updated', loadStructure);
     };
   }, []);
+
 
   const waliKelas = structureList.find((m) => m.role === 'Wali Kelas');
   const ketua = structureList.find((m) => m.role === 'Ketua Kelas');

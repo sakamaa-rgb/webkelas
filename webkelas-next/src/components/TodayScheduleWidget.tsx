@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Clock, BookOpen, Sparkles, CheckCircle2, ChevronRight, Calendar } from 'lucide-react';
 import { initialJadwalPelajaran, initialJadwalPiket } from '@/data/seedData';
 import { JadwalPelajaran, JadwalPiket } from '@/types/database';
+import { getJadwalPelajaran, getJadwalPiket } from '@/lib/supabase/dataService';
 
 export default function TodayScheduleWidget() {
   const [dayName, setDayName] = useState<string>('Senin');
@@ -56,9 +57,26 @@ export default function TodayScheduleWidget() {
     };
 
     loadScheduleData();
+
+    // Live sync from Supabase cloud database
+    getJadwalPelajaran().then((data) => {
+      if (data && data.length > 0) {
+        setJadwalList(data);
+        try { localStorage.setItem('class_jadwal_pelajaran', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
+    getJadwalPiket().then((data) => {
+      if (data && data.length > 0) {
+        setPiketList(data);
+        try { localStorage.setItem('class_piket_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadScheduleData);
     window.addEventListener('class_jadwal_updated', loadScheduleData);
     window.addEventListener('class_piket_updated', loadScheduleData);
+
     return () => {
       window.removeEventListener('storage', loadScheduleData);
       window.removeEventListener('class_jadwal_updated', loadScheduleData);

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Eye, Code2, Sparkles } from 'lucide-react';
 import { initialProjects } from '@/data/seedData';
 import { Project } from '@/types/database';
+import { getProjects } from '@/lib/supabase/dataService';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
@@ -27,6 +28,15 @@ export default function ProjectsPage() {
     };
 
     loadProjects();
+
+    // Live sync from Supabase cloud database
+    getProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjects(data);
+        try { localStorage.setItem('class_projects_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadProjects);
     window.addEventListener('class_projects_updated', loadProjects);
     return () => {
@@ -34,6 +44,7 @@ export default function ProjectsPage() {
       window.removeEventListener('class_projects_updated', loadProjects);
     };
   }, []);
+
 
   // Ordered descending by ID as in the original PHP site: SELECT * FROM projects ORDER BY id DESC
   const sortedProjects = [...projects].sort((a, b) => b.id - a.id);

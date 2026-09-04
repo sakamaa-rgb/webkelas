@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { initialJadwalPelajaran, initialJadwalPiket, initialStudents } from '@/data/seedData';
 import { Student, JadwalPelajaran, JadwalPiket } from '@/types/database';
+import { getJadwalPiket, getJadwalPelajaran, getStudents } from '@/lib/supabase/dataService';
 
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as const;
 type DayType = typeof DAYS[number];
@@ -168,10 +169,37 @@ export default function JadwalPage() {
     };
 
     loadAllData();
+
+    // Live sync from Supabase cloud database
+    getJadwalPiket().then((data) => {
+      if (data && data.length > 0) {
+        setPiketList(data);
+        try { localStorage.setItem('class_piket_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
+    getJadwalPelajaran().then((data) => {
+      if (data && data.length > 0) {
+        setJadwalList(data);
+        try { localStorage.setItem('class_jadwal_pelajaran', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
+    getStudents().then((data) => {
+      if (data && data.length > 0) {
+        setStudentsList(data);
+        try {
+          localStorage.setItem('class_students_list', JSON.stringify(data));
+          localStorage.setItem('class_web_students', JSON.stringify(data));
+        } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadAllData);
     window.addEventListener('class_jadwal_updated', loadAllData);
     window.addEventListener('class_piket_updated', loadAllData);
     window.addEventListener('class_students_updated', loadAllData);
+
 
     return () => {
       clearInterval(interval);

@@ -17,6 +17,7 @@ import {
 import { initialStudents } from '@/data/seedData';
 import { Student } from '@/types/database';
 import { useClassProfile } from '@/context/ClassProfileContext';
+import { getStudents } from '@/lib/supabase/dataService';
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,6 +55,18 @@ export default function SiswaPage() {
     };
 
     loadStudents();
+
+    // Live sync from Supabase cloud database
+    getStudents().then((data) => {
+      if (data && data.length > 0) {
+        setStudents(data);
+        try {
+          localStorage.setItem('class_students_list', JSON.stringify(data));
+          localStorage.setItem('class_web_students', JSON.stringify(data));
+        } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadStudents);
     window.addEventListener('class_students_updated', loadStudents);
     return () => {
@@ -61,6 +74,7 @@ export default function SiswaPage() {
       window.removeEventListener('class_students_updated', loadStudents);
     };
   }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 

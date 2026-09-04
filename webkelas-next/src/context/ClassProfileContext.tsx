@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { initialContact } from '@/data/seedData';
+import { getContactInfo } from '@/lib/supabase/dataService';
+
 
 export interface ClassProfile {
   className: string;
@@ -75,12 +77,36 @@ export function ClassProfileProvider({ children }: { children: React.ReactNode }
 
     loadFromStorage();
 
+    // Live sync from Supabase cloud database
+    getContactInfo().then((info) => {
+      if (info) {
+        setProfile((prev) => ({
+          ...prev,
+          className: info.class_name || prev.className,
+          schoolName: info.school_name || prev.schoolName,
+          tagline: info.tagline || prev.tagline,
+          year: info.year || prev.year,
+          description: info.description || prev.description,
+          logo: info.logo || prev.logo
+        }));
+        setContact((prev) => ({
+          ...prev,
+          instagram: info.instagram || prev.instagram,
+          whatsapp: info.whatsapp || prev.whatsapp,
+          email: info.email || prev.email,
+          tiktok: info.tiktok || prev.tiktok,
+          address: info.address || prev.address
+        }));
+      }
+    });
+
     const handleProfileUpdate = () => {
       loadFromStorage();
     };
 
     window.addEventListener('storage', handleProfileUpdate);
     window.addEventListener('class_profile_updated', handleProfileUpdate);
+
 
     return () => {
       window.removeEventListener('storage', handleProfileUpdate);

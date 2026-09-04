@@ -16,6 +16,7 @@ import {
 import { initialVideos } from '@/data/seedData';
 import { VideoKelas } from '@/types/database';
 import { useClassProfile } from '@/context/ClassProfileContext';
+import { getVideos } from '@/lib/supabase/dataService';
 
 export default function VideoPage() {
   const { profile } = useClassProfile();
@@ -40,6 +41,15 @@ export default function VideoPage() {
     };
 
     loadVideos();
+
+    // Live sync from Supabase cloud database
+    getVideos().then((data) => {
+      if (data && data.length > 0) {
+        setVideosList(data);
+        try { localStorage.setItem('class_videos_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadVideos);
     window.addEventListener('class_videos_updated', loadVideos);
     return () => {
@@ -47,6 +57,7 @@ export default function VideoPage() {
       window.removeEventListener('class_videos_updated', loadVideos);
     };
   }, []);
+
 
   const featuredVideo = videosList[0] || null;
 

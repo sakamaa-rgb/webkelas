@@ -232,5 +232,175 @@ export async function addGuestbookMessage(name: string, kelas: string, message: 
 }
 
 export async function getContactInfo(): Promise<ContactInfo> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('contact').select('*').limit(1).single();
+      if (!error && data) return data as ContactInfo;
+    } catch {
+      // Fallback
+    }
+  }
   return initialContact;
+}
+
+
+// ==============================================================================
+// CROSS-DEVICE MUTATION HELPERS (SYNC DIREKT KE SUPABASE)
+// ==============================================================================
+
+export async function upsertStudent(student: Partial<Student> & { id: string }) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('students').upsert([student]).select();
+      if (!error && data) return data[0] as Student;
+    } catch (e) {
+      console.error('Error upserting student to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteStudentFromDb(id: string) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('students').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting student from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertStructureMember(member: Partial<StructureMember> & { id: number }) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('structure').upsert([member]).select();
+      if (!error && data) return data[0] as StructureMember;
+    } catch (e) {
+      console.error('Error upserting structure to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function upsertJadwalPiket(piket: Partial<JadwalPiket>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('jadwal_piket').upsert([piket]).select();
+      if (!error && data) return data[0] as JadwalPiket;
+    } catch (e) {
+      console.error('Error upserting piket to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteJadwalPiket(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('jadwal_piket').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting piket from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertJadwalPelajaran(jadwal: Partial<JadwalPelajaran>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('jadwal_pelajaran').upsert([jadwal]).select();
+      if (!error && data) return data[0] as JadwalPelajaran;
+    } catch (e) {
+      console.error('Error upserting jadwal to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteJadwalPelajaran(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('jadwal_pelajaran').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting jadwal from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertVideo(video: Partial<VideoKelas>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('video_kelas').upsert([video]).select();
+      if (!error && data) return data[0] as VideoKelas;
+    } catch (e) {
+      console.error('Error upserting video to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteVideo(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('video_kelas').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting video from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertGalleryItem(item: Partial<GalleryItem>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('gallery').upsert([item]).select();
+      if (!error && data) return data[0] as GalleryItem;
+    } catch (e) {
+      console.error('Error upserting gallery to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteGalleryItem(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('gallery').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting gallery from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertProject(project: Partial<Project>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('projects').upsert([project]).select();
+      if (!error && data) return data[0] as Project;
+    } catch (e) {
+      console.error('Error upserting project to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteProject(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('projects').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting project from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertContact(contact: Partial<ContactInfo> & { id?: number }) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const payload = { id: 1, ...contact };
+      const { data, error } = await supabase.from('contact').upsert([payload]).select();
+      if (!error && data) return data[0];
+    } catch (e) {
+      console.error('Error upserting contact to Supabase:', e);
+    }
+  }
+  return null;
 }

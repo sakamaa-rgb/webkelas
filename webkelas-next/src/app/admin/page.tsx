@@ -96,6 +96,29 @@ import {
   initialComments 
 } from '@/data/seedData';
 import { StructureMember, Student, JadwalPiket, JadwalPelajaran, VideoKelas, GalleryItem, Project, ProjectComment } from '@/types/database';
+import { 
+  getStudents,
+  getStructure,
+  getJadwalPiket,
+  getJadwalPelajaran,
+  getVideos,
+  getGallery,
+  getProjects,
+  upsertStudent,
+  deleteStudentFromDb,
+  upsertStructureMember,
+  upsertJadwalPiket,
+  deleteJadwalPiket,
+  upsertJadwalPelajaran,
+  deleteJadwalPelajaran,
+  upsertVideo,
+  deleteVideo,
+  upsertGalleryItem,
+  deleteGalleryItem,
+  upsertProject,
+  deleteProject,
+  upsertContact
+} from '@/lib/supabase/dataService';
 
 const getWeekKey = () => {
   const now = new Date();
@@ -552,6 +575,56 @@ export default function AdminDashboardPage() {
       }
     }
 
+    // Load live data from Supabase for real-time cross-device sync
+    getStudents().then((data) => {
+      if (data && data.length > 0) {
+        setStudentsList(data);
+        try { localStorage.setItem('class_students_list', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getStructure().then((data) => {
+      if (data && data.length > 0) {
+        setStructureList(data);
+        try { localStorage.setItem('class_web_structure', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getJadwalPiket().then((data) => {
+      if (data && data.length > 0) {
+        setPiketList(data);
+        try { localStorage.setItem('class_piket_list', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getJadwalPelajaran().then((data) => {
+      if (data && data.length > 0) {
+        setJadwalList(data);
+        try { localStorage.setItem('class_jadwal_pelajaran', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getVideos().then((data) => {
+      if (data && data.length > 0) {
+        setVideosList(data);
+        try { localStorage.setItem('class_videos_list', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getGallery().then((data) => {
+      if (data && data.length > 0) {
+        setGalleryList(data);
+        try { localStorage.setItem('class_gallery_list', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
+    getProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjectsList(data);
+        try { localStorage.setItem('class_projects_list', JSON.stringify(data)); } catch(e){}
+      }
+    });
+
     // Read tab parameter from URL
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
@@ -559,6 +632,7 @@ export default function AdminDashboardPage() {
       setActiveTab(tab);
     }
   }, [router]);
+
 
   const handleLogout = () => {
     localStorage.removeItem('class_web_admin');
@@ -592,6 +666,10 @@ export default function AdminDashboardPage() {
 
   const handleSaveMember = (id: number) => {
     setSavingId(id);
+    const member = structureList.find((m) => m.id === id);
+    if (member) {
+      upsertStructureMember(member);
+    }
     try {
       localStorage.setItem('class_web_structure', JSON.stringify(structureList));
       if (typeof window !== 'undefined') {
@@ -602,7 +680,6 @@ export default function AdminDashboardPage() {
     }
     setTimeout(() => {
       setSavingId(null);
-      const member = structureList.find((m) => m.id === id);
       setSaveSuccessMsg(`Data ${member?.role || 'struktur'} berhasil disimpan!`);
       setTimeout(() => setSaveSuccessMsg(null), 3000);
     }, 400);
@@ -621,18 +698,19 @@ export default function AdminDashboardPage() {
   const handleSaveEditStudent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalEditStudent) return;
+    const updatedStudent: Student = {
+      ...modalEditStudent,
+      id: editId.trim() || modalEditStudent.id,
+      name: editName.trim() || modalEditStudent.name,
+      nisn: editNisn.trim() || null,
+      kelas: editClass.trim() || 'X PPLG 3',
+      photo: editPhoto || modalEditStudent.photo
+    };
+    upsertStudent(updatedStudent);
+
     setStudentsList((prev) => {
       const updated = prev.map((s) =>
-        s.id === modalEditStudent.id
-          ? {
-              ...s,
-              id: editId.trim() || s.id,
-              name: editName.trim() || s.name,
-              nisn: editNisn.trim() || null,
-              kelas: editClass.trim() || 'X PPLG 3',
-              photo: editPhoto || s.photo
-            }
-          : s
+        s.id === modalEditStudent.id ? updatedStudent : s
       );
       try {
         localStorage.setItem('class_students_list', JSON.stringify(updated));
@@ -661,6 +739,8 @@ export default function AdminDashboardPage() {
       kelas: addClass.trim() || 'X PPLG 3',
       photo: addPhoto || '/assets/uploads/students/student_001_1778723200.png'
     };
+    upsertStudent(newStudent);
+
     setStudentsList((prev) => {
       const updated = [newStudent, ...prev];
       try {
@@ -699,7 +779,10 @@ export default function AdminDashboardPage() {
     // 2. Trigger exit animation on card
     setDeletingId(targetId);
 
-    // 3. After animation completes (400ms), remove from state & persist
+    // 3. Delete from Supabase
+    deleteStudentFromDb(targetId);
+
+    // 4. After animation completes (400ms), remove from state & persist
     setTimeout(() => {
       setStudentsList((prev) => {
         const updated = prev.filter((s) => s.id !== targetId);
@@ -719,6 +802,7 @@ export default function AdminDashboardPage() {
       setTimeout(() => setSaveSuccessMsg(null), 3000);
     }, 400);
   };
+
 
   const handleAddPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -795,11 +879,17 @@ export default function AdminDashboardPage() {
     if (!piketFormName.trim()) return;
 
     if (editingPiket) {
+      const updatedPiket: JadwalPiket = {
+        ...editingPiket,
+        hari: piketFormDay,
+        nama_siswa: piketFormName.trim(),
+        pj: piketFormPj.trim() || editingPiket.pj
+      };
+      upsertJadwalPiket(updatedPiket);
+
       setPiketList((prev) => {
         const updated = prev.map((p) =>
-          p.id === editingPiket.id
-            ? { ...p, hari: piketFormDay, nama_siswa: piketFormName.trim(), pj: piketFormPj.trim() || p.pj }
-            : p
+          p.id === editingPiket.id ? updatedPiket : p
         );
         try { 
           localStorage.setItem('class_piket_list', JSON.stringify(updated)); 
@@ -818,6 +908,8 @@ export default function AdminDashboardPage() {
         urutan: piketList.filter((p) => p.hari === piketFormDay).length + 1,
         pj: piketFormPj.trim() || 'PJ Kebersihan'
       };
+      upsertJadwalPiket(newPiket);
+
       setPiketList((prev) => {
         const updated = [...prev, newPiket];
         try { 
@@ -839,6 +931,7 @@ export default function AdminDashboardPage() {
   const handleDeletePiket = (id: number) => {
     const piketItem = piketList.find((p) => p.id === id);
     if (confirm(`Hapus ${piketItem?.nama_siswa || 'siswa'} dari jadwal piket hari ${piketItem?.hari}?`)) {
+      deleteJadwalPiket(id);
       setPiketList((prev) => {
         const updated = prev.filter((p) => p.id !== id);
         try { 
@@ -896,19 +989,20 @@ export default function AdminDashboardPage() {
     const finalGuru = jadwalIsBreak ? '-' : (jadwalFormGuru.trim() || '-');
 
     if (editingJadwal) {
+      const updatedJadwal: JadwalPelajaran = {
+        ...editingJadwal,
+        hari: jadwalFormDay,
+        mata_pelajaran: finalMapel,
+        guru: finalGuru,
+        jam_mulai: jadwalFormJamMulai.trim() || '07.30',
+        jam_selesai: jadwalFormJamSelesai.trim() || '08.50',
+        urutan: Number(jadwalFormUrutan) || 1
+      };
+      upsertJadwalPelajaran(updatedJadwal);
+
       setJadwalList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingJadwal.id
-            ? {
-                ...item,
-                hari: jadwalFormDay,
-                mata_pelajaran: finalMapel,
-                guru: finalGuru,
-                jam_mulai: jadwalFormJamMulai.trim() || '07.30',
-                jam_selesai: jadwalFormJamSelesai.trim() || '08.50',
-                urutan: Number(jadwalFormUrutan) || 1
-              }
-            : item
+          item.id === editingJadwal.id ? updatedJadwal : item
         );
         try {
           localStorage.setItem('class_jadwal_pelajaran', JSON.stringify(updated));
@@ -931,6 +1025,8 @@ export default function AdminDashboardPage() {
         jam_selesai: jadwalFormJamSelesai.trim() || '08.50',
         urutan: Number(jadwalFormUrutan) || (jadwalList.filter((j) => j.hari === jadwalFormDay).length + 1)
       };
+      upsertJadwalPelajaran(newJadwal);
+
       setJadwalList((prev) => {
         const updated = [...prev, newJadwal];
         try {
@@ -964,6 +1060,9 @@ export default function AdminDashboardPage() {
     setJadwalToDelete(null);
     setDeletingJadwalId(targetId);
 
+    // Delete from Supabase
+    deleteJadwalPelajaran(targetId);
+
     setTimeout(() => {
       setJadwalList((prev) => {
         const updated = prev.filter((j) => j.id !== targetId);
@@ -982,6 +1081,7 @@ export default function AdminDashboardPage() {
       setTimeout(() => setSaveSuccessMsg(null), 3000);
     }, 350);
   };
+
 
   const getSubjectCategory = (mapel: string) => {
     const m = mapel.toUpperCase();
@@ -1049,18 +1149,19 @@ export default function AdminDashboardPage() {
     const defaultThumbnail = '/assets/uploads/thumbnails/thumb_1787385653_720.jpeg';
 
     if (editingVideo) {
+      const updatedVideo: VideoKelas = {
+        ...editingVideo,
+        judul: videoFormJudul.trim(),
+        deskripsi: videoFormDeskripsi.trim() || null,
+        url_video: videoFormUrl.trim(),
+        thumbnail: videoFormThumbnail.trim() || defaultThumbnail,
+        tanggal: videoFormTanggal || new Date().toISOString().split('T')[0]
+      };
+      upsertVideo(updatedVideo);
+
       setVideosList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingVideo.id
-            ? {
-                ...item,
-                judul: videoFormJudul.trim(),
-                deskripsi: videoFormDeskripsi.trim() || null,
-                url_video: videoFormUrl.trim(),
-                thumbnail: videoFormThumbnail.trim() || defaultThumbnail,
-                tanggal: videoFormTanggal || new Date().toISOString().split('T')[0]
-              }
-            : item
+          item.id === editingVideo.id ? updatedVideo : item
         );
         try {
           localStorage.setItem('class_videos_list', JSON.stringify(updated));
@@ -1082,6 +1183,8 @@ export default function AdminDashboardPage() {
         thumbnail: videoFormThumbnail.trim() || defaultThumbnail,
         tanggal: videoFormTanggal || new Date().toISOString().split('T')[0]
       };
+      upsertVideo(newVideo);
+
       setVideosList((prev) => {
         const updated = [newVideo, ...prev];
         try {
@@ -1113,6 +1216,9 @@ export default function AdminDashboardPage() {
 
     setVideoToDelete(null);
     setDeletingVideoId(targetId);
+
+    // Delete from Supabase
+    deleteVideo(targetId);
 
     setTimeout(() => {
       setVideosList((prev) => {
@@ -1178,16 +1284,17 @@ export default function AdminDashboardPage() {
     }
 
     if (editingGallery) {
+      const updatedGallery: GalleryItem = {
+        ...editingGallery,
+        caption: galleryFormCaption.trim(),
+        category: galleryFormCategory,
+        image: galleryFormImage
+      };
+      upsertGalleryItem(updatedGallery);
+
       setGalleryList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingGallery.id
-            ? {
-                ...item,
-                caption: galleryFormCaption.trim(),
-                category: galleryFormCategory,
-                image: galleryFormImage
-              }
-            : item
+          item.id === editingGallery.id ? updatedGallery : item
         );
         try {
           localStorage.setItem('class_gallery_list', JSON.stringify(updated));
@@ -1207,6 +1314,8 @@ export default function AdminDashboardPage() {
         category: galleryFormCategory,
         image: galleryFormImage
       };
+      upsertGalleryItem(newGallery);
+
       setGalleryList((prev) => {
         const updated = [newGallery, ...prev];
         try {
@@ -1238,6 +1347,9 @@ export default function AdminDashboardPage() {
 
     setGalleryToDelete(null);
     setDeletingGalleryId(targetId);
+
+    // Delete from Supabase
+    deleteGalleryItem(targetId);
 
     setTimeout(() => {
       setGalleryList((prev) => {
@@ -1326,20 +1438,21 @@ export default function AdminDashboardPage() {
       : ['Web App'];
 
     if (editingProject) {
+      const updatedProject: Project = {
+        ...editingProject,
+        title: projectFormTitle.trim(),
+        description: projectFormDescription.trim(),
+        image: projectFormImage,
+        link: projectFormLink.trim() || '#',
+        makers: projectFormMakers.trim() || null,
+        tech_stack: parsedTechStack,
+        featured: projectFormFeatured
+      };
+      upsertProject(updatedProject);
+
       setProjectsList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingProject.id
-            ? {
-                ...item,
-                title: projectFormTitle.trim(),
-                description: projectFormDescription.trim(),
-                image: projectFormImage,
-                link: projectFormLink.trim() || '#',
-                makers: projectFormMakers.trim() || null,
-                tech_stack: parsedTechStack,
-                featured: projectFormFeatured
-              }
-            : item
+          item.id === editingProject.id ? updatedProject : item
         );
         try {
           localStorage.setItem('class_projects_list', JSON.stringify(updated));
@@ -1363,6 +1476,8 @@ export default function AdminDashboardPage() {
         tech_stack: parsedTechStack,
         featured: projectFormFeatured
       };
+      upsertProject(newProject);
+
       setProjectsList((prev) => {
         const updated = [newProject, ...prev];
         try {
@@ -1388,6 +1503,8 @@ export default function AdminDashboardPage() {
       const updated = prev.map((item) =>
         item.id === id ? { ...item, featured: !item.featured } : item
       );
+      const targetProj = updated.find(p => p.id === id);
+      if (targetProj) upsertProject(targetProj);
       try {
         localStorage.setItem('class_projects_list', JSON.stringify(updated));
         if (typeof window !== 'undefined') {
@@ -1411,6 +1528,9 @@ export default function AdminDashboardPage() {
 
     setProjectToDelete(null);
     setDeletingProjectId(targetId);
+
+    // Delete from Supabase
+    deleteProject(targetId);
 
     setTimeout(() => {
       setProjectsList((prev) => {
@@ -1514,6 +1634,8 @@ export default function AdminDashboardPage() {
       tiktok: contactTiktok.trim(),
       address: contactAddress.trim()
     };
+    upsertContact(contactData);
+
     try {
       localStorage.setItem('class_web_contact', JSON.stringify(contactData));
       if (typeof window !== 'undefined') {
@@ -1548,6 +1670,7 @@ export default function AdminDashboardPage() {
         tiktok: '@xipplg3.official',
         address: 'SMK Penerbangan Bogor, Jl. Raya Sukabumi No. 12, Kota Bogor'
       };
+      upsertContact(resetData);
       try {
         localStorage.setItem('class_web_contact', JSON.stringify(resetData));
         if (typeof window !== 'undefined') {
@@ -1590,6 +1713,15 @@ export default function AdminDashboardPage() {
       description: profileDescription.trim(),
       logo: profileLogo
     };
+    upsertContact({
+      class_name: profileData.className,
+      school_name: profileData.schoolName,
+      tagline: profileData.tagline,
+      year: profileData.year,
+      description: profileData.description,
+      logo: profileData.logo
+    });
+
     try {
       localStorage.setItem('class_web_profile', JSON.stringify(profileData));
       if (typeof window !== 'undefined') {
@@ -1598,6 +1730,7 @@ export default function AdminDashboardPage() {
     } catch (err) {
       console.error(err);
     }
+
     addActivityLog(`Memperbarui profil & branding identitas website (${profileClassName})`, 'profile', 'Profil Website');
     setTimeout(() => {
       setSavingProfile(false);

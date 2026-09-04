@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { initialGallery, initialVideos } from '@/data/seedData';
 import { GalleryItem, VideoKelas } from '@/types/database';
+import { getGallery, getVideos } from '@/lib/supabase/dataService';
+
 
 export default function GaleriPage() {
   const [activeTab, setActiveTab] = useState<'foto' | 'video'>('foto');
@@ -70,9 +72,26 @@ export default function GaleriPage() {
     };
 
     loadMediaData();
+
+    // Live sync from Supabase cloud database
+    getGallery().then((data) => {
+      if (data && data.length > 0) {
+        setGalleryList(data);
+        try { localStorage.setItem('class_gallery_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
+    getVideos().then((data) => {
+      if (data && data.length > 0) {
+        setVideosList(data);
+        try { localStorage.setItem('class_videos_list', JSON.stringify(data)); } catch (e) {}
+      }
+    });
+
     window.addEventListener('storage', loadMediaData);
     window.addEventListener('class_gallery_updated', loadMediaData);
     window.addEventListener('class_videos_updated', loadMediaData);
+
     return () => {
       window.removeEventListener('storage', loadMediaData);
       window.removeEventListener('class_gallery_updated', loadMediaData);

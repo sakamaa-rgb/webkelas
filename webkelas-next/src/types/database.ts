@@ -100,9 +100,17 @@ export interface GuestbookMessage {
 }
 
 export interface ContactInfo {
-  id: number;
-  instagram: string;
-  whatsapp: string;
-  email: string;
-  logo: string;
+  id?: number;
+  instagram?: string;
+  whatsapp?: string;
+  email?: string;
+  logo?: string;
+  tiktok?: string;
+  address?: string;
+  class_name?: string;
+  school_name?: string;
+  tagline?: string;
+  year?: string;
+  description?: string;
 }
+
