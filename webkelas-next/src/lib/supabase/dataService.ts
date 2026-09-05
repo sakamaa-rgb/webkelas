@@ -366,11 +366,31 @@ export async function deleteStudentFromDb(id: string) {
   }
 }
 
+async function getValidNumericId(tableName: string, currentId?: number): Promise<number> {
+  // If currentId is a valid Postgres integer (1 to 2,000,000,000) and not an out-of-range timestamp (Date.now())
+  if (currentId && currentId > 0 && currentId < 2000000000) {
+    return currentId;
+  }
+  if (!supabase) {
+    return Math.floor(Math.random() * 100000) + 1;
+  }
+  try {
+    const { data } = await supabase.from(tableName).select('id').order('id', { ascending: false }).limit(1);
+    const maxId = (data?.[0]?.id as number) || 0;
+    return maxId + 1;
+  } catch {
+    return Math.floor(Math.random() * 100000) + 1;
+  }
+}
+
 export async function upsertStructureMember(member: Partial<StructureMember> & { id: number }) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('structure').upsert([member]).select();
+      const validId = await getValidNumericId('structure', member.id);
+      const payload = { ...member, id: validId };
+      const { data, error } = await supabase.from('structure').upsert([payload]).select();
       if (!error && data) return data[0] as StructureMember;
+      if (error) console.error('Error upserting structure to Supabase:', error);
     } catch (e) {
       console.error('Error upserting structure to Supabase:', e);
     }
@@ -381,8 +401,11 @@ export async function upsertStructureMember(member: Partial<StructureMember> & {
 export async function upsertJadwalPiket(piket: Partial<JadwalPiket>) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('jadwal_piket').upsert([piket]).select();
+      const validId = await getValidNumericId('jadwal_piket', piket.id);
+      const payload = { ...piket, id: validId };
+      const { data, error } = await supabase.from('jadwal_piket').upsert([payload]).select();
       if (!error && data) return data[0] as JadwalPiket;
+      if (error) console.error('Error upserting piket to Supabase:', error);
     } catch (e) {
       console.error('Error upserting piket to Supabase:', e);
     }
@@ -403,8 +426,11 @@ export async function deleteJadwalPiket(id: number) {
 export async function upsertJadwalPelajaran(jadwal: Partial<JadwalPelajaran>) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('jadwal_pelajaran').upsert([jadwal]).select();
+      const validId = await getValidNumericId('jadwal_pelajaran', jadwal.id);
+      const payload = { ...jadwal, id: validId };
+      const { data, error } = await supabase.from('jadwal_pelajaran').upsert([payload]).select();
       if (!error && data) return data[0] as JadwalPelajaran;
+      if (error) console.error('Error upserting jadwal to Supabase:', error);
     } catch (e) {
       console.error('Error upserting jadwal to Supabase:', e);
     }
@@ -425,8 +451,11 @@ export async function deleteJadwalPelajaran(id: number) {
 export async function upsertVideo(video: Partial<VideoKelas>) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('video_kelas').upsert([video]).select();
+      const validId = await getValidNumericId('video_kelas', video.id);
+      const payload = { ...video, id: validId };
+      const { data, error } = await supabase.from('video_kelas').upsert([payload]).select();
       if (!error && data) return data[0] as VideoKelas;
+      if (error) console.error('Error upserting video to Supabase:', error);
     } catch (e) {
       console.error('Error upserting video to Supabase:', e);
     }
@@ -447,8 +476,11 @@ export async function deleteVideo(id: number) {
 export async function upsertGalleryItem(item: Partial<GalleryItem>) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('gallery').upsert([item]).select();
+      const validId = await getValidNumericId('gallery', item.id);
+      const payload = { ...item, id: validId };
+      const { data, error } = await supabase.from('gallery').upsert([payload]).select();
       if (!error && data) return data[0] as GalleryItem;
+      if (error) console.error('Error upserting gallery to Supabase:', error);
     } catch (e) {
       console.error('Error upserting gallery to Supabase:', e);
     }
@@ -469,8 +501,11 @@ export async function deleteGalleryItem(id: number) {
 export async function upsertProject(project: Partial<Project>) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase.from('projects').upsert([project]).select();
+      const validId = await getValidNumericId('projects', project.id);
+      const payload = { ...project, id: validId };
+      const { data, error } = await supabase.from('projects').upsert([payload]).select();
       if (!error && data) return data[0] as Project;
+      if (error) console.error('Error upserting project to Supabase:', error);
     } catch (e) {
       console.error('Error upserting project to Supabase:', e);
     }

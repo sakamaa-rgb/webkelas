@@ -1243,7 +1243,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveVideo = (e: React.FormEvent) => {
+  const handleSaveVideo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!videoFormJudul.trim()) return;
     if (!videoFormUrl) {
@@ -1262,11 +1262,11 @@ export default function AdminDashboardPage() {
         thumbnail: videoFormThumbnail.trim() || defaultThumbnail,
         tanggal: videoFormTanggal || new Date().toISOString().split('T')[0]
       };
-      upsertVideo(updatedVideo);
+      const saved = (await upsertVideo(updatedVideo)) || updatedVideo;
 
       setVideosList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingVideo.id ? updatedVideo : item
+          item.id === editingVideo.id ? saved : item
         );
         try {
           localStorage.setItem('class_videos_list', JSON.stringify(updated));
@@ -1288,10 +1288,10 @@ export default function AdminDashboardPage() {
         thumbnail: videoFormThumbnail.trim() || defaultThumbnail,
         tanggal: videoFormTanggal || new Date().toISOString().split('T')[0]
       };
-      upsertVideo(newVideo);
+      const saved = (await upsertVideo(newVideo)) || newVideo;
 
       setVideosList((prev) => {
-        const updated = [newVideo, ...prev];
+        const updated = [saved, ...prev];
         try {
           localStorage.setItem('class_videos_list', JSON.stringify(updated));
           if (typeof window !== 'undefined') {
@@ -1302,7 +1302,7 @@ export default function AdminDashboardPage() {
         }
         return updated;
       });
-      setSaveSuccessMsg(`Video "${newVideo.judul}" berhasil ditambahkan!`);
+      setSaveSuccessMsg(`Video "${saved.judul}" berhasil ditambahkan!`);
     }
 
     setModalVideoOpen(false);
@@ -1393,7 +1393,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveGallery = (e: React.FormEvent) => {
+  const handleSaveGallery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!galleryFormCaption.trim()) return;
     if (!galleryFormImage) {
@@ -1408,11 +1408,11 @@ export default function AdminDashboardPage() {
         category: galleryFormCategory,
         image: galleryFormImage
       };
-      upsertGalleryItem(updatedGallery);
+      const saved = (await upsertGalleryItem(updatedGallery)) || updatedGallery;
 
       setGalleryList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingGallery.id ? updatedGallery : item
+          item.id === editingGallery.id ? saved : item
         );
         try {
           localStorage.setItem('class_gallery_list', JSON.stringify(updated));
@@ -1432,10 +1432,10 @@ export default function AdminDashboardPage() {
         category: galleryFormCategory,
         image: galleryFormImage
       };
-      upsertGalleryItem(newGallery);
+      const saved = (await upsertGalleryItem(newGallery)) || newGallery;
 
       setGalleryList((prev) => {
-        const updated = [newGallery, ...prev];
+        const updated = [saved, ...prev];
         try {
           localStorage.setItem('class_gallery_list', JSON.stringify(updated));
           if (typeof window !== 'undefined') {
@@ -1555,7 +1555,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectFormTitle.trim()) return;
     if (!projectFormImage) {
@@ -1578,11 +1578,11 @@ export default function AdminDashboardPage() {
         tech_stack: parsedTechStack,
         featured: projectFormFeatured
       };
-      upsertProject(updatedProject);
+      const saved = (await upsertProject(updatedProject)) || updatedProject;
 
       setProjectsList((prev) => {
         const updated = prev.map((item) =>
-          item.id === editingProject.id ? updatedProject : item
+          item.id === editingProject.id ? saved : item
         );
         try {
           localStorage.setItem('class_projects_list', JSON.stringify(updated));
@@ -1606,10 +1606,10 @@ export default function AdminDashboardPage() {
         tech_stack: parsedTechStack,
         featured: projectFormFeatured
       };
-      upsertProject(newProject);
+      const saved = (await upsertProject(newProject)) || newProject;
 
       setProjectsList((prev) => {
-        const updated = [newProject, ...prev];
+        const updated = [saved, ...prev];
         try {
           localStorage.setItem('class_projects_list', JSON.stringify(updated));
           if (typeof window !== 'undefined') {
@@ -1620,7 +1620,7 @@ export default function AdminDashboardPage() {
         }
         return updated;
       });
-      setSaveSuccessMsg(`Proyek baru "${newProject.title}" berhasil ditambahkan!`);
+      setSaveSuccessMsg(`Proyek baru "${saved.title}" berhasil ditambahkan!`);
     }
 
     setModalProjectOpen(false);
