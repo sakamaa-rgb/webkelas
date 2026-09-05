@@ -26,6 +26,27 @@ import {
   ContactInfo
 } from '@/types/database';
 
+export function normalizeAssetUrl(
+  url: string | null | undefined,
+  folder: 'gallery' | 'students' | 'structure' | 'videos' | 'thumbnails' | 'projects' | 'logo' | 'audio'
+): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+  if (
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('data:') ||
+    trimmed.startsWith('blob:')
+  ) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('/')) {
+    return trimmed;
+  }
+  return `/assets/uploads/${folder}/${trimmed}`;
+}
+
 export async function getStructure(): Promise<StructureMember[]> {
   if (isSupabaseConfigured && supabase) {
     try {
@@ -33,7 +54,12 @@ export async function getStructure(): Promise<StructureMember[]> {
         .from('structure')
         .select('*')
         .order('order_num', { ascending: true });
-      if (!error && data && data.length > 0) return data as StructureMember[];
+      if (!error && data && data.length > 0) {
+        return (data as StructureMember[]).map((m) => ({
+          ...m,
+          photo: normalizeAssetUrl(m.photo, 'structure')
+        }));
+      }
     } catch {
       // Fallback
     }
@@ -53,7 +79,12 @@ export async function getStudents(): Promise<Student[]> {
         .from('students')
         .select('*')
         .order('id', { ascending: true });
-      if (!error && data && data.length > 0) return data as Student[];
+      if (!error && data && data.length > 0) {
+        return (data as Student[]).map((s) => ({
+          ...s,
+          photo: normalizeAssetUrl(s.photo, 'students')
+        }));
+      }
     } catch {
       // Fallback
     }
@@ -98,7 +129,12 @@ export async function getProjects(): Promise<Project[]> {
         .from('projects')
         .select('*')
         .order('id', { ascending: true });
-      if (!error && data && data.length > 0) return data as Project[];
+      if (!error && data && data.length > 0) {
+        return (data as Project[]).map((p) => ({
+          ...p,
+          image: normalizeAssetUrl(p.image, 'projects')
+        }));
+      }
     } catch {
       // Fallback
     }
@@ -159,7 +195,12 @@ export async function getGallery(): Promise<GalleryItem[]> {
         .from('gallery')
         .select('*')
         .order('id', { ascending: false });
-      if (!error && data && data.length > 0) return data as GalleryItem[];
+      if (!error && data && data.length > 0) {
+        return (data as GalleryItem[]).map((g) => ({
+          ...g,
+          image: normalizeAssetUrl(g.image, 'gallery')
+        }));
+      }
     } catch {
       // Fallback
     }
@@ -174,7 +215,13 @@ export async function getVideos(): Promise<VideoKelas[]> {
         .from('video_kelas')
         .select('*')
         .order('id', { ascending: false });
-      if (!error && data && data.length > 0) return data as VideoKelas[];
+      if (!error && data && data.length > 0) {
+        return (data as VideoKelas[]).map((v) => ({
+          ...v,
+          url_video: normalizeAssetUrl(v.url_video, 'videos'),
+          thumbnail: normalizeAssetUrl(v.thumbnail, 'thumbnails')
+        }));
+      }
     } catch {
       // Fallback
     }
@@ -235,7 +282,12 @@ export async function getContactInfo(): Promise<ContactInfo> {
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.from('contact').select('*').limit(1).single();
-      if (!error && data) return data as ContactInfo;
+      if (!error && data) {
+        return {
+          ...data,
+          logo: normalizeAssetUrl(data.logo, 'logo')
+        } as ContactInfo;
+      }
     } catch {
       // Fallback
     }
