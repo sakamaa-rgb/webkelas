@@ -106,7 +106,7 @@ export default function SiswaLoginPage() {
           Portal Siswa
         </h1>
         <p className="text-xs text-purple-200/60 text-center mb-8">
-          Akses khusus siswa PPLG 3
+          Akses khusus siswa XI PPLG 3
         </p>
 
         {error && (

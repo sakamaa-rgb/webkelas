@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
           Portal Admin
         </h1>
         <p className="text-xs text-blue-200/60 text-center mb-8">
-          X PPLG 3 Engineering Hub
+          XI PPLG 3 Engineering Hub
         </p>
 
         {error && (

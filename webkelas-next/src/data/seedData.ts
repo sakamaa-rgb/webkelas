@@ -177,7 +177,7 @@ export const initialStudents: Student[] = [
 
 export const initialJadwalPelajaran: JadwalPelajaran[] = [
   // Senin
-  { id: 101, hari: 'Senin', jam_mulai: '07.00', jam_selesai: '07.30', mata_pelajaran: 'UPACARA BENDERA', guru: 'Seluruh Siswa & Dewan Guru', urutan: 1 },
+  { id: 101, hari: 'Senin', jam_mulai: '06.30', jam_selesai: '07.30', mata_pelajaran: 'UPACARA BENDERA', guru: 'Seluruh Siswa & Dewan Guru', urutan: 1 },
   { id: 1, hari: 'Senin', jam_mulai: '07.30', jam_selesai: '08.50', mata_pelajaran: 'SEJARAH', guru: 'BU RINA', urutan: 2 },
   { id: 2, hari: 'Senin', jam_mulai: '08.50', jam_selesai: '09.30', mata_pelajaran: 'PPKN', guru: 'PA MAMAN', urutan: 3 },
   { id: 3, hari: 'Senin', jam_mulai: '09.30', jam_selesai: '10.00', mata_pelajaran: 'ISTIRAHAT', guru: '-', urutan: 4 },
@@ -187,7 +187,7 @@ export const initialJadwalPelajaran: JadwalPelajaran[] = [
   { id: 7, hari: 'Senin', jam_mulai: '13.00', jam_selesai: '15.00', mata_pelajaran: 'PPLG/PRODUKTIF', guru: 'BU DELIKA', urutan: 8 },
   { id: 102, hari: 'Senin', jam_mulai: '15.00', jam_selesai: '15.15', mata_pelajaran: 'DOA & PULANG SEKOLAH', guru: 'Wali Kelas & Siswa', urutan: 9 },
   // Selasa
-  { id: 103, hari: 'Selasa', jam_mulai: '07.00', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
+  { id: 103, hari: 'Selasa', jam_mulai: '06.30', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
   { id: 8, hari: 'Selasa', jam_mulai: '07.30', jam_selesai: '08.50', mata_pelajaran: 'BISNIS DIGITAL', guru: 'PA DIDIN', urutan: 2 },
   { id: 9, hari: 'Selasa', jam_mulai: '08.50', jam_selesai: '09.30', mata_pelajaran: 'BAHASA INGGRIS', guru: 'MIS. SUCI', urutan: 3 },
   { id: 10, hari: 'Selasa', jam_mulai: '09.30', jam_selesai: '10.00', mata_pelajaran: 'ISTIRAHAT', guru: '-', urutan: 4 },
@@ -198,7 +198,7 @@ export const initialJadwalPelajaran: JadwalPelajaran[] = [
   { id: 15, hari: 'Selasa', jam_mulai: '13.40', jam_selesai: '15.00', mata_pelajaran: 'BAHASA INGGRIS', guru: 'MIS. SUCI', urutan: 9 },
   { id: 104, hari: 'Selasa', jam_mulai: '15.00', jam_selesai: '15.15', mata_pelajaran: 'DOA & PULANG SEKOLAH', guru: 'Wali Kelas & Siswa', urutan: 10 },
   // Rabu
-  { id: 105, hari: 'Rabu', jam_mulai: '07.00', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
+  { id: 105, hari: 'Rabu', jam_mulai: '06.30', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
   { id: 16, hari: 'Rabu', jam_mulai: '07.30', jam_selesai: '09.30', mata_pelajaran: 'PAI', guru: 'PA RAHMAT', urutan: 2 },
   { id: 17, hari: 'Rabu', jam_mulai: '09.30', jam_selesai: '10.00', mata_pelajaran: 'ISTIRAHAT', guru: '-', urutan: 3 },
   { id: 18, hari: 'Rabu', jam_mulai: '10.00', jam_selesai: '12.00', mata_pelajaran: 'PPLG/PRODUKTIF', guru: 'BU DIAH', urutan: 4 },
@@ -206,7 +206,7 @@ export const initialJadwalPelajaran: JadwalPelajaran[] = [
   { id: 20, hari: 'Rabu', jam_mulai: '13.00', jam_selesai: '15.00', mata_pelajaran: 'PPLG/PRODUKTIF', guru: 'PA DIDIN', urutan: 6 },
   { id: 106, hari: 'Rabu', jam_mulai: '15.00', jam_selesai: '15.15', mata_pelajaran: 'DOA & PULANG SEKOLAH', guru: 'Wali Kelas & Siswa', urutan: 7 },
   // Kamis
-  { id: 107, hari: 'Kamis', jam_mulai: '07.00', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
+  { id: 107, hari: 'Kamis', jam_mulai: '06.30', jam_selesai: '07.30', mata_pelajaran: 'SHOLAT DHUHA BERSAMA', guru: 'Guru Pembimbing & Seluruh Siswa', urutan: 1 },
   { id: 21, hari: 'Kamis', jam_mulai: '07.30', jam_selesai: '09.30', mata_pelajaran: 'BAHASA INDONESIA', guru: 'BU MITA', urutan: 2 },
   { id: 22, hari: 'Kamis', jam_mulai: '09.30', jam_selesai: '10.00', mata_pelajaran: 'ISTIRAHAT', guru: '-', urutan: 3 },
   { id: 23, hari: 'Kamis', jam_mulai: '10.00', jam_selesai: '11.00', mata_pelajaran: 'PJOK', guru: 'PA YUDHI', urutan: 4 },
@@ -215,12 +215,12 @@ export const initialJadwalPelajaran: JadwalPelajaran[] = [
   { id: 26, hari: 'Kamis', jam_mulai: '13.00', jam_selesai: '15.00', mata_pelajaran: 'KIK', guru: 'PA WANDA', urutan: 7 },
   { id: 108, hari: 'Kamis', jam_mulai: '15.00', jam_selesai: '15.15', mata_pelajaran: 'DOA & PULANG SEKOLAH', guru: 'Wali Kelas & Siswa', urutan: 8 },
   // Jumat
-  { id: 109, hari: 'Jumat', jam_mulai: '07.00', jam_selesai: '07.30', mata_pelajaran: 'KOKURIKULER (JUMAT SEHAT & BERSIH)', guru: 'Bergilir per 3 Minggu: Olahraga, Sarapan Sehat, Bersih-Bersih', urutan: 1 },
+  { id: 109, hari: 'Jumat', jam_mulai: '06.30', jam_selesai: '07.30', mata_pelajaran: 'KOKURIKULER (JUMAT SEHAT & BERSIH)', guru: 'Bergilir per 3 Minggu: Olahraga, Sarapan Sehat, Bersih-Bersih', urutan: 1 },
   { id: 27, hari: 'Jumat', jam_mulai: '07.30', jam_selesai: '08.10', mata_pelajaran: 'KIK', guru: 'PA WANDA', urutan: 2 },
   { id: 28, hari: 'Jumat', jam_mulai: '08.10', jam_selesai: '09.30', mata_pelajaran: 'PPLG/PRODUKTIF', guru: 'BU DELIKA', urutan: 3 },
   { id: 29, hari: 'Jumat', jam_mulai: '09.30', jam_selesai: '09.45', mata_pelajaran: 'ISTIRAHAT', guru: '-', urutan: 4 },
   { id: 30, hari: 'Jumat', jam_mulai: '09.45', jam_selesai: '11.45', mata_pelajaran: 'PPLG/PRODUKTIF', guru: 'PA DIDIN', urutan: 5 },
-  { id: 31, hari: 'Jumat', jam_mulai: '11.45', jam_selesai: '13.00', mata_pelajaran: 'ISHOMA / SHOLAT JUMAT', guru: '-', urutan: 6 },
+  { id: 31, hari: 'Jumat', jam_mulai: '12.00', jam_selesai: '13.00', mata_pelajaran: 'ISHOMA / SHOLAT JUMAT', guru: '-', urutan: 6 },
   { id: 110, hari: 'Jumat', jam_mulai: '13.00', jam_selesai: '13.15', mata_pelajaran: 'DOA & PULANG SEKOLAH', guru: 'Wali Kelas & Siswa', urutan: 7 }
 ];
 

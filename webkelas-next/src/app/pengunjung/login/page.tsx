@@ -49,7 +49,7 @@ export default function PengunjungLoginPage() {
           Portal Pengunjung
         </h1>
         <p className="text-xs text-emerald-200/60 text-center mb-8">
-          Jelajahi PPLG 3 Engineering
+          Jelajahi XI PPLG 3 Engineering
         </p>
 
         {error && (

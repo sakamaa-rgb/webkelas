@@ -155,7 +155,9 @@ export default function JadwalPage() {
           const parsed = JSON.parse(savedJadwal);
           if (Array.isArray(parsed) && parsed.length > 0) {
             const hasDhuha = parsed.some((p: any) => p.mata_pelajaran && p.mata_pelajaran.includes('DHUHA'));
-            if (hasDhuha) {
+            const hasUpacara = parsed.some((p: any) => p.mata_pelajaran && p.mata_pelajaran.includes('UPACARA'));
+            const has0630 = parsed.some((p: any) => p.jam_mulai === '06.30');
+            if (hasDhuha && hasUpacara && has0630) {
               setJadwalList(parsed);
             } else {
               setJadwalList(initialJadwalPelajaran);

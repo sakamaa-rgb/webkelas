@@ -210,10 +210,10 @@ export default function HomePage() {
               <span>{profile.schoolName || 'SMK Negeri 1 Ciomas'} • PPLG Department</span>
             </div>
 
-            {/* Main Headline (X PPLG 3 Engineering Hub) */}
+            {/* Main Headline (XI PPLG 3 Engineering Hub) */}
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-[1.04]">
               <span className="block text-slate-900 tracking-tight animate-hero-title">
-                {profile.className || 'X PPLG 3'}
+                {profile.className || 'XI PPLG 3'}
               </span>
               <span className="block text-[#5865F2] tracking-tight animate-engineering-hub mt-1 sm:mt-2">
                 Engineering Hub

@@ -272,14 +272,14 @@ export default function AdminDashboardPage() {
   const [addId, setAddId] = useState('');
   const [addNisn, setAddNisn] = useState('');
   const [addName, setAddName] = useState('');
-  const [addClass, setAddClass] = useState('X PPLG 3');
+  const [addClass, setAddClass] = useState('XI PPLG 3');
   const [addPhoto, setAddPhoto] = useState('/assets/uploads/students/student_001_1778723200.png');
 
   // Student Edit Form
   const [editId, setEditId] = useState('');
   const [editNisn, setEditNisn] = useState('');
   const [editName, setEditName] = useState('');
-  const [editClass, setEditClass] = useState('X PPLG 3');
+  const [editClass, setEditClass] = useState('XI PPLG 3');
   const [editPhoto, setEditPhoto] = useState('');
 
   // Piket Management State
@@ -497,7 +497,14 @@ export default function AdminDashboardPage() {
       try {
         const parsed = JSON.parse(savedJadwal);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setJadwalList(parsed);
+          const hasUpacara = parsed.some((p: any) => p.mata_pelajaran && p.mata_pelajaran.includes('UPACARA'));
+          const has0630 = parsed.some((p: any) => p.jam_mulai === '06.30');
+          if (hasUpacara && has0630) {
+            setJadwalList(parsed);
+          } else {
+            setJadwalList(initialJadwalPelajaran);
+            localStorage.setItem('class_jadwal_pelajaran', JSON.stringify(initialJadwalPelajaran));
+          }
         }
       } catch (e) {
         console.error(e);
@@ -718,7 +725,7 @@ export default function AdminDashboardPage() {
     setEditId(student.id);
     setEditNisn(student.nisn || '');
     setEditName(student.name);
-    setEditClass(student.kelas || 'X PPLG 3');
+    setEditClass(student.kelas || 'XI PPLG 3');
     setEditPhoto(student.photo);
   };
 
@@ -730,7 +737,7 @@ export default function AdminDashboardPage() {
       id: editId.trim() || modalEditStudent.id,
       name: editName.trim() || modalEditStudent.name,
       nisn: editNisn.trim() || null,
-      kelas: editClass.trim() || 'X PPLG 3',
+      kelas: editClass.trim() || 'XI PPLG 3',
       photo: editPhoto || modalEditStudent.photo
     };
     upsertStudent(updatedStudent);
@@ -763,7 +770,7 @@ export default function AdminDashboardPage() {
       id: assignedId,
       name: addName.trim(),
       nisn: addNisn.trim() || null,
-      kelas: addClass.trim() || 'X PPLG 3',
+      kelas: addClass.trim() || 'XI PPLG 3',
       photo: addPhoto || '/assets/uploads/students/student_001_1778723200.png'
     };
     upsertStudent(newStudent);
@@ -785,7 +792,7 @@ export default function AdminDashboardPage() {
     setAddId('');
     setAddNisn('');
     setAddName('');
-    setAddClass('X PPLG 3');
+    setAddClass('XI PPLG 3');
     setSaveSuccessMsg(`Siswa baru ${newStudent.name} berhasil ditambahkan!`);
     setTimeout(() => setSaveSuccessMsg(null), 3000);
   };
@@ -2668,7 +2675,7 @@ export default function AdminDashboardPage() {
                     </h2>
                   </div>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Kelola biodata seluruh siswa kelas X PPLG 3. Total: <strong className="text-slate-800 font-bold">{studentsList.length}</strong> siswa.
+                    Kelola biodata seluruh siswa kelas XI PPLG 3. Total: <strong className="text-slate-800 font-bold">{studentsList.length}</strong> siswa.
                   </p>
                 </div>
 
@@ -2691,7 +2698,7 @@ export default function AdminDashboardPage() {
                       setAddId(String(studentsList.length + 1).padStart(3, '0'));
                       setAddName('');
                       setAddNisn('');
-                      setAddClass('X PPLG 3');
+                      setAddClass('XI PPLG 3');
                       setAddPhoto('/assets/uploads/students/student_001_1778723200.png');
                       setModalAddOpen(true);
                     }}
@@ -2808,7 +2815,7 @@ export default function AdminDashboardPage() {
 
                       {/* Class */}
                       <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                        {s.kelas || 'X PPLG 3'}
+                        {s.kelas || 'XI PPLG 3'}
                       </p>
 
                       {/* NISN (if any) */}
@@ -2849,7 +2856,7 @@ export default function AdminDashboardPage() {
                           {studentToDelete.name}
                         </span>
                         <span className="text-[11px] text-slate-400 font-mono font-bold">
-                          NISN: {studentToDelete.nisn || '-'} • {studentToDelete.kelas || 'X PPLG 3'}
+                          NISN: {studentToDelete.nisn || '-'} • {studentToDelete.kelas || 'XI PPLG 3'}
                         </span>
                       </div>
                     </div>
@@ -2950,7 +2957,7 @@ export default function AdminDashboardPage() {
                           type="text"
                           value={addClass}
                           onChange={(e) => setAddClass(e.target.value)}
-                          placeholder="X PPLG 3"
+                          placeholder="XI PPLG 3"
                           className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20 transition-all font-medium"
                         />
                       </div>
@@ -3080,7 +3087,7 @@ export default function AdminDashboardPage() {
                             type="text"
                             value={editClass}
                             onChange={(e) => setEditClass(e.target.value)}
-                            placeholder="X PPLG 3"
+                            placeholder="XI PPLG 3"
                             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20 transition-all font-medium"
                           />
                         </div>
@@ -3158,7 +3165,7 @@ export default function AdminDashboardPage() {
                       </h3>
                       <div className="mt-1.5 inline-block">
                         <span className="px-3 py-0.5 rounded-full bg-blue-500/40 border border-blue-400/40 text-white font-bold text-[11px]">
-                          {modalBiodataStudent.kelas || 'X PPLG 3'}
+                          {modalBiodataStudent.kelas || 'XI PPLG 3'}
                         </span>
                       </div>
                     </div>
@@ -3472,15 +3479,15 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group ${
+                                    className={`p-2.5 sm:p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-2.5 group ${
                                       isDone
                                         ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-2xs'
                                         : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-blue-300 hover:shadow-sm text-slate-800'
                                     }`}
                                   >
                                     {/* Left: Avatar & Full Name */}
-                                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                                      <div className="relative w-11 h-14 sm:w-12 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex-shrink-0">
+                                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                                      <div className="relative w-10 h-12 sm:w-12 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border-2 border-white shadow-xs flex-shrink-0">
                                         <Image
                                           src={photoUrl}
                                           alt={item.nama_siswa}
@@ -3491,49 +3498,49 @@ export default function AdminDashboardPage() {
                                       </div>
                                       <div className="min-w-0 flex-1">
                                         <div
-                                          className={`text-sm sm:text-base font-bold text-slate-800 leading-snug break-words ${isDone ? 'line-through text-slate-400' : ''}`}
+                                          className={`text-xs sm:text-base font-bold text-slate-800 leading-snug truncate ${isDone ? 'line-through text-slate-400' : ''}`}
                                           title={item.nama_siswa}
                                         >
                                           {item.nama_siswa}
                                         </div>
-                                        <div className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
-                                          <span className="px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">
+                                        <div className="text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
+                                          <span className="px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[9px] sm:text-[10px] font-bold">
                                             #{idx + 1}
                                           </span>
-                                          <span>{isDone ? 'Sudah Selesai' : 'Belum Piket'}</span>
+                                          <span className="truncate">{isDone ? 'Selesai' : 'Belum Piket'}</span>
                                         </div>
                                       </div>
                                     </div>
 
                                     {/* Right: Big Interactive Button & Edit/Delete */}
-                                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                                       <button
                                         onClick={() => togglePiketStatus(item.id)}
-                                        className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm font-bold cursor-pointer active:scale-95 ${
+                                        className={`px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl transition-all flex items-center gap-1 text-xs sm:text-sm font-bold cursor-pointer active:scale-95 ${
                                           isDone
                                             ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
                                             : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
                                         }`}
                                         title={isDone ? 'Batalkan Status Selesai' : 'Tandai Sudah Piket'}
                                       >
-                                        <Check className="w-4 h-4 stroke-[3]" />
+                                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
                                         <span>{isDone ? 'Selesai' : 'Piket'}</span>
                                       </button>
 
                                       <button
                                         onClick={() => openEditPiketModal(item)}
-                                        className="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                                        className="p-1.5 sm:p-2.5 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
                                         title="Edit Petugas"
                                       >
-                                        <Edit className="w-4 h-4" />
+                                        <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                       </button>
 
                                       <button
                                         onClick={() => handleDeletePiket(item.id)}
-                                        className="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                        className="p-1.5 sm:p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                                         title="Hapus dari Piket"
                                       >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                       </button>
                                     </div>
                                   </div>
@@ -3783,7 +3790,17 @@ export default function AdminDashboardPage() {
                     const isToday = daysIndo[new Date().getDay()] === hari;
                     const dayItems = jadwalList
                       .filter((j) => j.hari === hari)
-                      .sort((a, b) => a.urutan - b.urutan);
+                      .sort((a, b) => {
+                        const timeToMin = (t: string) => {
+                          if (!t) return 9999;
+                          const [h, m] = t.replace(':', '.').split('.').map(Number);
+                          return (isNaN(h) ? 99 : h) * 60 + (isNaN(m) ? 0 : m);
+                        };
+                        const minA = timeToMin(a.jam_mulai);
+                        const minB = timeToMin(b.jam_mulai);
+                        if (minA !== minB) return minA - minB;
+                        return a.urutan - b.urutan;
+                      });
 
                     const isDayOpen = selectedJadwalDay !== 'Semua' || !!openJadwalDays[hari];
 
@@ -3821,38 +3838,39 @@ export default function AdminDashboardPage() {
                               <Calendar className="w-4 h-4 text-white" />
                             </div>
                             <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-extrabold text-sm sm:text-base tracking-tight truncate">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h3 className="font-black text-sm sm:text-base tracking-tight truncate">
                                   {hari}
                                 </h3>
                                 {isToday && (
-                                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-white text-blue-700 shadow-xs uppercase tracking-wider flex-shrink-0">
+                                  <span className="px-1.5 py-0.2 rounded-md bg-white text-indigo-700 text-[9px] font-black uppercase tracking-wider shadow-2xs">
                                     Hari Ini
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[11px] text-white/80 font-medium block truncate">
+                              <span className="text-[10px] sm:text-xs text-white/80 font-medium block truncate">
                                 {dayItems.length} Sesi Terjadwal
                               </span>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 flex-shrink-0">
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
                             <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 openAddJadwalModal(hari);
                               }}
                               className="p-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
-                              title={`Tambah Jam Pelajaran ${hari}`}
+                              title={`Tambah Sesi di hari ${hari}`}
                             >
                               <Plus className="w-4 h-4 stroke-[2.5]" />
                             </button>
 
                             {selectedJadwalDay === 'Semua' && (
-                              <div className="p-1 text-white/80 lg:hidden">
+                              <div className="p-1.5 text-white/80 transition-transform lg:hidden">
                                 <ChevronDown
-                                  className={`w-5 h-5 transition-transform duration-200 ${
+                                  className={`w-4 h-4 transition-transform duration-200 ${
                                     isDayOpen ? 'rotate-180' : ''
                                   }`}
                                 />
@@ -3862,7 +3880,7 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* List of Lessons / Sessions (Hidden if collapsed on mobile) */}
-                        <div className={`p-2.5 sm:p-4 space-y-2 flex-1 bg-slate-50/50 ${
+                        <div className={`p-3 sm:p-4 space-y-2.5 flex-1 bg-slate-50/50 ${
                           isDayOpen ? 'block' : 'hidden lg:block'
                         }`}>
                           {dayItems.length === 0 ? (
@@ -3877,7 +3895,7 @@ export default function AdminDashboardPage() {
                               </button>
                             </div>
                           ) : (
-                            dayItems.map((item) => {
+                            dayItems.map((item, idx) => {
                               const isBreak =
                                 item.mata_pelajaran.toUpperCase().includes('ISTIRAHAT') ||
                                 item.mata_pelajaran.toUpperCase().includes('ISHOMA') ||
@@ -3890,7 +3908,7 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`flex flex-col sm:flex-row sm:items-center justify-between px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all gap-2 sm:gap-0 ${
+                                    className={`flex items-center justify-between px-2.5 py-2 sm:px-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all gap-2 ${
                                       isDeleting ? 'opacity-0 scale-90' : ''
                                     }`}
                                   >
@@ -3898,11 +3916,11 @@ export default function AdminDashboardPage() {
                                       <div className="p-1 rounded-lg bg-amber-200/70 text-amber-800 flex-shrink-0">
                                         <Coffee className="w-3.5 h-3.5" />
                                       </div>
-                                      <div className="min-w-0">
+                                      <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
                                         <span className="font-extrabold text-xs text-amber-900 tracking-wide">
                                           {item.mata_pelajaran}
                                         </span>
-                                        <span className="text-[10px] font-mono text-amber-700 ml-2">
+                                        <span className="text-[10px] font-mono text-amber-700 font-semibold bg-amber-100/80 px-1.5 py-0.5 rounded">
                                           {item.jam_mulai} - {item.jam_selesai}
                                         </span>
                                       </div>
@@ -3910,17 +3928,17 @@ export default function AdminDashboardPage() {
                                     <div className="flex items-center gap-0.5 flex-shrink-0">
                                       <button
                                         onClick={() => openEditJadwalModal(item)}
-                                        className="p-1 text-amber-700 hover:bg-amber-100 rounded-lg active:scale-90 transition-all cursor-pointer"
+                                        className="p-1 sm:p-1.5 rounded-lg text-amber-700 hover:bg-amber-100 active:scale-90 transition-all cursor-pointer"
                                         title="Edit Sesi"
                                       >
-                                        <Edit className="w-3.5 h-3.5" />
+                                        <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                       </button>
                                       <button
                                         onClick={() => confirmDeleteJadwal(item)}
-                                        className="p-1 text-amber-700 hover:bg-rose-100 hover:text-rose-600 rounded-lg active:scale-90 transition-all cursor-pointer"
+                                        className="p-1 sm:p-1.5 rounded-lg text-amber-700 hover:bg-rose-100 hover:text-rose-600 active:scale-90 transition-all cursor-pointer"
                                         title="Hapus Sesi"
                                       >
-                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                       </button>
                                     </div>
                                   </div>
@@ -3930,12 +3948,12 @@ export default function AdminDashboardPage() {
                               return (
                                 <div
                                   key={item.id}
-                                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
+                                  className={`flex items-center justify-between gap-2 sm:gap-3 p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
                                     isDeleting ? 'opacity-0 scale-90 blur-xs' : ''
                                   }`}
                                 >
                                   {/* Left: Time Badge */}
-                                  <div className="flex flex-col items-center justify-center px-2 py-1 rounded-lg bg-slate-100/90 text-slate-800 font-mono text-[10px] sm:text-[11px] font-bold flex-shrink-0 min-w-[68px] sm:min-w-[72px] text-center border border-slate-200/60">
+                                  <div className="flex flex-col items-center justify-center px-1.5 py-1 rounded-lg bg-slate-100/90 text-slate-800 font-mono text-[10px] sm:text-[11px] font-bold flex-shrink-0 w-14 sm:w-16 text-center border border-slate-200/60">
                                     <span className="leading-tight">{item.jam_mulai}</span>
                                     <span className="text-[8px] text-slate-400 font-normal leading-none my-0.5">s/d</span>
                                     <span className="leading-tight">{item.jam_selesai}</span>
@@ -3944,17 +3962,17 @@ export default function AdminDashboardPage() {
                                   {/* Center: Title & Teacher */}
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="text-[9px] font-bold font-mono text-slate-400">
-                                        #{item.urutan}
+                                      <span className="text-[9px] sm:text-[10px] font-bold font-mono text-slate-400">
+                                        #{idx + 1}
                                       </span>
                                       <span className="font-extrabold text-xs sm:text-sm text-slate-900 truncate">
                                         {item.mata_pelajaran}
                                       </span>
-                                      <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-md border ${category.color}`}>
+                                      <span className={`text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded-md border ${category.color}`}>
                                         {category.label}
                                       </span>
                                     </div>
-                                    <div className="flex items-center gap-1 mt-0.5 text-[11px] text-slate-500 truncate">
+                                    <div className="flex items-center gap-1 mt-0.5 text-[10px] sm:text-[11px] text-slate-500 truncate">
                                       <UserCheck className="w-3 h-3 text-blue-600 flex-shrink-0" />
                                       <span className="truncate">{item.guru && item.guru !== '-' ? item.guru : 'Guru Pengampu'}</span>
                                     </div>
@@ -3964,17 +3982,17 @@ export default function AdminDashboardPage() {
                                   <div className="flex items-center gap-0.5 flex-shrink-0">
                                     <button
                                       onClick={() => openEditJadwalModal(item)}
-                                      className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 active:scale-90 transition-all cursor-pointer"
+                                      className="p-1 sm:p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 active:scale-90 transition-all cursor-pointer"
                                       title="Edit Sesi"
                                     >
-                                      <Edit className="w-4 h-4" />
+                                      <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     </button>
                                     <button
                                       onClick={() => confirmDeleteJadwal(item)}
-                                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:scale-90 transition-all cursor-pointer"
+                                      className="p-1 sm:p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:scale-90 transition-all cursor-pointer"
                                       title="Hapus Sesi"
                                     >
-                                      <Trash2 className="w-4 h-4" />
+                                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     </button>
                                   </div>
                                 </div>

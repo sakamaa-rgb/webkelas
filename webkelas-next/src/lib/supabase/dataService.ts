@@ -100,18 +100,49 @@ export async function getJadwalPelajaran(): Promise<JadwalPelajaran[]> {
         .select('*')
         .order('urutan', { ascending: true });
       if (!error && data && data.length > 0) {
-        const hasRoutines = (data as JadwalPelajaran[]).some(
-          (d) =>
-            d.id >= 100 ||
-            d.mata_pelajaran.toUpperCase().includes('UPACARA') ||
-            d.mata_pelajaran.toUpperCase().includes('DHUHA') ||
-            d.mata_pelajaran.toUpperCase().includes('KOKURIKULER')
-        );
-        if (!hasRoutines) {
-          const routines = initialJadwalPelajaran.filter((item) => item.id >= 100);
-          return [...(data as JadwalPelajaran[]), ...routines];
+        let list = data as JadwalPelajaran[];
+        
+        // Ensure morning routine exists for each weekday
+        const routines = initialJadwalPelajaran.filter((item) => item.id >= 100 && item.urutan === 1);
+        for (const routine of routines) {
+          const hasDayRoutine = list.some(
+            (d) =>
+              d.hari === routine.hari &&
+              (d.mata_pelajaran.toUpperCase().includes('UPACARA') ||
+                d.mata_pelajaran.toUpperCase().includes('DHUHA') ||
+                d.mata_pelajaran.toUpperCase().includes('KOKURIKULER'))
+          );
+          if (!hasDayRoutine) {
+            list.push(routine);
+          }
         }
-        return data as JadwalPelajaran[];
+
+        // Also ensure Pulang routine exists for each weekday
+        const pulangRoutines = initialJadwalPelajaran.filter((item) => item.mata_pelajaran.toUpperCase().includes('PULANG'));
+        for (const pRoutine of pulangRoutines) {
+          const hasPulang = list.some(
+            (d) => d.hari === pRoutine.hari && d.mata_pelajaran.toUpperCase().includes('PULANG')
+          );
+          if (!hasPulang) {
+            list.push(pRoutine);
+          }
+        }
+
+        // Normalize morning routines to 06.30 - 07.30
+        list = list.map((item) => {
+          const m = item.mata_pelajaran.toUpperCase();
+          if (m.includes('UPACARA') || m.includes('DHUHA') || m.includes('KOKURIKULER')) {
+            return {
+              ...item,
+              jam_mulai: '06.30',
+              jam_selesai: '07.30',
+              urutan: 1
+            };
+          }
+          return item;
+        });
+
+        return list;
       }
     } catch {
       // Fallback
