@@ -344,7 +344,11 @@ export default function JadwalPage() {
 
   const filteredPelajaran = jadwalList
     .filter((j) => j.hari === selectedDay)
-    .sort((a, b) => a.urutan - b.urutan);
+    .sort((a, b) => {
+      const timeA = parseTimeToMinutes(a.jam_mulai) ?? a.urutan * 100;
+      const timeB = parseTimeToMinutes(b.jam_mulai) ?? b.urutan * 100;
+      return timeA - timeB;
+    });
   const filteredPiket = piketList.filter((p) => p.hari === selectedDay);
   const pj = filteredPiket[0]?.pj || '-';
   const completedCount = filteredPiket.filter((p) => piketCompleted[p.id]).length;

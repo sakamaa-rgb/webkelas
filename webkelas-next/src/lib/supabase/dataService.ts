@@ -99,7 +99,20 @@ export async function getJadwalPelajaran(): Promise<JadwalPelajaran[]> {
         .from('jadwal_pelajaran')
         .select('*')
         .order('urutan', { ascending: true });
-      if (!error && data && data.length > 0) return data as JadwalPelajaran[];
+      if (!error && data && data.length > 0) {
+        const hasRoutines = (data as JadwalPelajaran[]).some(
+          (d) =>
+            d.id >= 100 ||
+            d.mata_pelajaran.toUpperCase().includes('UPACARA') ||
+            d.mata_pelajaran.toUpperCase().includes('DHUHA') ||
+            d.mata_pelajaran.toUpperCase().includes('KOKURIKULER')
+        );
+        if (!hasRoutines) {
+          const routines = initialJadwalPelajaran.filter((item) => item.id >= 100);
+          return [...(data as JadwalPelajaran[]), ...routines];
+        }
+        return data as JadwalPelajaran[];
+      }
     } catch {
       // Fallback
     }
