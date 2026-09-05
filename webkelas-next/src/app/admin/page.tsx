@@ -1724,7 +1724,7 @@ export default function AdminDashboardPage() {
       tiktok: contactTiktok.trim(),
       address: contactAddress.trim()
     };
-    upsertContact, uploadFileToStorage(contactData);
+    upsertContact(contactData);
 
     try {
       localStorage.setItem('class_web_contact', JSON.stringify(contactData));
@@ -1760,7 +1760,7 @@ export default function AdminDashboardPage() {
         tiktok: '@xipplg3.official',
         address: 'SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor'
       };
-      upsertContact, uploadFileToStorage(resetData);
+      upsertContact(resetData);
       try {
         localStorage.setItem('class_web_contact', JSON.stringify(resetData));
         if (typeof window !== 'undefined') {
