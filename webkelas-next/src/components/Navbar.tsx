@@ -127,7 +127,7 @@ export default function Navbar() {
                 </span>
               </span>
               <p className="text-[11px] text-slate-500 font-medium leading-none">
-                {profile.schoolName || 'SMK Penerbangan Bogor'}
+                {profile.schoolName || 'SMK Negeri 1 Ciomas'}
               </p>
             </div>
           </Link>

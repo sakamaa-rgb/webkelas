@@ -396,16 +396,16 @@ export default function AdminDashboardPage() {
   const [contactWhatsapp, setContactWhatsapp] = useState(initialContact.whatsapp || '6281294862060');
   const [contactEmail, setContactEmail] = useState(initialContact.email || 'classxpplg3@gmail.com');
   const [contactTiktok, setContactTiktok] = useState('@xipplg3.official');
-  const [contactAddress, setContactAddress] = useState('SMK Penerbangan Bogor, Jl. Raya Sukabumi No. 12, Kota Bogor');
+  const [contactAddress, setContactAddress] = useState('SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor');
   const [savingContact, setSavingContact] = useState(false);
   const [contactSaveSuccess, setContactSaveSuccess] = useState(false);
 
   // Profile Website State (Kanan)
   const [profileClassName, setProfileClassName] = useState('XI PPLG 3');
-  const [profileSchoolName, setProfileSchoolName] = useState('SMK Penerbangan Bogor');
+  const [profileSchoolName, setProfileSchoolName] = useState('SMK Negeri 1 Ciomas');
   const [profileTagline, setProfileTagline] = useState('Unggul dalam Teknologi, Kreatif dalam Inovasi & Bersatu');
   const [profileYear, setProfileYear] = useState('2026 / 2027');
-  const [profileDescription, setProfileDescription] = useState('Portal web resmi kelas XI PPLG 3 SMK Penerbangan Bogor sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.');
+  const [profileDescription, setProfileDescription] = useState('Portal web resmi kelas XI PPLG 3 SMK Negeri 1 Ciomas sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.');
   const [profileLogo, setProfileLogo] = useState(initialContact.logo || '/assets/uploads/logo/logo_1787282041.jpeg');
   const [profileLogoFileName, setProfileLogoFileName] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
@@ -1766,13 +1766,13 @@ export default function AdminDashboardPage() {
       setContactWhatsapp(initialContact.whatsapp || '6281294862060');
       setContactEmail(initialContact.email || 'classxpplg3@gmail.com');
       setContactTiktok('@xipplg3.official');
-      setContactAddress('SMK Penerbangan Bogor, Jl. Raya Sukabumi No. 12, Kota Bogor');
+      setContactAddress('SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor');
       const resetData = {
         instagram: initialContact.instagram,
         whatsapp: initialContact.whatsapp,
         email: initialContact.email,
         tiktok: '@xipplg3.official',
-        address: 'SMK Penerbangan Bogor, Jl. Raya Sukabumi No. 12, Kota Bogor'
+        address: 'SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor'
       };
       upsertContact(resetData);
       try {
@@ -1850,18 +1850,18 @@ export default function AdminDashboardPage() {
   const handleResetProfile = () => {
     if (confirm('Kembalikan data profil dan logo website ke pengaturan standar bawaan?')) {
       setProfileClassName('XI PPLG 3');
-      setProfileSchoolName('SMK Penerbangan Bogor');
+      setProfileSchoolName('SMK Negeri 1 Ciomas');
       setProfileTagline('Unggul dalam Teknologi, Kreatif dalam Inovasi & Bersatu');
       setProfileYear('2026 / 2027');
-      setProfileDescription('Portal web resmi kelas XI PPLG 3 SMK Penerbangan Bogor sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.');
+      setProfileDescription('Portal web resmi kelas XI PPLG 3 SMK Negeri 1 Ciomas sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.');
       setProfileLogo(initialContact.logo || '/assets/uploads/logo/logo_1787282041.jpeg');
       setProfileLogoFileName('');
       const defaultProfile = {
         className: 'XI PPLG 3',
-        schoolName: 'SMK Penerbangan Bogor',
+        schoolName: 'SMK Negeri 1 Ciomas',
         tagline: 'Unggul dalam Teknologi, Kreatif dalam Inovasi & Bersatu',
         year: '2026 / 2027',
-        description: 'Portal web resmi kelas XI PPLG 3 SMK Penerbangan Bogor sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.',
+        description: 'Portal web resmi kelas XI PPLG 3 SMK Negeri 1 Ciomas sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.',
         logo: initialContact.logo || '/assets/uploads/logo/logo_1787282041.jpeg'
       };
       try {
@@ -3290,7 +3290,7 @@ export default function AdminDashboardPage() {
                           Jadwal Piket Kebersihan
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
-                          XI PPLG 3 • SMK Penerbangan Bogor • Pantau & tandai tugas kebersihan harian
+                          XI PPLG 3 • SMK Negeri 1 Ciomas • Pantau & tandai tugas kebersihan harian
                         </p>
                       </div>
                     </div>
@@ -3490,7 +3490,7 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3 group ${
+                                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group ${
                                       isDone
                                         ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-2xs'
                                         : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-blue-300 hover:shadow-sm text-slate-800'
@@ -3908,7 +3908,7 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`flex items-center justify-between px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all ${
+                                    className={`flex flex-col sm:flex-row sm:items-center justify-between px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all gap-2 sm:gap-0 ${
                                       isDeleting ? 'opacity-0 scale-90' : ''
                                     }`}
                                   >
@@ -3948,7 +3948,7 @@ export default function AdminDashboardPage() {
                               return (
                                 <div
                                   key={item.id}
-                                  className={`flex items-center gap-2 sm:gap-3 p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
+                                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
                                     isDeleting ? 'opacity-0 scale-90 blur-xs' : ''
                                   }`}
                                 >
@@ -6078,7 +6078,7 @@ export default function AdminDashboardPage() {
                         rows={3}
                         value={contactAddress}
                         onChange={(e) => setContactAddress(e.target.value)}
-                        placeholder="SMK Penerbangan Bogor..."
+                        placeholder="SMK Negeri 1 Ciomas..."
                         className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
                       />
                     </div>
@@ -6231,7 +6231,7 @@ export default function AdminDashboardPage() {
                           type="text"
                           value={profileSchoolName}
                           onChange={(e) => setProfileSchoolName(e.target.value)}
-                          placeholder="SMK Penerbangan Bogor"
+                          placeholder="SMK Negeri 1 Ciomas"
                           className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                         />
                       </div>
@@ -6335,7 +6335,7 @@ export default function AdminDashboardPage() {
                           </span>
                         </div>
                         <p className="text-xs text-slate-400 truncate">
-                          {profileSchoolName || 'SMK Penerbangan Bogor'}
+                          {profileSchoolName || 'SMK Negeri 1 Ciomas'}
                         </p>
                         <p className="text-[11px] text-indigo-300/90 italic truncate">
                           "{profileTagline || 'Unggul dalam Teknologi, Kreatif dalam Inovasi'}"

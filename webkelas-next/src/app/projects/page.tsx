@@ -61,7 +61,7 @@ export default function ProjectsPage() {
           Project <span className="text-blue-600">Kami</span>
         </h1>
         <p className="mt-3 text-sm sm:text-base text-slate-500">
-          Koleksi proyek yang sedang dan telah dikerjakan oleh siswa XI PPLG 3 SMK Penerbangan Bogor.
+          Koleksi proyek yang sedang dan telah dikerjakan oleh siswa XI PPLG 3 SMK Negeri 1 Ciomas.
         </p>
       </div>
 

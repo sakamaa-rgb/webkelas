@@ -24,10 +24,10 @@ export interface ClassContact {
 
 export const defaultClassProfile: ClassProfile = {
   className: 'XI PPLG 3',
-  schoolName: 'SMK Penerbangan Bogor',
+  schoolName: 'SMK Negeri 1 Ciomas',
   tagline: 'Unggul dalam Teknologi, Kreatif dalam Inovasi & Bersatu',
   year: '2026 / 2027',
-  description: 'Portal web resmi kelas XI PPLG 3 SMK Penerbangan Bogor sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.',
+  description: 'Portal web resmi kelas XI PPLG 3 SMK Negeri 1 Ciomas sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.',
   logo: initialContact.logo || '/assets/uploads/logo/logo_1787282041.jpeg'
 };
 
@@ -36,7 +36,7 @@ export const defaultClassContact: ClassContact = {
   whatsapp: initialContact.whatsapp || '6281294862060',
   email: initialContact.email || 'classxpplg3@gmail.com',
   tiktok: '@xipplg3.official',
-  address: 'SMK Penerbangan Bogor, Jl. Raya Sukabumi No. 12, Kota Bogor'
+  address: 'SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor'
 };
 
 interface ClassProfileContextType {

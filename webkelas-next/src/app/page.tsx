@@ -207,7 +207,7 @@ export default function HomePage() {
             {/* Top Badge with Pulsing Dot */}
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-600 font-mono text-xs font-semibold shadow-sm">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot" />
-              <span>{profile.schoolName || 'SMK Penerbangan Bogor'} • PPLG Department</span>
+              <span>{profile.schoolName || 'SMK Negeri 1 Ciomas'} • PPLG Department</span>
             </div>
 
             {/* Main Headline (X PPLG 3 Engineering Hub) */}

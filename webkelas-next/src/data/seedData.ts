@@ -281,7 +281,7 @@ export const initialProjects: Project[] = [
   {
     id: 1,
     title: 'Radar Organisasi Dan Aspirasi',
-    description: 'Website ini sebuah website roa atau radar organisasi dan aspirasi dari SMK PENERBANGAN BOGOR',
+    description: 'Website ini sebuah website roa atau radar organisasi dan aspirasi dari SMK Negeri 1 Ciomas',
     image: '/assets/uploads/projects/project_1778720947.png',
     link: 'https://roangkasa.infinityfree.me/index.php',
     makers: 'Don Matteu Abie Wewengkang , Muhammad Rajib Zahir , Nadine Shahmina',
