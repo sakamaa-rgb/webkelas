@@ -720,4 +720,196 @@ body {
     engineeringGlow 4s ease-in-out infinite;
 }
 
+/* ==============================================================================
+   PORTAL LOGIN & SAFE MOBILE ANIMATIONS (60/120FPS GPU ACCELERATED)
+   ============================================================================== */
+
+/* 1. Login Card Entrance */
+@keyframes loginCardPopIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.96);
+  }
+  65% {
+    opacity: 1;
+    transform: translate3d(0, -4px, 0) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-login-card {
+  animation: loginCardPopIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* 2. Login Icon Floating Badge */
+@keyframes loginIconFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(2deg);
+  }
+}
+
+.animate-login-icon {
+  animation: loginIconFloat 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 3. Login Error Shake */
+@keyframes errorShakeSafe {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20%, 60% { transform: translate3d(-5px, 0, 0); }
+  40%, 80% { transform: translate3d(5px, 0, 0); }
+}
+
+.animate-error-shake {
+  animation: errorShakeSafe 0.4s ease-in-out both;
+  will-change: transform;
+}
+
+/* 4. Ambient Background Floating Orbs */
+@keyframes ambientOrbFloat1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(30px, -24px, 0) scale(1.12); }
+}
+
+@keyframes ambientOrbFloat2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-28px, 20px, 0) scale(1.08); }
+}
+
+.animate-ambient-orb-1 {
+  animation: ambientOrbFloat1 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-ambient-orb-2 {
+  animation: ambientOrbFloat2 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 5. Shimmer Button Sweep */
+@keyframes btnShimmerSweep {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
+}
+
+.btn-shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  animation: btnShimmerSweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 6. Safe Mobile Specific Animations (Tuned down for safety, zero-lag, no overflow) */
+@keyframes mobileSafeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes mobileSafeBreath {
+  0%, 100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+  50% {
+    opacity: 0.82;
+    transform: scale3d(1.03, 1.03, 1);
+  }
+}
+
+@keyframes mobileSafeFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+.animate-mobile-safe-in {
+  animation: mobileSafeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-mobile-breath {
+  animation: mobileSafeBreath 2.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Responsive Overrides: Tone down effects on mobile screen (< 768px) */
+@media (max-width: 768px) {
+  /* Reduce heavy blur & opacity on mobile to prevent GPU thermal throttling */
+  .login-glass-card {
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+  }
+
+  .animate-login-card {
+    animation-duration: 0.4s !important;
+  }
+
+  /* Reduce orb movement and blur to conserve mobile performance */
+  .animate-ambient-orb-1,
+  .animate-ambient-orb-2 {
+    filter: blur(35px) !important;
+    opacity: 0.16 !important;
+    animation-duration: 14s !important;
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  /* Calmer float on mobile so it doesn't cause visual distraction */
+  .animate-login-icon {
+    animation: mobileSafeFloat 3.8s ease-in-out infinite !important;
+  }
+
+  /* Shorter button shine interval */
+  .btn-shine-effect::after {
+    animation-duration: 6s !important;
+    width: 40% !important;
+  }
+}
+
+/* Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-login-card,
+  .animate-login-icon,
+  .animate-ambient-orb-1,
+  .animate-ambient-orb-2,
+  .btn-shine-effect::after,
+  .animate-mobile-safe-in,
+  .animate-mobile-breath {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 
