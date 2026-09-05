@@ -28,7 +28,7 @@ export const defaultClassProfile: ClassProfile = {
   tagline: 'Unggul dalam Teknologi, Kreatif dalam Inovasi & Bersatu',
   year: '2026 / 2027',
   description: 'Portal web resmi kelas XI PPLG 3 SMK Negeri 1 Ciomas sebagai wadah karya, portofolio digital, dan dokumentasi kebersamaan siswa.',
-  logo: initialContact.logo || '/assets/uploads/logo/logo_1787282041.jpeg'
+  logo: initialContact.logo || '/assets/uploads/logo/logo_windows_xp.jpg'
 };
 
 export const defaultClassContact: ClassContact = {

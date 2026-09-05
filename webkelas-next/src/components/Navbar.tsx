@@ -13,7 +13,9 @@ import {
   LogIn, 
   ChevronDown, 
   LogOut,
-  UserCheck
+  UserCheck,
+  Gauge,
+  LayoutDashboard
 } from 'lucide-react';
 import { useClassProfile } from '@/context/ClassProfileContext';
 
@@ -113,7 +115,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-blue-200 shadow-xs flex-shrink-0 bg-blue-600">
               <Image 
-                src={profile.logo || "/assets/uploads/logo/logo_1787282041.jpeg"} 
+                src={profile.logo || "/assets/uploads/logo/logo_windows_xp.jpg"} 
                 alt={`${profile.className || 'XI PPLG 3'} Logo`} 
                 fill 
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -152,80 +154,90 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Right Action: Login Dropdown (Matching Screenshot 1) */}
+          {/* Right Action: Authentication Panel */}
           <div className="hidden lg:flex items-center gap-3 relative" ref={dropdownRef}>
-            <button
-              onClick={() => setShowLoginDropdown(!showLoginDropdown)}
-              className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm shadow-blue-500/20 active:scale-95"
-            >
-              <LogIn className="w-4 h-4" />
-              <span className="max-w-[120px] truncate">
-                {currentUser ? currentUser.split(' ')[0] : 'Login'}
-              </span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showLoginDropdown ? 'rotate-180' : ''}`} />
-            </button>
-
-            {/* Dropdown Menu matching Screenshot 1 */}
-            {showLoginDropdown && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                {/* 1. Portal Siswa */}
-                <Link
-                  href={currentRole === 'student' ? '/siswa/dashboard' : '/siswa/login'}
-                  onClick={() => setShowLoginDropdown(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 hover:text-purple-600 group"
+            {!currentUser ? (
+              // NOT LOGGED IN: Show Login Dropdown
+              <div className="relative">
+                <button
+                  onClick={() => setShowLoginDropdown(!showLoginDropdown)}
+                  className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm shadow-blue-500/20 active:scale-95 hover:-translate-y-0.5 duration-200"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-[11px] font-medium text-slate-400 leading-tight">Portal</div>
-                    <div className="text-sm font-bold text-slate-800 group-hover:text-purple-600 leading-tight">Siswa</div>
-                  </div>
-                </Link>
+                  <LogIn className="w-4 h-4" />
+                  <span>Login</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showLoginDropdown ? 'rotate-180' : ''}`} />
+                </button>
 
-                {/* 2. Pengunjung */}
-                <Link
-                  href="/pengunjung/login"
-                  onClick={() => setShowLoginDropdown(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 hover:text-emerald-600 group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <Users className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-bold text-slate-800 group-hover:text-emerald-600">Pengunjung</div>
-                  </div>
-                </Link>
-
-                <div className="my-1.5 border-t border-slate-100" />
-
-                {/* 3. Admin */}
-                <Link
-                  href={currentRole === 'admin' ? '/admin' : '/admin/login'}
-                  onClick={() => setShowLoginDropdown(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 hover:text-blue-600 group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <Lock className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-bold text-slate-800 group-hover:text-blue-600">Admin</div>
-                  </div>
-                </Link>
-
-                {/* Optional Logout if already logged in */}
-                {currentUser && (
-                  <>
-                    <div className="my-1.5 border-t border-slate-100" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 text-rose-600 text-xs font-bold transition-colors"
+                {/* Dropdown Menu */}
+                {showLoginDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <Link
+                      href="/siswa/login"
+                      onClick={() => setShowLoginDropdown(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-all duration-200 text-slate-700 hover:text-purple-600 group active:scale-[0.98]"
                     >
-                      <LogOut className="w-4 h-4" />
-                      <span>Keluar ({currentRole})</span>
-                    </button>
-                  </>
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div className="text-left font-bold text-sm">Siswa</div>
+                    </Link>
+
+                    <Link
+                      href="/pengunjung/login"
+                      onClick={() => setShowLoginDropdown(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-all duration-200 text-slate-700 hover:text-emerald-600 group active:scale-[0.98]"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      <div className="text-left font-bold text-sm">Pengunjung</div>
+                    </Link>
+
+                    <div className="my-1.5 border-t border-slate-100" />
+
+                    <Link
+                      href="/admin/login"
+                      onClick={() => setShowLoginDropdown(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-all duration-200 text-slate-700 hover:text-blue-600 group active:scale-[0.98]"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Lock className="w-4 h-4" />
+                      </div>
+                      <div className="text-left font-bold text-sm">Admin</div>
+                    </Link>
+                  </div>
                 )}
+              </div>
+            ) : (
+              // LOGGED IN: Show Panels and Logout
+              <div className="flex items-center gap-2.5 animate-in fade-in zoom-in-95 duration-200">
+                {currentRole === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+                  >
+                    <Gauge className="w-4 h-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                )}
+                
+                {currentRole === 'student' && (
+                  <Link
+                    href="/siswa/dashboard"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+                  >
+                    <Gauge className="w-4 h-4" />
+                    <span>Siswa Panel</span>
+                  </Link>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-rose-500 text-rose-500 hover:bg-rose-50 font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
               </div>
             )}
           </div>
@@ -266,35 +278,77 @@ export default function Navbar() {
           })}
 
           <div className="pt-3 border-t border-slate-100 space-y-2">
-            <div className="text-xs font-bold text-slate-400 px-3 uppercase tracking-wider">
-              Login Portal:
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <Link
-                href="/siswa/login"
-                onClick={() => setIsOpen(false)}
-                className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-purple-50 text-purple-700 text-xs font-bold text-center border border-purple-100"
-              >
-                <GraduationCap className="w-4 h-4 mb-1" />
-                <span>Siswa</span>
-              </Link>
-              <Link
-                href="/pengunjung/login"
-                onClick={() => setIsOpen(false)}
-                className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold text-center border border-emerald-100"
-              >
-                <Users className="w-4 h-4 mb-1" />
-                <span>Pengunjung</span>
-              </Link>
-              <Link
-                href="/admin/login"
-                onClick={() => setIsOpen(false)}
-                className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-blue-50 text-blue-700 text-xs font-bold text-center border border-blue-100"
-              >
-                <Lock className="w-4 h-4 mb-1" />
-                <span>Admin</span>
-              </Link>
-            </div>
+            {!currentUser ? (
+              <>
+                <div className="text-xs font-bold text-slate-400 px-3 uppercase tracking-wider">
+                  Login Portal:
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <Link
+                    href="/siswa/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold text-center border border-purple-100 transition-all duration-200 active:scale-95"
+                  >
+                    <GraduationCap className="w-4 h-4 mb-1" />
+                    <span>Siswa</span>
+                  </Link>
+                  <Link
+                    href="/pengunjung/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold text-center border border-emerald-100 transition-all duration-200 active:scale-95"
+                  >
+                    <Users className="w-4 h-4 mb-1" />
+                    <span>Pengunjung</span>
+                  </Link>
+                  <Link
+                    href="/admin/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold text-center border border-blue-100 transition-all duration-200 active:scale-95"
+                  >
+                    <Lock className="w-4 h-4 mb-1" />
+                    <span>Admin</span>
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-xs font-bold text-slate-400 px-3 uppercase tracking-wider">
+                  Navigasi Akun:
+                </div>
+                <div className="flex flex-col gap-2">
+                  {currentRole === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full p-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm transition-all duration-200 active:scale-95"
+                    >
+                      <Gauge className="w-4 h-4" />
+                      <span>Admin Panel</span>
+                    </Link>
+                  )}
+                  {currentRole === 'student' && (
+                    <Link
+                      href="/siswa/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full p-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm transition-all duration-200 active:scale-95"
+                    >
+                      <Gauge className="w-4 h-4" />
+                      <span>Siswa Panel</span>
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 w-full p-2.5 rounded-xl border border-rose-500 text-rose-500 bg-white hover:bg-rose-50 font-bold text-sm transition-all duration-200 active:scale-95"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

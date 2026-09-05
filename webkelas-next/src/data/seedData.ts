@@ -17,7 +17,7 @@ export const initialContact: ContactInfo = {
   instagram: '@xpplg.3rd',
   whatsapp: '6281294862060',
   email: 'classxpplg3@gmail.com',
-  logo: '/assets/uploads/logo/logo_1787282041.jpeg'
+  logo: '/assets/uploads/logo/logo_windows_xp.jpg'
 };
 
 export const initialStructure: StructureMember[] = [
