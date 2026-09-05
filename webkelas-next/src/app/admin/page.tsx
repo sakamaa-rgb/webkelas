@@ -831,7 +831,7 @@ export default function AdminDashboardPage() {
   };
 
 
-  const handleAddPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = await uploadFileToStorage(file, 'students');
@@ -1213,7 +1213,7 @@ export default function AdminDashboardPage() {
     setModalVideoOpen(true);
   };
 
-  const handleVideoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = await uploadFileToStorage(file, 'videos');
@@ -1325,7 +1325,7 @@ export default function AdminDashboardPage() {
     }, 350);
   };
 
-  const handleVideoThumbUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoThumbUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = await uploadFileToStorage(file, 'videos/thumbnails');
@@ -1352,7 +1352,7 @@ export default function AdminDashboardPage() {
     setModalGalleryOpen(true);
   };
 
-  const handleGalleryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = await uploadFileToStorage(file, 'gallery');
@@ -1504,7 +1504,7 @@ export default function AdminDashboardPage() {
     setModalProjectOpen(true);
   };
 
-  const handleProjectPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProjectPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = await uploadFileToStorage(file, 'projects');
@@ -1773,7 +1773,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -1781,14 +1781,10 @@ export default function AdminDashboardPage() {
         return;
       }
       setProfileLogoFileName(file.name);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        if (result) {
-          setProfileLogo(result);
-        }
-      };
-      reader.readAsDataURL(file);
+      const url = await uploadFileToStorage(file, 'logo');
+      if (url) {
+        setProfileLogo(url);
+      }
     }
   };
 
@@ -1803,7 +1799,7 @@ export default function AdminDashboardPage() {
       description: profileDescription.trim(),
       logo: profileLogo
     };
-    upsertContact, uploadFileToStorage({
+    upsertContact({
       class_name: profileData.className,
       school_name: profileData.schoolName,
       tagline: profileData.tagline,
