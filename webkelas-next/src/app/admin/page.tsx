@@ -841,6 +841,12 @@ export default function AdminDashboardPage() {
   const handleAddPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) setAddPhoto(ev.target.result as string);
+      };
+      reader.readAsDataURL(file);
+
       const url = await uploadFileToStorage(file, 'students');
       if (url) setAddPhoto(url);
     }
@@ -849,6 +855,12 @@ export default function AdminDashboardPage() {
   const handleEditPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) setEditPhoto(ev.target.result as string);
+      };
+      reader.readAsDataURL(file);
+
       const url = await uploadFileToStorage(file, 'students');
       if (url) setEditPhoto(url);
     }
@@ -1335,6 +1347,7 @@ export default function AdminDashboardPage() {
   const handleVideoThumbUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setVideoFormThumbnail(URL.createObjectURL(file));
       const url = await uploadFileToStorage(file, 'videos/thumbnails');
       if (url) setVideoFormThumbnail(url);
     }
@@ -1362,10 +1375,20 @@ export default function AdminDashboardPage() {
   const handleGalleryPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 1. Tampilkan preview lokal instan via FileReader (Base64)
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setGalleryFormImage(ev.target.result as string);
+          setGalleryFileName(file.name);
+        }
+      };
+      reader.readAsDataURL(file);
+
+      // 2. Upload ke Supabase Storage di background
       const url = await uploadFileToStorage(file, 'gallery');
       if (url) {
         setGalleryFormImage(url);
-        setGalleryFileName(file.name);
       }
     }
   };
@@ -1514,10 +1537,20 @@ export default function AdminDashboardPage() {
   const handleProjectPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 1. Tampilkan preview instan langsung via FileReader (Base64)
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setProjectFormImage(ev.target.result as string);
+          setProjectFileName(file.name);
+        }
+      };
+      reader.readAsDataURL(file);
+
+      // 2. Upload ke Supabase Storage di background
       const url = await uploadFileToStorage(file, 'projects');
       if (url) {
         setProjectFormImage(url);
-        setProjectFileName(file.name);
       }
     }
   };
@@ -2967,16 +3000,24 @@ export default function AdminDashboardPage() {
                         <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                           Foto <span className="text-slate-400 text-[11px] font-normal">(opsional)</span>
                         </label>
-                        <label className="flex items-center justify-center gap-2 w-full py-3 border border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold cursor-pointer transition-colors">
-                          <ImageIcon className="w-4 h-4 text-slate-400" />
-                          <span>{addPhoto && addPhoto.startsWith('blob:') ? 'Foto Terpilih (Ganti)' : 'Pilih foto...'}</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleAddPhotoUpload}
-                          />
-                        </label>
+                        <div className="flex items-center gap-3">
+                          {addPhoto && (
+                            <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">
+                              <img src={addPhoto} alt="Preview" className="w-full h-full object-cover object-top" />
+                            </div>
+                          )}
+                          <label className="flex-1 flex items-center justify-center gap-2 py-3 border border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold cursor-pointer transition-colors">
+                            <ImageIcon className="w-4 h-4 text-slate-400" />
+                            <span>{addPhoto ? 'Ganti Foto' : 'Pilih foto...'}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleAddPhotoUpload}
+                              onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+                            />
+                          </label>
+                        </div>
                       </div>
                     </div>
 
@@ -3021,11 +3062,10 @@ export default function AdminDashboardPage() {
                     {/* Preview Avatar */}
                     <div className="pt-5 pb-2 text-center">
                       <div className="relative w-16 h-16 rounded-full overflow-hidden bg-red-600 border-2 border-white shadow-md mx-auto flex items-center justify-center">
-                        <Image
+                        <img
                           src={editPhoto || modalEditStudent.photo}
                           alt="Preview"
-                          fill
-                          className="object-cover object-top"
+                          className="w-full h-full object-cover object-top"
                         />
                       </div>
                       <span className="text-[11px] font-semibold text-slate-400 mt-1.5 block">
@@ -4949,17 +4989,17 @@ export default function AdminDashboardPage() {
                               id="gallery-file-input"
                               accept="image/*"
                               onChange={handleGalleryPhotoUpload}
+                              onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
                               className="hidden"
                             />
                             <label htmlFor="gallery-file-input" className="cursor-pointer block">
                               {galleryFormImage ? (
                                 <div className="space-y-2">
                                   <div className="relative aspect-16/9 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-xs">
-                                    <Image
+                                    <img
                                       src={galleryFormImage}
                                       alt="Preview Foto"
-                                      fill
-                                      className="object-cover"
+                                      className="w-full h-full object-cover"
                                     />
                                   </div>
                                   <div className="flex items-center justify-between gap-2 px-1">
@@ -5390,17 +5430,17 @@ export default function AdminDashboardPage() {
                               id="project-screenshot-upload"
                               accept="image/*"
                               onChange={handleProjectPhotoUpload}
+                              onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
                               className="hidden"
                             />
                             <label htmlFor="project-screenshot-upload" className="cursor-pointer block">
                               {projectFormImage ? (
                                 <div className="space-y-2">
                                   <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-xs">
-                                    <Image
+                                    <img
                                       src={projectFormImage}
                                       alt="Screenshot preview"
-                                      fill
-                                      className="object-cover"
+                                      className="w-full h-full object-cover"
                                     />
                                   </div>
                                   <div className="flex items-center justify-between gap-2 px-1">

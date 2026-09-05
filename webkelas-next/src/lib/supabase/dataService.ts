@@ -505,24 +505,28 @@ export async function upsertContact(contact: Partial<ContactInfo> & { id?: numbe
 // ==============================================================================
 
 export async function uploadFileToStorage(file: File, folder: string): Promise<string | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+  if (!isSupabaseConfigured || !supabase) {
+    console.warn('Supabase is not configured for file upload');
+    return null;
+  }
   try {
-    const ext = file.name.split('.').pop();
-    const fileName = `_.`;
-    const filePath = `/`;
+    const ext = file.name.split('.').pop() || 'jpg';
+    const cleanName = file.name.substring(0, file.name.lastIndexOf('.')).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fileName = `${Date.now()}_${cleanName}.${ext}`;
+    const filePath = `${folder}/${fileName}`;
 
-    const { error } = await supabase.storage.from('webkelas_media').upload(filePath, file, {
+    const { data: uploadData, error } = await supabase.storage.from('webkelas_media').upload(filePath, file, {
       cacheControl: '3600',
-      upsert: false
+      upsert: true
     });
 
     if (error) {
-      console.error('Error uploading file to Supabase Storage:', error);
+      console.error('Error uploading file to Supabase Storage (Pastikan bucket "webkelas_media" sudah dibuat & diset Public):', error.message || error);
       return null;
     }
 
-    const { data } = supabase.storage.from('webkelas_media').getPublicUrl(filePath);
-    return data.publicUrl;
+    const { data: urlData } = supabase.storage.from('webkelas_media').getPublicUrl(filePath);
+    return urlData?.publicUrl || null;
   } catch (err) {
     console.error('Unexpected error uploading file:', err);
     return null;
