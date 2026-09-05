@@ -117,7 +117,7 @@ import {
   deleteGalleryItem,
   upsertProject,
   deleteProject,
-  upsertContact
+  upsertContact, uploadFileToStorage
 } from '@/lib/supabase/dataService';
 
 const getWeekKey = () => {
@@ -679,17 +679,15 @@ export default function AdminDashboardPage() {
     );
   };
 
-  const handlePhotoChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target?.result as string;
+      const url = await uploadFileToStorage(file, 'members');
+      if (url) {
         setStructureList((prev) =>
-          prev.map((m) => (m.id === id ? { ...m, photo: dataUrl } : m))
+          prev.map((m) => (m.id === id ? { ...m, photo: url } : m))
         );
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -836,22 +834,16 @@ export default function AdminDashboardPage() {
   const handleAddPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setAddPhoto(ev.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const url = await uploadFileToStorage(file, 'students');
+      if (url) setAddPhoto(url);
     }
   };
 
-  const handleEditPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEditPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setEditPhoto(ev.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const url = await uploadFileToStorage(file, 'students');
+      if (url) setEditPhoto(url);
     }
   };
 
@@ -1224,12 +1216,11 @@ export default function AdminDashboardPage() {
   const handleVideoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setVideoFormUrl(ev.target?.result as string);
+      const url = await uploadFileToStorage(file, 'videos');
+      if (url) {
+        setVideoFormUrl(url);
         setVideoFileName(file.name);
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -1337,11 +1328,8 @@ export default function AdminDashboardPage() {
   const handleVideoThumbUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setVideoFormThumbnail(ev.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const url = await uploadFileToStorage(file, 'videos/thumbnails');
+      if (url) setVideoFormThumbnail(url);
     }
   };
 
@@ -1367,12 +1355,11 @@ export default function AdminDashboardPage() {
   const handleGalleryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setGalleryFormImage(ev.target?.result as string);
+      const url = await uploadFileToStorage(file, 'gallery');
+      if (url) {
+        setGalleryFormImage(url);
         setGalleryFileName(file.name);
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -1520,12 +1507,11 @@ export default function AdminDashboardPage() {
   const handleProjectPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setProjectFormImage(ev.target?.result as string);
+      const url = await uploadFileToStorage(file, 'projects');
+      if (url) {
+        setProjectFormImage(url);
         setProjectFileName(file.name);
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -1738,7 +1724,7 @@ export default function AdminDashboardPage() {
       tiktok: contactTiktok.trim(),
       address: contactAddress.trim()
     };
-    upsertContact(contactData);
+    upsertContact, uploadFileToStorage(contactData);
 
     try {
       localStorage.setItem('class_web_contact', JSON.stringify(contactData));
@@ -1774,7 +1760,7 @@ export default function AdminDashboardPage() {
         tiktok: '@xipplg3.official',
         address: 'SMK Negeri 1 Ciomas, Jl. Raya Sukabumi No. 12, Kota Bogor'
       };
-      upsertContact(resetData);
+      upsertContact, uploadFileToStorage(resetData);
       try {
         localStorage.setItem('class_web_contact', JSON.stringify(resetData));
         if (typeof window !== 'undefined') {
@@ -1817,7 +1803,7 @@ export default function AdminDashboardPage() {
       description: profileDescription.trim(),
       logo: profileLogo
     };
-    upsertContact({
+    upsertContact, uploadFileToStorage({
       class_name: profileData.className,
       school_name: profileData.schoolName,
       tagline: profileData.tagline,

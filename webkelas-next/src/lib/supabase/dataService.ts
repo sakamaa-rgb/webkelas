@@ -404,3 +404,31 @@ export async function upsertContact(contact: Partial<ContactInfo> & { id?: numbe
   }
   return null;
 }
+// ==============================================================================
+// STORAGE HELPERS (SUPABASE STORAGE)
+// ==============================================================================
+
+export async function uploadFileToStorage(file: File, folder: string): Promise<string | null> {
+  if (!isSupabaseConfigured || !supabase) return null;
+  try {
+    const ext = file.name.split('.').pop();
+    const fileName = `_.`;
+    const filePath = `/`;
+
+    const { error } = await supabase.storage.from('webkelas_media').upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+    if (error) {
+      console.error('Error uploading file to Supabase Storage:', error);
+      return null;
+    }
+
+    const { data } = supabase.storage.from('webkelas_media').getPublicUrl(filePath);
+    return data.publicUrl;
+  } catch (err) {
+    console.error('Unexpected error uploading file:', err);
+    return null;
+  }
+}
