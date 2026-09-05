@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { initialPlaylist } from '@/data/seedData';
 import { Song } from '@/types/database';
+import { getPlaylist } from '@/lib/supabase/dataService';
 
 interface MusicContextType {
   songs: Song[];
@@ -41,7 +42,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Sync with localStorage playlist
+  // Sync with localStorage playlist & Supabase cloud database
   useEffect(() => {
     const loadPlaylist = () => {
       const saved = localStorage.getItem('class_music_playlist');
@@ -55,6 +56,17 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       }
     };
     loadPlaylist();
+
+    // Sync live playlist and covers from Supabase so mobile and all devices stay connected
+    getPlaylist().then((remoteSongs) => {
+      if (remoteSongs && remoteSongs.length > 0) {
+        setSongs(remoteSongs);
+        try {
+          localStorage.setItem('class_music_playlist', JSON.stringify(remoteSongs));
+        } catch {}
+      }
+    });
+
     window.addEventListener('class_playlist_updated', loadPlaylist);
     return () => window.removeEventListener('class_playlist_updated', loadPlaylist);
   }, []);

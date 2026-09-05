@@ -23,6 +23,12 @@ import {
 } from 'lucide-react';
 import { Song } from '@/types/database';
 import { initialPlaylist } from '@/data/seedData';
+import { 
+  getAllSongs, 
+  upsertSong, 
+  deleteSong, 
+  uploadFileToStorage 
+} from '@/lib/supabase/dataService';
 
 interface KelolaMusicTabProps {
   onAddLog?: (
@@ -59,7 +65,7 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
   const [playingSongId, setPlayingSongId] = useState<number | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load songs from localStorage
+  // Load songs from Supabase & localStorage
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('class_music_playlist');
@@ -68,16 +74,23 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setPlaylist(parsed);
-          return;
         }
       } catch (e) {
         console.error(e);
       }
+    } else {
+      setPlaylist(initialPlaylist);
     }
-    setPlaylist(initialPlaylist);
-    try {
-      localStorage.setItem('class_music_playlist', JSON.stringify(initialPlaylist));
-    } catch {}
+
+    // Sync with Supabase cloud database
+    getAllSongs().then((remote) => {
+      if (remote && remote.length > 0) {
+        setPlaylist(remote);
+        try {
+          localStorage.setItem('class_music_playlist', JSON.stringify(remote));
+        } catch {}
+      }
+    });
   }, []);
 
   // Save playlist helper
@@ -120,7 +133,7 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
   };
 
   // Handle MP3 Upload
-  const handleMp3FileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMp3FileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -134,23 +147,30 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
     const fileSizeMb = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
     setFormAudioMeta({ name: file.name, size: fileSizeMb });
 
+    // Auto fill title if empty
+    if (!formJudul) {
+      const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+      setFormJudul(cleanName);
+    }
+
     // Convert to Data URL / Object URL
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
         setFormFileName(event.target.result as string);
-        // Auto fill title if empty
-        if (!formJudul) {
-          const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-          setFormJudul(cleanName);
-        }
       }
     };
     reader.readAsDataURL(file);
+
+    // Upload to Supabase Storage if available
+    const url = await uploadFileToStorage(file, 'music/audio');
+    if (url) {
+      setFormFileName(url);
+    }
   };
 
   // Handle Cover Image Upload
-  const handleCoverFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -160,6 +180,7 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
       return;
     }
 
+    // 1. Tampilkan preview lokal instan
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -167,6 +188,12 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
       }
     };
     reader.readAsDataURL(file);
+
+    // 2. Upload file cover ke Supabase Storage agar tersimpan permanen di cloud
+    const url = await uploadFileToStorage(file, 'music/covers');
+    if (url) {
+      setFormCover(url);
+    }
   };
 
   // Open Add Modal
@@ -182,7 +209,7 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
   };
 
   // Save Add
-  const handleSaveAdd = (e: React.FormEvent) => {
+  const handleSaveAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formJudul.trim() || !formArtis.trim()) {
       setErrorMsg('Judul lagu dan Nama artis harus diisi.');
@@ -203,14 +230,15 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
       aktif: formAktif
     };
 
-    const updated = [...playlist, newSong].sort((a, b) => a.urutan - b.urutan);
+    const saved = (await upsertSong(newSong)) || newSong;
+    const updated = [...playlist, saved].sort((a, b) => a.urutan - b.urutan);
     savePlaylist(updated);
     setModalAddOpen(false);
-    setSuccessMsg(`Lagu "${newSong.judul}" berhasil ditambahkan ke playlist!`);
+    setSuccessMsg(`Lagu "${saved.judul}" berhasil ditambahkan ke playlist!`);
     setTimeout(() => setSuccessMsg(null), 3500);
 
     if (onAddLog) {
-      onAddLog(`Menambahkan lagu baru "${newSong.judul}" ke pemutar musik`, 'content', 'Kelola Musik');
+      onAddLog(`Menambahkan lagu baru "${saved.judul}" ke pemutar musik`, 'content', 'Kelola Musik');
     }
   };
 
@@ -228,24 +256,24 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
   };
 
   // Save Edit
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSongId) return;
 
-    const updated = playlist.map((s) => {
-      if (s.id === editingSongId) {
-        return {
-          ...s,
-          judul: formJudul.trim(),
-          artis: formArtis.trim(),
-          file_name: formFileName.trim(),
-          cover: formCover.trim() || s.cover,
-          urutan: Number(formUrutan),
-          aktif: formAktif
-        };
-      }
-      return s;
-    }).sort((a, b) => a.urutan - b.urutan);
+    const targetSong = playlist.find(s => s.id === editingSongId);
+    const updatedSong: Song = {
+      id: editingSongId,
+      judul: formJudul.trim(),
+      artis: formArtis.trim(),
+      file_name: formFileName.trim(),
+      cover: formCover.trim() || targetSong?.cover || null,
+      urutan: Number(formUrutan),
+      aktif: formAktif
+    };
+
+    const saved = (await upsertSong(updatedSong)) || updatedSong;
+
+    const updated = playlist.map((s) => (s.id === editingSongId ? saved : s)).sort((a, b) => a.urutan - b.urutan);
 
     savePlaylist(updated);
     setModalEditOpen(false);
@@ -261,6 +289,10 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
   const toggleSongStatus = (id: number) => {
     const updated = playlist.map((s) => (s.id === id ? { ...s, aktif: !s.aktif } : s));
     savePlaylist(updated);
+    const target = updated.find(s => s.id === id);
+    if (target) {
+      upsertSong(target);
+    }
   };
 
   // Delete
@@ -275,6 +307,7 @@ export default function KelolaMusicTab({ onAddLog }: KelolaMusicTabProps) {
 
     const updated = playlist.filter((s) => s.id !== songToDelete.id);
     savePlaylist(updated);
+    deleteSong(songToDelete.id);
     setSongToDelete(null);
     setSuccessMsg(`Lagu "${targetTitle}" berhasil dihapus dari playlist.`);
     setTimeout(() => setSuccessMsg(null), 3500);

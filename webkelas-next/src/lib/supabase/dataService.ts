@@ -289,6 +289,21 @@ export async function getPlaylist(): Promise<Song[]> {
   return initialPlaylist;
 }
 
+export async function getAllSongs(): Promise<Song[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('music_playlist')
+        .select('*')
+        .order('urutan', { ascending: true });
+      if (!error && data && data.length > 0) return data as Song[];
+    } catch {
+      // Fallback
+    }
+  }
+  return initialPlaylist;
+}
+
 export async function getGuestbook(): Promise<GuestbookMessage[]> {
   if (isSupabaseConfigured && supabase) {
     try {
@@ -519,6 +534,31 @@ export async function deleteProject(id: number) {
       await supabase.from('projects').delete().eq('id', id);
     } catch (e) {
       console.error('Error deleting project from Supabase:', e);
+    }
+  }
+}
+
+export async function upsertSong(song: Partial<Song>) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const validId = await getValidNumericId('music_playlist', song.id);
+      const payload = { ...song, id: validId };
+      const { data, error } = await supabase.from('music_playlist').upsert([payload]).select();
+      if (!error && data) return data[0] as Song;
+      if (error) console.error('Error upserting song to Supabase:', error);
+    } catch (e) {
+      console.error('Error upserting song to Supabase:', e);
+    }
+  }
+  return null;
+}
+
+export async function deleteSong(id: number) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('music_playlist').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting song from Supabase:', e);
     }
   }
 }
