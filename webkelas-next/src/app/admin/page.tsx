@@ -1996,7 +1996,7 @@ export default function AdminDashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-100 flex text-slate-800 font-sans antialiased">
+    <div className="min-h-screen bg-slate-100 flex text-slate-800 font-sans antialiased w-full max-w-full overflow-x-hidden">
       {/* 1. Dark Navy Sidebar (Matching Screenshot) */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0b132b] text-slate-300 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
@@ -2225,17 +2225,17 @@ export default function AdminDashboardPage() {
       )}
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 min-w-0 w-full max-w-full lg:pl-64 flex flex-col min-h-screen overflow-x-hidden">
         {/* Topbar (Matching Screenshot) */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-          <div className="flex items-center gap-3">
+        <header className="h-16 bg-white border-b border-slate-200 px-3 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs w-full min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900"
+              className="lg:hidden p-2 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex-shrink-0"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight truncate">
               {activeTab === 'struktur'
                 ? 'Kelola Struktur'
                 : activeTab === 'dashboard'
@@ -2247,12 +2247,12 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Admin User Profile Pill (Matching Screenshot) */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-shrink-0">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-slate-800 text-xs font-bold">
               <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center">
                 <User className="w-3.5 h-3.5" />
               </div>
-              <span>adminPPLG3</span>
+              <span className="hidden xs:inline sm:inline">adminPPLG3</span>
             </div>
           </div>
         </header>
@@ -2266,8 +2266,8 @@ export default function AdminDashboardPage() {
         )}
 
         {/* Dashboard Body Content */}
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">
-          <div key={activeTab} className="animate-admin-tab space-y-8">
+        <main className="flex-1 p-3 sm:p-8 max-w-7xl w-full min-w-0 mx-auto overflow-x-hidden">
+          <div key={activeTab} className="animate-admin-tab space-y-6 sm:space-y-8 w-full min-w-0 max-w-full">
             {/* DASHBOARD TAB */}
             {activeTab === 'dashboard' && (
               <>
@@ -3258,58 +3258,58 @@ export default function AdminDashboardPage() {
 
           {/* TAB: Kelola Piket (Special UI/UX & Animations) */}
           {activeTab === 'piket' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6 w-full min-w-0">
               {/* Cleanliness Hero Header with Sweeping Broom Animation */}
-              <div className="bg-gradient-to-br from-slate-900 via-[#0f172a] to-blue-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+              <div className="bg-gradient-to-br from-slate-900 via-[#0f172a] to-blue-950 rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-white shadow-xl relative overflow-hidden w-full min-w-0">
                 <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/3 -mb-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                  <div>
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold mb-3 backdrop-blur-xs">
-                      <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 w-full min-w-0">
+                  <div className="min-w-0">
+                    <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] sm:text-xs font-bold mb-2 sm:mb-3 backdrop-blur-xs">
+                      <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-blue-300" />
                       <span>Sistem Manajemen Kebersihan Kelas</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 flex items-center justify-center flex-shrink-0 shadow-inner">
-                        <Paintbrush className="w-6 h-6 animate-sweep-broom" />
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <Paintbrush className="w-5 h-5 sm:w-6 sm:h-6 animate-sweep-broom" />
                       </div>
-                      <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                      <div className="min-w-0 flex-1">
+                        <h2 className="text-lg sm:text-2xl font-black text-white tracking-tight truncate">
                           Jadwal Piket Kebersihan
                         </h2>
-                        <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
-                          XI PPLG 3 • SMK Negeri 1 Ciomas • Pantau & tandai tugas kebersihan harian
+                        <p className="text-[11px] sm:text-sm text-slate-300 mt-0.5 truncate">
+                          XI PPLG 3 • SMK Negeri 1 Ciomas • Tugas kebersihan harian
                         </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions & Day Info */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="px-4 py-2 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md text-xs">
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                    <div className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md text-[10px] sm:text-xs">
+                      <span className="text-slate-400 block text-[9px] sm:text-[10px] uppercase font-bold tracking-wider">
                         Hari Ini
                       </span>
                       <span className="font-extrabold text-emerald-400 flex items-center gap-1.5 mt-0.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-ping" />
                         {['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()]}
                       </span>
                     </div>
 
-                    <div className="px-3.5 py-2 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md text-xs flex flex-col justify-center">
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">
+                    <div className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl sm:rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md text-[10px] sm:text-xs flex flex-col justify-center">
+                      <span className="text-slate-400 block text-[9px] sm:text-[10px] uppercase font-bold tracking-wider">
                         Siklus Piket
                       </span>
                       <span className="font-bold text-blue-300 flex items-center gap-1 mt-0.5">
                         <RotateCcw className="w-3 h-3 text-blue-400" />
-                        Minggu ke-{getWeekNumber()} (Auto Reset Senin)
+                        Minggu ke-{getWeekNumber()}
                       </span>
                     </div>
 
                     <button
                       onClick={handleResetPiketWeek}
-                      className="flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-white/10 hover:bg-rose-600/30 border border-white/15 hover:border-rose-500/50 text-slate-200 hover:text-rose-200 font-bold text-xs transition-all flex-shrink-0 cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-3 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-rose-600/30 border border-white/15 hover:border-rose-500/50 text-slate-200 hover:text-rose-200 font-bold text-[11px] sm:text-xs transition-all flex-shrink-0 cursor-pointer"
                       title="Reset semua status checklist piket minggu ini kembali ke 0%"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
@@ -3318,18 +3318,18 @@ export default function AdminDashboardPage() {
 
                     <button
                       onClick={() => openAddPiketModal()}
-                      className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all flex-shrink-0 cursor-pointer"
+                      className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all flex-shrink-0 cursor-pointer"
                     >
-                      <UserPlus className="w-4 h-4" />
+                      <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span>Tambah Petugas</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Day Filter Pills */}
-                <div className="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 sm:mx-0 sm:px-0 sm:flex-wrap">
-                    <span className="text-xs font-bold text-slate-400 mr-1 flex-shrink-0">Filter Hari:</span>
+                <div className="mt-4 sm:mt-6 pt-3 sm:pt-5 border-t border-slate-800/80 w-full min-w-0">
+                  <div className="w-full min-w-0 max-w-full flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 sm:mx-0 sm:px-0">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-400 mr-1 flex-shrink-0">Filter:</span>
                     {['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map((day) => {
                       const isTodayDay = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === day;
                       const isSelected = selectedPiketDay === day;
@@ -3337,7 +3337,7 @@ export default function AdminDashboardPage() {
                         <button
                           key={day}
                           onClick={() => setSelectedPiketDay(day)}
-                          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
+                          className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
                             isSelected
                               ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 ring-2 ring-blue-400/50'
                               : 'bg-white/5 text-slate-300 hover:bg-white/15 hover:text-white border border-white/5'
@@ -3357,12 +3357,12 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* VIEW: Fully responsive layout (Big cards on window/desktop, sleek mobile accordion) */}
-              <div className="w-full pb-28">
+              <div className="w-full min-w-0 max-w-full pb-28">
                 <div
                   className={
                     selectedPiketDay !== 'Semua'
-                      ? 'max-w-4xl mx-auto w-full space-y-5'
-                      : 'grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 lg:gap-8 items-start'
+                      ? 'max-w-4xl mx-auto w-full min-w-0 space-y-4 sm:space-y-5'
+                      : 'w-full min-w-0 max-w-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-8 items-start'
                   }
                 >
                   {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']
@@ -3390,7 +3390,7 @@ export default function AdminDashboardPage() {
                       return (
                         <div
                           key={hari}
-                          className={`w-full bg-white rounded-2xl sm:rounded-3xl border ${themeColor.border} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative ${
+                          className={`w-full min-w-0 max-w-full bg-white rounded-2xl sm:rounded-3xl border ${themeColor.border} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative ${
                             isToday ? `ring-2 ${themeColor.ring} shadow-lg shadow-blue-500/10` : ''
                           }`}
                         >
@@ -3401,17 +3401,17 @@ export default function AdminDashboardPage() {
                                 togglePiketDayAccordion(hari);
                               }
                             }}
-                            className={`bg-gradient-to-r ${themeColor.bg} p-4 sm:p-6 text-white relative overflow-hidden select-none ${
+                            className={`bg-gradient-to-r ${themeColor.bg} p-3.5 sm:p-6 text-white relative overflow-hidden select-none ${
                               selectedPiketDay === 'Semua' ? 'cursor-pointer' : ''
                             }`}
                           >
                             <div className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-lg sm:text-2xl font-black tracking-wide truncate">
+                              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                                <span className="text-base sm:text-2xl font-black tracking-wide truncate">
                                   {hari}
                                 </span>
                                 {isToday && (
-                                  <span className="px-2 py-0.5 rounded-full bg-white text-slate-900 font-extrabold text-[9px] sm:text-xs shadow-sm animate-pulse flex-shrink-0">
+                                  <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white text-slate-900 font-extrabold text-[8px] sm:text-xs shadow-sm animate-pulse flex-shrink-0">
                                     ⭐ HARI INI
                                   </span>
                                 )}
@@ -3423,16 +3423,16 @@ export default function AdminDashboardPage() {
                                     e.stopPropagation();
                                     openAddPiketModal(hari as any);
                                   }}
-                                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-xs flex-shrink-0"
+                                  className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold text-[11px] sm:text-xs transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer backdrop-blur-xs flex-shrink-0"
                                 >
                                   <UserPlus className="w-3.5 h-3.5" />
-                                  <span className="hidden sm:inline">+ Petugas</span>
+                                  <span className="hidden xs:inline sm:inline">+ Petugas</span>
                                 </button>
 
                                 {selectedPiketDay === 'Semua' && (
                                   <div className="p-1 text-white/80 lg:hidden">
                                     <ChevronDown
-                                      className={`w-5 h-5 transition-transform duration-200 ${
+                                      className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${
                                         isPiketDayOpen ? 'rotate-180' : ''
                                       }`}
                                     />
@@ -3442,33 +3442,31 @@ export default function AdminDashboardPage() {
                             </div>
 
                             {/* Penanggung Jawab (PJ) Pill */}
-                            <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-white/95 font-semibold">
+                            <div className="mt-2 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-white/95 font-semibold truncate">
                               <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 fill-amber-300 flex-shrink-0" />
-                              <span className="truncate">Penanggung Jawab: <strong>{pj}</strong></span>
+                              <span className="truncate">PJ: <strong>{pj}</strong></span>
                             </div>
 
                             {/* Progress bar */}
-                            <div className="mt-3 sm:mt-4">
-                              <div className="flex justify-between text-[11px] sm:text-xs text-white/90 font-bold mb-1">
-                                <span>Kebersihan: {completedCount}/{items.length} Selesai</span>
-                                <span className="font-mono bg-black/20 px-2 py-0.5 rounded-md">{percentComplete}%</span>
-                              </div>
-                              <div className="w-full h-2 sm:h-2.5 bg-black/20 rounded-full overflow-hidden p-0.5">
-                                <div
-                                  className="h-full bg-white transition-all duration-500 ease-out rounded-full shadow-sm"
-                                  style={{ width: `${percentComplete}%` }}
-                                />
-                              </div>
+                            <div className="mt-3 pt-2.5 border-t border-white/20 flex items-center justify-between text-[10px] sm:text-xs text-white/90">
+                              <span>Progress Kebersihan</span>
+                              <span className="font-mono font-bold">{completedCount}/{items.length} ({percentComplete}%)</span>
+                            </div>
+                            <div className="w-full bg-black/20 rounded-full h-1.5 mt-1.5 overflow-hidden">
+                              <div
+                                className="bg-white h-full rounded-full transition-all duration-500 ease-out"
+                                style={{ width: `${percentComplete}%` }}
+                              />
                             </div>
                           </div>
 
                           {/* List of Duty Students (Hidden if collapsed on mobile) */}
-                          <div className={`p-3 sm:p-5 space-y-2 flex-1 ${
+                          <div className={`p-2.5 sm:p-5 space-y-2 flex-1 ${
                             isPiketDayOpen ? 'block' : 'hidden lg:block'
                           }`}>
 
                             {items.length === 0 ? (
-                              <div className="py-12 text-center text-slate-400 text-xs sm:text-sm">
+                              <div className="py-8 sm:py-12 text-center text-slate-400 text-xs sm:text-sm">
                                 Belum ada petugas piket untuk hari {hari}.
                               </div>
                             ) : (
@@ -3479,7 +3477,7 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`p-2.5 sm:p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-2.5 group ${
+                                    className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between gap-1.5 sm:gap-2.5 group w-full min-w-0 ${
                                       isDone
                                         ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-2xs'
                                         : 'bg-slate-50/70 border-slate-200 hover:bg-white hover:border-blue-300 hover:shadow-sm text-slate-800'
@@ -3487,12 +3485,12 @@ export default function AdminDashboardPage() {
                                   >
                                     {/* Left: Avatar & Full Name */}
                                     <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                                      <div className="relative w-10 h-12 sm:w-12 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border-2 border-white shadow-xs flex-shrink-0">
+                                      <div className="relative w-8 h-10 sm:w-12 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-xs flex-shrink-0">
                                         <Image
                                           src={photoUrl}
                                           alt={item.nama_siswa}
                                           fill
-                                          sizes="64px"
+                                          sizes="48px"
                                           className="object-cover object-top"
                                         />
                                       </div>
@@ -3503,8 +3501,8 @@ export default function AdminDashboardPage() {
                                         >
                                           {item.nama_siswa}
                                         </div>
-                                        <div className="text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
-                                          <span className="px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[9px] sm:text-[10px] font-bold">
+                                        <div className="text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1 sm:gap-1.5 mt-0.5">
+                                          <span className="px-1 py-0.2 rounded bg-slate-200 text-slate-600 text-[8px] sm:text-[10px] font-bold flex-shrink-0">
                                             #{idx + 1}
                                           </span>
                                           <span className="truncate">{isDone ? 'Selesai' : 'Belum Piket'}</span>
@@ -3512,24 +3510,24 @@ export default function AdminDashboardPage() {
                                       </div>
                                     </div>
 
-                                    {/* Right: Big Interactive Button & Edit/Delete */}
+                                    {/* Right: Interactive Button & Edit/Delete */}
                                     <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                                       <button
                                         onClick={() => togglePiketStatus(item.id)}
-                                        className={`px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl transition-all flex items-center gap-1 text-xs sm:text-sm font-bold cursor-pointer active:scale-95 ${
+                                        className={`px-2 py-1 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition-all flex items-center gap-1 text-[11px] sm:text-sm font-bold cursor-pointer active:scale-95 ${
                                           isDone
-                                            ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
+                                            ? 'bg-emerald-600 text-white shadow-xs'
                                             : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
                                         }`}
                                         title={isDone ? 'Batalkan Status Selesai' : 'Tandai Sudah Piket'}
                                       >
-                                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+                                        <Check className="w-3 h-3 sm:w-4 sm:h-4 stroke-[3]" />
                                         <span>{isDone ? 'Selesai' : 'Piket'}</span>
                                       </button>
 
                                       <button
                                         onClick={() => openEditPiketModal(item)}
-                                        className="p-1.5 sm:p-2.5 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                                        className="p-1 sm:p-2 rounded-lg sm:rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer flex-shrink-0"
                                         title="Edit Petugas"
                                       >
                                         <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -3537,7 +3535,7 @@ export default function AdminDashboardPage() {
 
                                       <button
                                         onClick={() => handleDeletePiket(item.id)}
-                                        className="p-1.5 sm:p-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                        className="p-1 sm:p-2 rounded-lg sm:rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer flex-shrink-0"
                                         title="Hapus dari Piket"
                                       >
                                         <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -3581,7 +3579,7 @@ export default function AdminDashboardPage() {
                     </button>
                   </div>
 
-                  <form onSubmit={handleSavePiket} className="p-6 space-y-4 text-xs sm:text-sm">
+                  <form onSubmit={handleSavePiket} className="p-4 sm:p-6 space-y-4 text-xs sm:text-sm overflow-y-auto flex-1">
                     {/* Hari */}
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -3664,20 +3662,20 @@ export default function AdminDashboardPage() {
 
           {/* TAB: Kelola Jadwal Pelajaran */}
           {activeTab === 'jadwal' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6 w-full min-w-0">
               {/* 1. Hero Banner */}
-              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-900 text-white p-4 sm:p-7 shadow-xl border border-slate-800">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-900 text-white p-4 sm:p-7 shadow-xl border border-slate-800 w-full min-w-0">
                 <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
                 <div className="absolute left-1/2 -top-24 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-6">
-                  <div className="space-y-2 sm:space-y-3 max-w-2xl">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[11px] sm:text-xs font-semibold backdrop-blur-xs">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-6 w-full min-w-0">
+                  <div className="space-y-2 sm:space-y-3 max-w-2xl min-w-0">
+                    <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] sm:text-xs font-semibold backdrop-blur-xs">
                       <Calendar className="w-3.5 h-3.5 text-blue-400" />
                       <span>Agenda Pembelajaran XI PPLG 3</span>
                     </div>
 
-                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
+                    <h2 className="text-lg sm:text-3xl lg:text-4xl font-black tracking-tight text-white truncate">
                       Kelola Jadwal Pelajaran
                     </h2>
 
@@ -3686,7 +3684,7 @@ export default function AdminDashboardPage() {
                     </p>
 
                     {/* Quick Stats Pill Strip */}
-                    <div className="flex items-center gap-1.5 sm:gap-2.5 pt-0.5 sm:pt-2 text-[10px] sm:text-xs overflow-x-auto no-scrollbar pb-0.5">
+                    <div className="w-full min-w-0 max-w-full flex items-center gap-1.5 sm:gap-2.5 pt-0.5 sm:pt-2 text-[10px] sm:text-xs overflow-x-auto no-scrollbar pb-0.5">
                       <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold flex items-center gap-1.5 backdrop-blur-xs flex-shrink-0">
                         <BookOpen className="w-3.5 h-3.5 text-blue-300" />
                         <span>Total <strong>{jadwalList.length}</strong> Sesi</span>
@@ -3739,7 +3737,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* 2. Responsive Day Filter Tabs */}
-              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2 sm:mx-0 sm:px-0">
+              <div className="w-full min-w-0 max-w-full flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 sm:mx-0 sm:px-0">
                 {['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map((hari) => {
                   const daysIndo = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                   const isCurrentToday = daysIndo[new Date().getDay()] === hari;
@@ -3779,8 +3777,8 @@ export default function AdminDashboardPage() {
               <div
                 className={
                   selectedJadwalDay === 'Semua'
-                    ? 'grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 lg:gap-8 items-start pb-28'
-                    : 'max-w-4xl mx-auto w-full space-y-5 pb-28'
+                    ? 'w-full min-w-0 max-w-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-8 items-start pb-28'
+                    : 'max-w-4xl mx-auto w-full min-w-0 space-y-4 sm:space-y-5 pb-28'
                 }
               >
                 {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']
@@ -3818,7 +3816,7 @@ export default function AdminDashboardPage() {
                     return (
                       <div
                         key={hari}
-                        className={`bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-all hover:shadow-md ${
+                        className={`w-full min-w-0 max-w-full bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-all hover:shadow-md ${
                           isToday ? 'ring-2 ring-blue-500/40 shadow-blue-100/50' : ''
                         }`}
                       >
@@ -3829,26 +3827,26 @@ export default function AdminDashboardPage() {
                               toggleJadwalDayAccordion(hari);
                             }
                           }}
-                          className={`p-3.5 sm:p-4 bg-gradient-to-r ${gradient} text-white flex items-center justify-between select-none ${
+                          className={`p-3 sm:p-4 bg-gradient-to-r ${gradient} text-white flex items-center justify-between select-none ${
                             selectedJadwalDay === 'Semua' ? 'cursor-pointer' : ''
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="p-1.5 rounded-xl bg-white/20 backdrop-blur-xs flex-shrink-0">
-                              <Calendar className="w-4 h-4 text-white" />
+                          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                            <div className="p-1 sm:p-1.5 rounded-xl bg-white/20 backdrop-blur-xs flex-shrink-0">
+                              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5 flex-wrap">
-                                <h3 className="font-black text-sm sm:text-base tracking-tight truncate">
+                                <h3 className="font-black text-xs sm:text-base tracking-tight truncate">
                                   {hari}
                                 </h3>
                                 {isToday && (
-                                  <span className="px-1.5 py-0.2 rounded-md bg-white text-indigo-700 text-[9px] font-black uppercase tracking-wider shadow-2xs">
+                                  <span className="px-1.5 py-0.2 rounded-md bg-white text-indigo-700 text-[8px] sm:text-[9px] font-black uppercase tracking-wider shadow-2xs">
                                     Hari Ini
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[10px] sm:text-xs text-white/80 font-medium block truncate">
+                              <span className="text-[9px] sm:text-xs text-white/80 font-medium block truncate">
                                 {dayItems.length} Sesi Terjadwal
                               </span>
                             </div>
@@ -3856,21 +3854,20 @@ export default function AdminDashboardPage() {
 
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <button
-                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 openAddJadwalModal(hari);
                               }}
-                              className="p-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
-                              title={`Tambah Sesi di hari ${hari}`}
+                              className="px-2 sm:px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[10px] sm:text-xs transition-all flex items-center gap-1 cursor-pointer backdrop-blur-xs flex-shrink-0"
                             >
-                              <Plus className="w-4 h-4 stroke-[2.5]" />
+                              <Plus className="w-3 h-3 stroke-[3]" />
+                              <span className="hidden xs:inline sm:inline">Tambah</span>
                             </button>
 
                             {selectedJadwalDay === 'Semua' && (
-                              <div className="p-1.5 text-white/80 transition-transform lg:hidden">
+                              <div className="p-1 text-white/80 lg:hidden">
                                 <ChevronDown
-                                  className={`w-4 h-4 transition-transform duration-200 ${
+                                  className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${
                                     isDayOpen ? 'rotate-180' : ''
                                   }`}
                                 />
@@ -3880,12 +3877,12 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* List of Lessons / Sessions (Hidden if collapsed on mobile) */}
-                        <div className={`p-3 sm:p-4 space-y-2.5 flex-1 bg-slate-50/50 ${
+                        <div className={`p-2.5 sm:p-4 space-y-2 sm:space-y-2.5 flex-1 bg-slate-50/50 ${
                           isDayOpen ? 'block' : 'hidden lg:block'
                         }`}>
                           {dayItems.length === 0 ? (
                             <div className="text-center py-6 sm:py-8 px-4 text-slate-400">
-                              <BookOpen className="w-7 h-7 mx-auto text-slate-300 mb-2" />
+                              <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-slate-300 mb-2" />
                               <p className="text-xs font-semibold">Belum ada jadwal untuk hari {hari}</p>
                               <button
                                 onClick={() => openAddJadwalModal(hari)}
@@ -3908,19 +3905,19 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={item.id}
-                                    className={`flex items-center justify-between px-2.5 py-2 sm:px-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all gap-2 ${
+                                    className={`w-full min-w-0 flex items-center justify-between px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-950 transition-all gap-1.5 sm:gap-2 ${
                                       isDeleting ? 'opacity-0 scale-90' : ''
                                     }`}
                                   >
-                                    <div className="flex items-center gap-2 min-w-0">
+                                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
                                       <div className="p-1 rounded-lg bg-amber-200/70 text-amber-800 flex-shrink-0">
                                         <Coffee className="w-3.5 h-3.5" />
                                       </div>
-                                      <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
-                                        <span className="font-extrabold text-xs text-amber-900 tracking-wide">
+                                      <div className="min-w-0 flex items-center gap-1.5 truncate">
+                                        <span className="font-extrabold text-xs text-amber-900 tracking-wide truncate">
                                           {item.mata_pelajaran}
                                         </span>
-                                        <span className="text-[10px] font-mono text-amber-700 font-semibold bg-amber-100/80 px-1.5 py-0.5 rounded">
+                                        <span className="text-[9px] sm:text-[10px] font-mono text-amber-700 font-semibold bg-amber-100/80 px-1.5 py-0.5 rounded flex-shrink-0">
                                           {item.jam_mulai} - {item.jam_selesai}
                                         </span>
                                       </div>
@@ -3948,32 +3945,32 @@ export default function AdminDashboardPage() {
                               return (
                                 <div
                                   key={item.id}
-                                  className={`flex items-center justify-between gap-2 sm:gap-3 p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
+                                  className={`w-full min-w-0 flex items-center justify-between gap-1.5 sm:gap-3 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-xs transition-all ${
                                     isDeleting ? 'opacity-0 scale-90 blur-xs' : ''
                                   }`}
                                 >
                                   {/* Left: Time Badge */}
-                                  <div className="flex flex-col items-center justify-center px-1.5 py-1 rounded-lg bg-slate-100/90 text-slate-800 font-mono text-[10px] sm:text-[11px] font-bold flex-shrink-0 w-14 sm:w-16 text-center border border-slate-200/60">
+                                  <div className="flex flex-col items-center justify-center px-1 sm:px-1.5 py-1 rounded-lg bg-slate-100/90 text-slate-800 font-mono text-[9px] sm:text-[11px] font-bold flex-shrink-0 w-12 sm:w-16 text-center border border-slate-200/60">
                                     <span className="leading-tight">{item.jam_mulai}</span>
-                                    <span className="text-[8px] text-slate-400 font-normal leading-none my-0.5">s/d</span>
+                                    <span className="text-[7px] sm:text-[8px] text-slate-400 font-normal leading-none my-0.5">s/d</span>
                                     <span className="leading-tight">{item.jam_selesai}</span>
                                   </div>
 
                                   {/* Center: Title & Teacher */}
                                   <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="text-[9px] sm:text-[10px] font-bold font-mono text-slate-400">
+                                    <div className="flex items-center gap-1 sm:gap-1.5">
+                                      <span className="text-[8px] sm:text-[10px] font-bold font-mono text-slate-400 flex-shrink-0">
                                         #{idx + 1}
                                       </span>
                                       <span className="font-extrabold text-xs sm:text-sm text-slate-900 truncate">
                                         {item.mata_pelajaran}
                                       </span>
-                                      <span className={`text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded-md border ${category.color}`}>
+                                      <span className={`text-[7px] sm:text-[9px] font-bold px-1 sm:px-1.5 py-0.2 rounded-md border flex-shrink-0 hidden xs:inline-block sm:inline-block ${category.color}`}>
                                         {category.label}
                                       </span>
                                     </div>
-                                    <div className="flex items-center gap-1 mt-0.5 text-[10px] sm:text-[11px] text-slate-500 truncate">
-                                      <UserCheck className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                                    <div className="flex items-center gap-1 mt-0.5 text-[9px] sm:text-[11px] text-slate-500 truncate">
+                                      <UserCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600 flex-shrink-0" />
                                       <span className="truncate">{item.guru && item.guru !== '-' ? item.guru : 'Guru Pengampu'}</span>
                                     </div>
                                   </div>
@@ -4002,7 +3999,7 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* Card Footer: Add session button */}
-                        <div className={`p-2.5 sm:p-3 bg-white border-t border-slate-100 text-center ${
+                        <div className={`p-2 sm:p-3 bg-white border-t border-slate-100 text-center ${
                           isDayOpen ? 'block' : 'hidden lg:block'
                         }`}>
                           <button
@@ -4046,7 +4043,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                     {/* Modal Form */}
-                    <form onSubmit={handleSaveJadwal} className="p-6 space-y-4 text-xs sm:text-sm">
+                    <form onSubmit={handleSaveJadwal} className="p-4 sm:p-6 space-y-4 text-xs sm:text-sm overflow-y-auto flex-1">
                       {/* Hari & Urutan */}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
