@@ -271,6 +271,21 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
     }
   }, []);
 
+  // Otomatis sinkronkan data browser ke file proyek saat di localhost
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && ekskulList.length > 0) {
+      fetch('/api/save-default-aktivitas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ekskulList,
+          orgList,
+          journeyList
+        })
+      }).catch(() => {});
+    }
+  }, [ekskulList, orgList, journeyList]);
+
   const showAlert = (text: string, type: 'success' | 'info' = 'success') => {
     setAlertMsg({ type, text });
     setTimeout(() => setAlertMsg(null), 3500);
