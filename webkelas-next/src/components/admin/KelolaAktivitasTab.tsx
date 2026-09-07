@@ -1504,23 +1504,51 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
               <label className="block font-bold text-slate-700 mb-1">
                 Nama Ekstrakurikuler <span className="text-rose-500">*</span>
               </label>
-              <input
-                type="text"
-                list="ekskul-options-list"
-                value={formEkskul.nama || ''}
-                onChange={(e) => setFormEkskul({ ...formEkskul, nama: e.target.value })}
-                placeholder="Pilih atau ketik nama eskul (Rohis, Pramuka, Paskibra, Futsal, Voli, Basket)..."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-600 focus:outline-hidden font-medium text-slate-800"
+              <select
+                value={(() => {
+                  const curr = (formEkskul.nama || '').toLowerCase();
+                  if (curr.includes('rohis')) return 'Rohis';
+                  if (curr.includes('pramuka')) return 'Pramuka';
+                  if (curr.includes('paskibra')) return 'Paskibra';
+                  if (curr.includes('futsal')) return 'Futsal';
+                  if (curr.includes('voli') || curr.includes('volley')) return 'Voli';
+                  if (curr.includes('basket')) return 'Basket';
+                  if (curr.includes('silat')) return 'Silat';
+                  return formEkskul.nama || '';
+                })()}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const autoCategory = 
+                    val === 'Silat' || val === 'Futsal' || val === 'Voli' || val === 'Basket' 
+                      ? 'Olahraga' 
+                      : val === 'Rohis' 
+                      ? 'Keagamaan' 
+                      : val === 'Pramuka' 
+                      ? 'Organisasi & Kepemimpinan' 
+                      : val === 'Paskibra' 
+                      ? 'Kedisiplinan & Baris-Berbaris' 
+                      : formEkskul.kategori || 'Umum';
+                  setFormEkskul({ 
+                    ...formEkskul, 
+                    nama: val, 
+                    kategori: autoCategory 
+                  });
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-600 focus:outline-hidden font-bold text-slate-800 bg-white"
                 required
-              />
-              <datalist id="ekskul-options-list">
-                <option value="Rohis (Kerohanian Islam)" />
-                <option value="Gerakan Pramuka" />
-                <option value="Paskibra" />
-                <option value="Futsal Club" />
-                <option value="Bola Voli" />
-                <option value="Basketball Club" />
-              </datalist>
+              >
+                <option value="">-- Pilih Ekstrakurikuler --</option>
+                <option value="Rohis">Rohis (Kerohanian Islam)</option>
+                <option value="Pramuka">Pramuka</option>
+                <option value="Paskibra">Paskibra</option>
+                <option value="Futsal">Futsal</option>
+                <option value="Voli">Voli</option>
+                <option value="Basket">Basket</option>
+                <option value="Silat">Silat</option>
+                {formEkskul.nama && !['rohis','pramuka','paskibra','futsal','voli','basket','silat'].some(k => (formEkskul.nama || '').toLowerCase().includes(k)) && (
+                  <option value={formEkskul.nama}>{formEkskul.nama}</option>
+                )}
+              </select>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">

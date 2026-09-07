@@ -66,7 +66,18 @@ export const defaultEkskulCategories = [
   'Paskibra',
   'Futsal',
   'Voli',
-  'Basket'
+  'Basket',
+  'Silat'
+];
+
+export const officialEkskulNames = [
+  'Rohis',
+  'Pramuka',
+  'Paskibra',
+  'Futsal',
+  'Voli',
+  'Basket',
+  'Silat'
 ];
 
 export const matchesEkskulCategory = (item: EkstrakurikulerItem, category: string): boolean => {
@@ -81,12 +92,13 @@ export const matchesEkskulCategory = (item: EkstrakurikulerItem, category: strin
   if (target === 'futsal') return name.includes('futsal') || cat.includes('futsal');
   if (target === 'voli') return name.includes('voli') || name.includes('volley') || cat.includes('voli');
   if (target === 'basket') return name.includes('basket') || cat.includes('basket');
+  if (target === 'silat') return name.includes('silat') || cat.includes('silat') || name.includes('pencak');
 
   return name.includes(target) || cat.includes(target);
 };
 
 export const getAvailableEkskulCategories = (list: EkstrakurikulerItem[]): string[] => {
-  const base = ['Semua', 'Rohis', 'Pramuka', 'Paskibra', 'Futsal', 'Voli', 'Basket'];
+  const base = ['Semua', 'Rohis', 'Pramuka', 'Paskibra', 'Futsal', 'Voli', 'Basket', 'Silat'];
   const customSet = new Set<string>();
   list.forEach((item) => {
     const matchesBase = base.slice(1).some((b) => matchesEkskulCategory(item, b));
