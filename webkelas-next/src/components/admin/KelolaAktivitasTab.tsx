@@ -29,7 +29,9 @@ import {
   Eye,
   SlidersHorizontal,
   RefreshCw,
-  User
+  User,
+  Copy,
+  Download
 } from 'lucide-react';
 import { 
   ekstrakurikulerList as initialEkskul, 
@@ -183,6 +185,11 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
 
   // Students list for dropdown selection
   const [students, setStudents] = useState<{ id: string; name: string }[]>([]);
+
+  // Sync & Export/Import state
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonInput, setJsonInput] = useState('');
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -504,6 +511,68 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
     showAlert('Data aktivitas berhasil direset ke bawaan awal!');
   };
 
+  // Sync to project default JSON file (so Vercel has the exact same data)
+  const handleSyncToProject = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/save-default-aktivitas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ekskulList,
+          orgList,
+          journeyList
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showAlert('Berhasil! Seluruh data aktivitas sudah disimpan ke file proyek. Sekarang tinggal push ke GitHub agar muncul di Vercel!');
+      } else {
+        showAlert(data.error || 'Gagal menyimpan ke file proyek', 'info');
+      }
+    } catch (err: any) {
+      showAlert('Gagal menghubungi server lokal: ' + err.message, 'info');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Export JSON to clipboard
+  const handleExportData = () => {
+    const payload = JSON.stringify({
+      ekskul: ekskulList,
+      org: orgList,
+      journey: journeyList
+    }, null, 2);
+    navigator.clipboard.writeText(payload);
+    showAlert('Data berhasil disalin ke Clipboard! Buka web Vercel > Admin > Impor Data.');
+  };
+
+  // Import JSON from clipboard/input
+  const handleImportData = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      if (parsed.ekskul && Array.isArray(parsed.ekskul)) {
+        setEkskulList(parsed.ekskul);
+        localStorage.setItem('class_aktivitas_ekskul', JSON.stringify(parsed.ekskul));
+      }
+      if (parsed.org && Array.isArray(parsed.org)) {
+        setOrgList(parsed.org);
+        localStorage.setItem('class_aktivitas_org', JSON.stringify(parsed.org));
+      }
+      if (parsed.journey && Array.isArray(parsed.journey)) {
+        setJourneyList(parsed.journey);
+        localStorage.setItem('class_aktivitas_journey', JSON.stringify(parsed.journey));
+      }
+      window.dispatchEvent(new Event('class_aktivitas_updated'));
+      showAlert('Berhasil! Data aktivitas telah diimpor.');
+      setShowJsonModal(false);
+      setJsonInput('');
+    } catch {
+      alert('Format JSON tidak valid! Pastikan Anda menempelkan kode JSON yang benar.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Alert Notification */}
@@ -534,14 +603,45 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={handleSyncToProject}
+            disabled={isSyncing}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            title="Simpan data saat ini ke file proyek agar otomatis muncul permanen di Vercel setelah git push"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>{isSyncing ? 'Menyimpan...' : 'Simpan Data ke Vercel'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExportData}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs transition-all cursor-pointer"
+            title="Salin data ke Clipboard"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            <span>Salin Data</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowJsonModal(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs transition-all cursor-pointer"
+            title="Impor data dari Clipboard/JSON"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Impor Data</span>
+          </button>
+
           <button
             onClick={handleResetToDefault}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all"
             title="Reset ke data bawaan"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>Reset Bawaan</span>
+            <span>Reset</span>
           </button>
         </div>
       </div>
@@ -1859,6 +1959,59 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
                 className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20 cursor-pointer transition-all active:scale-95"
               >
                 Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* MODAL 5: IMPOR DATA DARI JSON / CLIPBOARD */}
+      {showJsonModal && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setShowJsonModal(false)}
+        >
+          <div 
+            className="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Download className="w-5 h-5 text-purple-600" />
+                <h4 className="text-base font-black text-slate-900">Impor Data Aktivitas</h4>
+              </div>
+              <button onClick={() => setShowJsonModal(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+              Tempelkan (*Paste*) kode JSON data aktivitas yang sebelumnya Anda salin dengan tombol <strong>"Salin Data"</strong> dari localhost.
+            </p>
+
+            <textarea
+              rows={8}
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              placeholder='Tempelkan kode JSON di sini...'
+              className="w-full p-3 rounded-2xl border border-slate-200 focus:border-purple-600 focus:outline-hidden text-xs font-mono bg-slate-50"
+            />
+
+            <div className="mt-4 flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setShowJsonModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleImportData}
+                className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 cursor-pointer transition-all active:scale-95"
+              >
+                Impor Data Sekarang
               </button>
             </div>
           </div>

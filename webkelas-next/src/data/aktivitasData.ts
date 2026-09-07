@@ -1,3 +1,5 @@
+import savedDefaults from './aktivitasDefaultData.json';
+
 export interface EkstrakurikulerItem {
   id: string;
   nama: string;           // Nama Eskul
@@ -100,7 +102,7 @@ export const getAvailableEkskulCategories = (list: EkstrakurikulerItem[]): strin
 };
 
 
-export const ekstrakurikulerList: EkstrakurikulerItem[] = [
+const defaultEkskulList: EkstrakurikulerItem[] = [
   {
     id: 'ekskul-futsal',
     nama: 'Futsal Club',
@@ -169,7 +171,7 @@ export const ekstrakurikulerList: EkstrakurikulerItem[] = [
   }
 ];
 
-export const organisasiMembers: OrganisasiMember[] = [
+const defaultOrgList: OrganisasiMember[] = [
   {
     id: 'org-mpk-khaira',
     nama: 'Khaira Putri Madani',
@@ -214,7 +216,7 @@ export const organisasiMembers: OrganisasiMember[] = [
   }
 ];
 
-export const journeyMilestones: JourneyMilestone[] = [
+const defaultJourneyList: JourneyMilestone[] = [
   {
     step: '01',
     stageName: 'Persiapan',
@@ -281,3 +283,19 @@ export const journeyMilestones: JourneyMilestone[] = [
     highlights: ['Sertifikat Terverifikasi Industri', 'Portofolio Terakreditasi', 'Kesiapan Level Up Profesional']
   }
 ];
+
+export const ekstrakurikulerList: EkstrakurikulerItem[] =
+  (savedDefaults.ekstrakurikulerList && (savedDefaults.ekstrakurikulerList as any[]).length > 0)
+    ? (savedDefaults.ekstrakurikulerList as EkstrakurikulerItem[])
+    : defaultEkskulList;
+
+export const organisasiMembers: OrganisasiMember[] =
+  (savedDefaults.organisasiMembers && (savedDefaults.organisasiMembers as any[]).length > 0)
+    ? (savedDefaults.organisasiMembers as OrganisasiMember[])
+    : defaultOrgList;
+
+export const journeyMilestones: JourneyMilestone[] =
+  (savedDefaults.journeyMilestones && (savedDefaults.journeyMilestones as any[]).length > 0)
+    ? (savedDefaults.journeyMilestones as JourneyMilestone[])
+    : defaultJourneyList;
+
