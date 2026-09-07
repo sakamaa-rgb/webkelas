@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@500;600&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -905,11 +905,198 @@ body {
   .animate-ambient-orb-2,
   .btn-shine-effect::after,
   .animate-mobile-safe-in,
-  .animate-mobile-breath {
+  .animate-mobile-breath,
+  .animate-aktivitas-float,
+  .animate-aktivitas-glow,
+  .animate-timeline-node,
+  .animate-card-fade-up,
+  .animate-lightbox-content,
+  .animate-lightbox-backdrop,
+  .animate-delete-exit {
     animation: none !important;
     transform: none !important;
     transition: none !important;
   }
 }
+
+/* =========================================================================
+   ADMIN DELETE ANIMATION (Smooth GPU Exit with Collapse)
+   ========================================================================= */
+@keyframes itemDeleteExit {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    max-height: 600px;
+    margin-bottom: 1.5rem;
+  }
+  35% {
+    opacity: 0.35;
+    transform: translate3d(-14px, 0, 0) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-28px, -12px, 0) scale(0.85);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-width: 0;
+    overflow: hidden;
+  }
+}
+
+.animate-delete-exit {
+  animation: itemDeleteExit 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+  will-change: transform, opacity, max-height;
+}
+
+/* =========================================================================
+   DEDICATED AKTIVITAS ANIMATIONS (Window & Mobile 60FPS Safe)
+   ========================================================================= */
+
+/* 1. Subtle Floating Ornament (Hardware Accelerated) */
+@keyframes aktivitasFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(2.5deg);
+  }
+}
+
+.animate-aktivitas-float {
+  animation: aktivitasFloat 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 2. Shimmering Glow Accent for Timeline & Hero */
+@keyframes aktivitasGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale3d(1, 1, 1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale3d(1.05, 1.05, 1);
+  }
+}
+
+.animate-aktivitas-glow {
+  animation: aktivitasGlow 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* 3. Timeline Node Pulse Ring (Safe on CPU) */
+@keyframes timelinePulse {
+  0% {
+    transform: scale3d(1, 1, 1);
+    box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.5);
+  }
+  70% {
+    transform: scale3d(1.05, 1.05, 1);
+    box-shadow: 0 0 0 10px rgba(147, 51, 234, 0);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+    box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+  }
+}
+
+.animate-timeline-node {
+  animation: timelinePulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+/* 4. Staggered Card Entrance Animation */
+@keyframes cardFadeUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-card-fade-up {
+  animation: cardFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Stagger delays without JS overhead */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* 5. Interactive Card Hover with Smooth Lift */
+.aktivitas-card-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktivitas-card-hover:hover {
+    transform: translate3d(0, -6px, 0);
+    box-shadow: 0 18px 30px -10px rgba(15, 23, 42, 0.12), 0 8px 16px -8px rgba(15, 23, 42, 0.08);
+  }
+}
+
+/* On mobile touch devices: active tap feedback instead of hover */
+@media (hover: none) {
+  .aktivitas-card-hover:active {
+    transform: scale3d(0.985, 0.985, 1);
+    transition-duration: 0.15s;
+  }
+}
+
+/* 6. Lightbox zoom & fade in */
+@keyframes lightboxFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes lightboxZoomIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale3d(0.94, 0.94, 1);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+
+.animate-lightbox-backdrop {
+  animation: lightboxFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-lightbox-content {
+  animation: lightboxZoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Performance overrides for mobile (< 768px) */
+@media (max-width: 768px) {
+  .animate-aktivitas-float {
+    animation-duration: 6.5s;
+    transform: translate3d(0, -4px, 0);
+  }
+  .animate-timeline-node {
+    animation-duration: 3s;
+  }
+}
+
 
 

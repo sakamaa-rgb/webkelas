@@ -50,6 +50,7 @@ export default function Footer() {
             </h4>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <Link href="/struktur" className="hover:text-blue-400 transition-colors">Struktur Kelas</Link>
+              <Link href="/aktivitas" className="hover:text-blue-400 transition-colors">Aktivitas</Link>
               <Link href="/siswa" className="hover:text-blue-400 transition-colors">Daftar Siswa</Link>
               <Link href="/jadwal" className="hover:text-blue-400 transition-colors">Jadwal & Piket</Link>
               <Link href="/projects" className="hover:text-blue-400 transition-colors">Proyek Siswa</Link>

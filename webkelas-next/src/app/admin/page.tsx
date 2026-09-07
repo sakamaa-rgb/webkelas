@@ -72,9 +72,11 @@ import {
   Download,
   RefreshCw,
   MessageCircle,
-  Music2
+  Music2,
+  Compass
 } from 'lucide-react';
 import KelolaMusicTab from '@/components/admin/KelolaMusicTab';
+import KelolaAktivitasTab from '@/components/admin/KelolaAktivitasTab';
 import AdminModalPortal from '@/components/admin/AdminModalPortal';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -2099,6 +2101,18 @@ export default function AdminDashboardPage() {
               </button>
 
               <button
+                onClick={() => { setActiveTab('aktivitas'); setSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
+                  activeTab === 'aktivitas'
+                    ? 'bg-blue-600 text-white font-bold'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Compass className="w-4 h-4 flex-shrink-0" />
+                <span>Aktivitas</span>
+              </button>
+
+              <button
                 onClick={() => { setActiveTab('siswa'); setSidebarOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                   activeTab === 'siswa'
@@ -2275,6 +2289,8 @@ export default function AdminDashboardPage() {
                 ? 'Dashboard'
                 : activeTab === 'music'
                 ? 'Kelola Musik'
+                : activeTab === 'aktivitas'
+                ? 'Kelola Aktivitas'
                 : `Kelola ${activeTab.replace('_', ' ')}`}
             </h1>
           </div>
@@ -2455,6 +2471,14 @@ export default function AdminDashboardPage() {
                   >
                     <FolderTree className="w-4 h-4 text-blue-600 flex-shrink-0" />
                     <span>Kelola Struktur</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('aktivitas')}
+                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
+                  >
+                    <Compass className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                    <span>Kelola Aktivitas</span>
                   </button>
 
                   <button
@@ -6706,6 +6730,11 @@ export default function AdminDashboardPage() {
           {/* TAB: KELOLA MUSIK */}
           {activeTab === 'music' && (
             <KelolaMusicTab onAddLog={addActivityLog} />
+          )}
+
+          {/* TAB: KELOLA AKTIVITAS */}
+          {activeTab === 'aktivitas' && (
+            <KelolaAktivitasTab onAddLog={addActivityLog} />
           )}
           </div>
         </main>

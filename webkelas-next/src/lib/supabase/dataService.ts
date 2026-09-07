@@ -579,18 +579,35 @@ export async function upsertContact(contact: Partial<ContactInfo> & { id?: numbe
 // STORAGE HELPERS (SUPABASE STORAGE)
 // ==============================================================================
 
+import { compressImage } from '@/lib/imageCompressor';
+
 export async function uploadFileToStorage(file: File, folder: string): Promise<string | null> {
   if (!isSupabaseConfigured || !supabase) {
     console.warn('Supabase is not configured for file upload');
     return null;
   }
   try {
-    const ext = file.name.split('.').pop() || 'jpg';
-    const cleanName = file.name.substring(0, file.name.lastIndexOf('.')).replace(/[^a-zA-Z0-9_-]/g, '_');
+    // Kompres foto otomatis jika berupa file gambar agar website tidak lambat/lag
+    let fileToUpload = file;
+    if (file.type.startsWith('image/')) {
+      try {
+        const { file: compressedFile } = await compressImage(file, {
+          maxWidth: 1400,
+          maxHeight: 1400,
+          quality: 0.82
+        });
+        fileToUpload = compressedFile;
+      } catch (compErr) {
+        console.warn('Image compression fallback to original:', compErr);
+      }
+    }
+
+    const ext = fileToUpload.name.split('.').pop() || 'jpg';
+    const cleanName = fileToUpload.name.substring(0, fileToUpload.name.lastIndexOf('.')).replace(/[^a-zA-Z0-9_-]/g, '_');
     const fileName = `${Date.now()}_${cleanName}.${ext}`;
     const filePath = `${folder}/${fileName}`;
 
-    const { data: uploadData, error } = await supabase.storage.from('webkelas_media').upload(filePath, file, {
+    const { data: uploadData, error } = await supabase.storage.from('webkelas_media').upload(filePath, fileToUpload, {
       cacheControl: '3600',
       upsert: true
     });

@@ -21,10 +21,11 @@ import { useClassProfile } from '@/context/ClassProfileContext';
 
 const navLinks = [
   { name: 'Beranda', href: '/' },
-  { name: 'Struktur', href: '/struktur' },
+  { name: 'Struktur Kelas', href: '/struktur' },
+  { name: 'Aktivitas', href: '/aktivitas' },
   { name: 'Siswa', href: '/siswa' },
   { name: 'Jadwal & Piket', href: '/jadwal' },
-  { name: 'Projects', href: '/projects' },
+  { name: 'Project', href: '/projects' },
   { name: 'Galeri', href: '/galeri' },
   { name: 'Contact', href: '/contact' },
 ];
