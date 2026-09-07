@@ -563,13 +563,15 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
     showAlert('Data berhasil disalin ke Clipboard! Buka web Vercel > Admin > Impor Data.');
   };
 
-  // Import JSON from clipboard/input
-  const handleImportData = () => {
+  const applyImportedJson = (rawText: string) => {
     try {
-      const parsed = JSON.parse(jsonInput);
+      const trimmed = rawText.trim();
+      const parsed = JSON.parse(trimmed);
+      let count = 0;
       if (parsed.ekskul && Array.isArray(parsed.ekskul)) {
         setEkskulList(parsed.ekskul);
         localStorage.setItem('class_aktivitas_ekskul', JSON.stringify(parsed.ekskul));
+        count += parsed.ekskul.length;
       }
       if (parsed.org && Array.isArray(parsed.org)) {
         setOrgList(parsed.org);
@@ -580,12 +582,38 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
         localStorage.setItem('class_aktivitas_journey', JSON.stringify(parsed.journey));
       }
       window.dispatchEvent(new Event('class_aktivitas_updated'));
-      showAlert('Berhasil! Data aktivitas telah diimpor.');
+      showAlert(`Berhasil! ${count} data ekskul & aktivitas telah diimpor.`);
       setShowJsonModal(false);
       setJsonInput('');
     } catch {
-      alert('Format JSON tidak valid! Pastikan Anda menempelkan kode JSON yang benar.');
+      const trimmed = rawText.trim();
+      if (!trimmed.startsWith('{')) {
+        alert('Format JSON tidak valid! Teks yang Anda tempel terpotong di bagian awal (biasanya karena batas panjang pesan WhatsApp). Silakan kirim sebagai file dokumen .json atau gunakan opsi "Pilih File Backup .json".');
+      } else {
+        alert('Format JSON tidak valid! Pastikan Anda menempelkan kode JSON yang lengkap dari kurung buka { sampai kurung tutup }.');
+      }
     }
+  };
+
+  // Import JSON from file upload
+  const handleJsonFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        applyImportedJson(content);
+      } catch (err: any) {
+        alert('Gagal membaca file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // Import JSON from clipboard/input
+  const handleImportData = () => {
+    applyImportedJson(jsonInput);
   };
 
   return (
@@ -2029,19 +2057,46 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
               </button>
             </div>
 
-            <p className="text-xs text-slate-500 mb-3 leading-relaxed">
-              Tempelkan (*Paste*) kode JSON data aktivitas yang sebelumnya Anda salin dengan tombol <strong>"Salin Data"</strong> dari localhost.
-            </p>
+            <div className="space-y-3.5 overflow-y-auto pr-1">
+              {/* Opsi 1: Upload File Langsung (Paling aman untuk HP) */}
+              <label className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-purple-300 bg-purple-50/60 hover:bg-purple-100/70 active:scale-[0.99] cursor-pointer transition-all group">
+                <input 
+                  type="file" 
+                  accept=".json,application/json" 
+                  className="hidden" 
+                  onChange={handleJsonFileUpload} 
+                />
+                <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center mb-2 shadow-md shadow-purple-600/20 group-hover:scale-105 transition-transform">
+                  <Upload className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-black text-purple-900">Pilih File Backup (.json)</span>
+                <span className="text-[11px] text-purple-600 text-center mt-0.5">
+                  Sangat direkomendasikan di HP agar data foto/teks tidak terpotong!
+                </span>
+              </label>
 
-            <textarea
-              rows={8}
-              value={jsonInput}
-              onChange={(e) => setJsonInput(e.target.value)}
-              placeholder='Tempelkan kode JSON di sini...'
-              className="w-full p-3 rounded-2xl border border-slate-200 focus:border-purple-600 focus:outline-hidden text-xs font-mono bg-slate-50"
-            />
+              <div className="flex items-center gap-2 my-2">
+                <div className="h-px bg-slate-200 flex-1" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">atau tempel kode</span>
+                <div className="h-px bg-slate-200 flex-1" />
+              </div>
 
-            <div className="mt-4 flex gap-2.5">
+              <div>
+                <p className="text-xs text-slate-500 mb-2 leading-relaxed">
+                  Tempelkan (*Paste*) kode JSON data aktivitas yang sebelumnya Anda salin dengan tombol <strong>"Salin Data"</strong> dari laptop:
+                </p>
+
+                <textarea
+                  rows={6}
+                  value={jsonInput}
+                  onChange={(e) => setJsonInput(e.target.value)}
+                  placeholder='Contoh: { "ekskul": [...], "org": [...] }'
+                  className="w-full p-3 rounded-2xl border border-slate-200 focus:border-purple-600 focus:outline-hidden text-xs font-mono bg-slate-50 leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 flex gap-2.5">
               <button
                 type="button"
                 onClick={() => setShowJsonModal(false)}
