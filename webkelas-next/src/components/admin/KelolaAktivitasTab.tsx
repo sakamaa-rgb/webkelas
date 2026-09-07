@@ -552,6 +552,29 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
     }
   };
 
+  // Unduh file backup JSON ke komputer
+  const handleDownloadBackup = () => {
+    try {
+      const payload = JSON.stringify({
+        ekskul: ekskulList,
+        org: orgList,
+        journey: journeyList
+      }, null, 2);
+      const blob = new Blob([payload], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aktivitas_data_backup.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showAlert('File aktivitas_data_backup.json berhasil diunduh!');
+    } catch (err: any) {
+      alert('Gagal mengunduh file: ' + err.message);
+    }
+  };
+
   // Export JSON to clipboard
   const handleExportData = () => {
     const payload = JSON.stringify({
@@ -660,6 +683,16 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
 
           <button
             type="button"
+            onClick={handleDownloadBackup}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm shadow-amber-500/20 active:scale-95 transition-all cursor-pointer"
+            title="Unduh file aktivitas_data_backup.json untuk dikirim ke HP"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Ekspor File JSON</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleExportData}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs transition-all cursor-pointer"
             title="Salin data ke Clipboard"
@@ -671,10 +704,10 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
           <button
             type="button"
             onClick={() => setShowJsonModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs transition-all cursor-pointer"
-            title="Impor data dari Clipboard/JSON"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-sm shadow-purple-600/20 active:scale-95 transition-all cursor-pointer"
+            title="Impor data dari File Backup .json atau teks"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Upload className="w-3.5 h-3.5" />
             <span>Impor Data</span>
           </button>
 
