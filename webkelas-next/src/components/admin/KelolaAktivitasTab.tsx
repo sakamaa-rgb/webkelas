@@ -207,17 +207,22 @@ export default function KelolaAktivitasTab({ onAddLog }: KelolaAktivitasTabProps
             return !['ekskul-itclub', 'ekskul-pmr', 'ekskul-musik'].includes(id) &&
                    !name.includes('it club') && !name.includes('palang merah') && !name.includes('seni musik');
           }) : [];
-          if (sanitized.length > 0) {
-            setEkskulList(sanitized);
-          } else {
+
+          const sanitizedIds = new Set(sanitized.map((i: any) => i.id));
+          const missingInSanitized = initialEkskul.some((i: any) => !sanitizedIds.has(i.id));
+
+          if (sanitized.length === 0 || initialEkskul.length > sanitized.length || missingInSanitized) {
             setEkskulList(initialEkskul);
             localStorage.setItem('class_aktivitas_ekskul', JSON.stringify(initialEkskul));
+          } else {
+            setEkskulList(sanitized);
           }
         } catch {
           setEkskulList(initialEkskul);
         }
       } else {
         setEkskulList(initialEkskul);
+        localStorage.setItem('class_aktivitas_ekskul', JSON.stringify(initialEkskul));
       }
 
       const savedOrg = localStorage.getItem('class_aktivitas_org');
