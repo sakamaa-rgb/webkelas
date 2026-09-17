@@ -184,20 +184,34 @@ export default function TodayScheduleWidget() {
             </div>
           </div>
 
-          <div className="space-y-2 mb-4">
-            <p className="text-xs uppercase font-bold tracking-wider text-slate-400">
-              Petugas Bertugas:
-            </p>
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase font-bold tracking-wider text-slate-400">
+                Petugas Bertugas:
+              </p>
+              <div className="flex items-center gap-1 text-[10px] font-bold">
+                <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800">🍱 MBG</span>
+                <span className="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800">🧹 Nyapu</span>
+              </div>
+            </div>
             <div className="flex flex-wrap gap-1.5">
-              {todayPiket.map((p) => (
-                <span
-                  key={p.id}
-                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5"
-                >
-                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                  {p.nama_siswa}
-                </span>
-              ))}
+              {todayPiket.map((p) => {
+                const itemTipe = p.tipe || (p.urutan <= 3 ? 'mbg' : 'kebersihan');
+                const isMbg = itemTipe === 'mbg';
+                return (
+                  <span
+                    key={p.id}
+                    className={`px-2.5 py-1 rounded-xl text-xs font-semibold border flex items-center gap-1.5 ${
+                      isMbg
+                        ? 'bg-amber-50/80 border-amber-200/80 text-amber-900'
+                        : 'bg-emerald-50/80 border-emerald-200/80 text-emerald-900'
+                    }`}
+                  >
+                    <span>{isMbg ? '🍱' : '🧹'}</span>
+                    <span className="font-medium">{p.nama_siswa}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { MessageCircle, Mail, Heart, Code2, Sparkles } from 'lucide-react';
-import { useClassProfile } from '@/context/ClassProfileContext';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,12 +12,15 @@ const InstagramIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+import { useClassProfile } from '@/context/ClassProfileContext';
+import { formatInstagramUrl, formatWhatsAppUrl, formatEmailUrl } from '@/lib/contactHelper';
+
 export default function Footer() {
   const { profile, contact } = useClassProfile();
 
-  const igHandle = contact.instagram ? contact.instagram.replace('@', '').trim() : '';
-  const waNumber = contact.whatsapp ? contact.whatsapp.replace(/[^0-9]/g, '') : '';
-  const emailAddr = contact.email ? contact.email.trim() : '';
+  const igUrl = formatInstagramUrl(contact.instagram);
+  const waUrl = formatWhatsAppUrl(contact.whatsapp, `Halo Admin ${profile.className || 'Kelas XI RPL 2'}, saya ingin menghubungi melalui website.`);
+  const emailUrl = formatEmailUrl(contact.email, `Pesan dari Website Kelas ${profile.className || 'XI RPL 2'}`);
 
   return (
     <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 mt-20">
@@ -68,37 +70,31 @@ export default function Footer() {
               Punya ide kolaborasi atau ingin menyapa kami?
             </p>
             <div className="flex items-center gap-3 pt-1">
-              {igHandle && (
-                <a
-                  href={`https://instagram.com/${igHandle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-pink-500 hover:text-pink-400 transition-all flex items-center justify-center text-slate-300"
-                  aria-label="Instagram"
-                >
-                  <InstagramIcon className="w-5 h-5" />
-                </a>
-              )}
-              {waNumber && (
-                <a
-                  href={`https://wa.me/${waNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center text-slate-300"
-                  aria-label="WhatsApp"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </a>
-              )}
-              {emailAddr && (
-                <a
-                  href={`mailto:${emailAddr}`}
-                  className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-blue-500 hover:text-blue-400 transition-all flex items-center justify-center text-slate-300"
-                  aria-label="Email"
-                >
-                  <Mail className="w-5 h-5" />
-                </a>
-              )}
+              <a
+                href={igUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-pink-500 hover:text-pink-400 transition-all flex items-center justify-center text-slate-300"
+                aria-label="Instagram"
+              >
+                <InstagramIcon className="w-5 h-5" />
+              </a>
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center text-slate-300"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="w-5 h-5" />
+              </a>
+              <a
+                href={emailUrl}
+                className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-blue-500 hover:text-blue-400 transition-all flex items-center justify-center text-slate-300"
+                aria-label="Email"
+              >
+                <Mail className="w-5 h-5" />
+              </a>
             </div>
           </div>
         </div>

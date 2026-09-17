@@ -77,6 +77,8 @@ import {
 } from 'lucide-react';
 import KelolaMusicTab from '@/components/admin/KelolaMusicTab';
 import KelolaAktivitasTab from '@/components/admin/KelolaAktivitasTab';
+import KelolaStrukturTab from '@/components/admin/KelolaStrukturTab';
+import AdminLiveClock from '@/components/admin/AdminLiveClock';
 import AdminModalPortal from '@/components/admin/AdminModalPortal';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -119,7 +121,9 @@ import {
   deleteGalleryItem,
   upsertProject,
   deleteProject,
-  upsertContact, uploadFileToStorage
+  getContactInfo,
+  upsertContact, 
+  uploadFileToStorage
 } from '@/lib/supabase/dataService';
 
 const getWeekKey = () => {
@@ -293,6 +297,8 @@ export default function AdminDashboardPage() {
   const [piketFormDay, setPiketFormDay] = useState<'Senin' | 'Selasa' | 'Rabu' | 'Kamis' | 'Jumat'>('Senin');
   const [piketFormName, setPiketFormName] = useState('');
   const [piketFormPj, setPiketFormPj] = useState('');
+  const [piketFormTipe, setPiketFormTipe] = useState<'mbg' | 'kebersihan'>('kebersihan');
+  const [piketAdminFilter, setPiketAdminFilter] = useState<'all' | 'mbg' | 'kebersihan'>('all');
 
   // Jadwal Pelajaran State
   const [jadwalList, setJadwalList] = useState<JadwalPelajaran[]>(initialJadwalPelajaran);
@@ -659,6 +665,15 @@ export default function AdminDashboardPage() {
       }
     });
 
+    getContactInfo().then((info) => {
+      if (info) {
+        if (info.instagram) setContactInstagram(info.instagram);
+        if (info.whatsapp) setContactWhatsapp(info.whatsapp);
+        if (info.email) setContactEmail(info.email);
+        if (info.logo) setProfileLogo(info.logo);
+      }
+    });
+
     // Read tab parameter from URL
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
@@ -966,6 +981,7 @@ export default function AdminDashboardPage() {
     setEditingPiket(null);
     setPiketFormDay(day || 'Senin');
     setPiketFormName('');
+    setPiketFormTipe('kebersihan');
     const existingPj = piketList.find((p) => p.hari === (day || 'Senin'))?.pj || '';
     setPiketFormPj(existingPj);
     setModalPiketOpen(true);
@@ -976,6 +992,7 @@ export default function AdminDashboardPage() {
     setPiketFormDay(piket.hari as any);
     setPiketFormName(piket.nama_siswa);
     setPiketFormPj(piket.pj);
+    setPiketFormTipe((piket.tipe as any) || (piket.urutan <= 3 ? 'mbg' : 'kebersihan'));
     setModalPiketOpen(true);
   };
 
@@ -988,7 +1005,8 @@ export default function AdminDashboardPage() {
         ...editingPiket,
         hari: piketFormDay,
         nama_siswa: piketFormName.trim(),
-        pj: piketFormPj.trim() || editingPiket.pj
+        pj: piketFormPj.trim() || editingPiket.pj,
+        tipe: piketFormTipe
       };
       upsertJadwalPiket(updatedPiket);
 
@@ -1011,7 +1029,8 @@ export default function AdminDashboardPage() {
         hari: piketFormDay,
         nama_siswa: piketFormName.trim(),
         urutan: piketList.filter((p) => p.hari === piketFormDay).length + 1,
-        pj: piketFormPj.trim() || 'PJ Kebersihan'
+        pj: piketFormPj.trim() || 'PJ Kebersihan',
+        tipe: piketFormTipe
       };
       upsertJadwalPiket(newPiket);
 
@@ -1756,7 +1775,7 @@ export default function AdminDashboardPage() {
     });
   };
 
-  const handleSaveContact = (e: React.FormEvent) => {
+  const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingContact(true);
     const contactData = {
@@ -1766,7 +1785,11 @@ export default function AdminDashboardPage() {
       tiktok: contactTiktok.trim(),
       address: contactAddress.trim()
     };
-    upsertContact(contactData);
+    await upsertContact({
+      instagram: contactData.instagram,
+      whatsapp: contactData.whatsapp,
+      email: contactData.email
+    });
 
     try {
       localStorage.setItem('class_web_contact', JSON.stringify(contactData));
@@ -1830,7 +1853,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingProfile(true);
     const profileData = {
@@ -1841,14 +1864,11 @@ export default function AdminDashboardPage() {
       description: profileDescription.trim(),
       logo: profileLogo
     };
-    upsertContact({
-      class_name: profileData.className,
-      school_name: profileData.schoolName,
-      tagline: profileData.tagline,
-      year: profileData.year,
-      description: profileData.description,
-      logo: profileData.logo
-    });
+    if (profileData.logo) {
+      await upsertContact({
+        logo: profileData.logo
+      });
+    }
 
     try {
       localStorage.setItem('class_web_profile', JSON.stringify(profileData));
@@ -1900,7 +1920,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveAllContactAndProfile = () => {
+  const handleSaveAllContactAndProfile = async () => {
     setSavingContact(true);
     setSavingProfile(true);
     const contactData = {
@@ -1918,6 +1938,14 @@ export default function AdminDashboardPage() {
       description: profileDescription.trim(),
       logo: profileLogo
     };
+
+    await upsertContact({
+      instagram: contactData.instagram,
+      whatsapp: contactData.whatsapp,
+      email: contactData.email,
+      logo: profileData.logo
+    });
+
     try {
       localStorage.setItem('class_web_contact', JSON.stringify(contactData));
       localStorage.setItem('class_web_profile', JSON.stringify(profileData));
@@ -2319,23 +2347,62 @@ export default function AdminDashboardPage() {
           <div key={activeTab} className="animate-admin-tab space-y-6 sm:space-y-8 w-full min-w-0 max-w-full">
             {/* DASHBOARD TAB */}
             {activeTab === 'dashboard' && (
-              <>
-                {/* 3. Stats Grid (Matching Screenshot: Siswa, Piket, Jadwal, Video, Project, Gallery) */}
+              <div className="relative space-y-6 sm:space-y-8">
+                {/* Ambient Background Glowing Orbs */}
+                <div className="absolute -top-16 -left-16 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-admin-orb" />
+                <div className="absolute top-1/4 -right-16 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-admin-orb-delayed" />
+                <div className="absolute -bottom-16 left-1/3 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-admin-orb" />
+
+                {/* 1. Live Command Center Hero Status Bar */}
+                <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-slate-700/60 admin-card-shimmer">
+                  <div className="absolute -right-12 -top-12 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[11px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3 text-blue-400" />
+                          Command Center v2.4
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-400 font-medium">
+                          • XI RPL 2 Panel
+                        </span>
+                      </div>
+                      <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                        Admin Dashboard & Pengawasan
+                      </h1>
+                      <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+                        Kelola data piket MBG & kebersihan, struktur organisasi kelas, jadwal mapel, dan aktivitas harian secara real-time.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-2 md:pt-0">
+                      <AdminLiveClock />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Stats Grid with Shimmer and Color Themes */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-5">
                   {/* 1. Total Siswa */}
                   <div
                     onClick={() => setActiveTab('siswa')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-blue-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-blue-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Users className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <Users className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                        Roster
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-blue-600 transition-colors">
                         {totalStudents}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Total Siswa
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Total Siswa</span>
+                        <span className="text-blue-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
@@ -2343,17 +2410,23 @@ export default function AdminDashboardPage() {
                   {/* 2. Data Piket */}
                   <div
                     onClick={() => setActiveTab('piket')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-emerald-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-emerald-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Paintbrush className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <Paintbrush className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                        MBG/Sapu
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-emerald-600 transition-colors">
                         {totalPiket}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Data Piket
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Data Piket</span>
+                        <span className="text-emerald-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
@@ -2361,17 +2434,23 @@ export default function AdminDashboardPage() {
                   {/* 3. Jadwal Mapel */}
                   <div
                     onClick={() => setActiveTab('jadwal')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-amber-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-amber-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Monitor className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <Monitor className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                        Mingguan
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-amber-600 transition-colors">
                         {totalJadwal}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Jadwal Mapel
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Jadwal Mapel</span>
+                        <span className="text-amber-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
@@ -2379,17 +2458,23 @@ export default function AdminDashboardPage() {
                   {/* 4. Video Kelas */}
                   <div
                     onClick={() => setActiveTab('video')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-purple-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-purple-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Film className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <Film className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                        Media
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-purple-600 transition-colors">
                         {totalVideos}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Video Kelas
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Video Kelas</span>
+                        <span className="text-purple-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
@@ -2397,17 +2482,23 @@ export default function AdminDashboardPage() {
                   {/* 5. Total Project */}
                   <div
                     onClick={() => setActiveTab('project')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-orange-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-orange-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Code className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <Code className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+                        Karya
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-orange-600 transition-colors">
                         {totalProjects}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Total Project
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Total Project</span>
+                        <span className="text-orange-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
@@ -2415,307 +2506,197 @@ export default function AdminDashboardPage() {
                   {/* 6. Foto Gallery */}
                   <div
                     onClick={() => setActiveTab('gallery')}
-                    className="group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex items-center gap-3.5 sm:gap-4 transition-all duration-300 md:hover:-translate-y-1.5 md:hover:shadow-lg md:hover:border-emerald-300 active:scale-[0.98]"
+                    className="relative overflow-hidden group cursor-pointer bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-rose-400 active:scale-[0.98] admin-card-shimmer"
                   >
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-rose-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                        <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                        Album
+                      </span>
                     </div>
                     <div>
-                      <div className="text-xl sm:text-3xl font-black text-slate-900 leading-none">
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none tracking-tight group-hover:text-rose-600 transition-colors">
                         {totalGallery}
                       </div>
-                      <div className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-1">
-                        Foto Gallery
+                      <div className="text-[11px] sm:text-xs text-slate-500 font-bold mt-1.5 flex items-center justify-between">
+                        <span>Foto Gallery</span>
+                        <span className="text-rose-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-              {/* 4. Akses Cepat Card */}
-              <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs">
-                {/* Header */}
-                <div className="flex items-center gap-2 text-base font-black text-slate-900 mb-6">
-                  <Zap className="w-5 h-5 text-slate-800 fill-slate-800" />
-                  <h2>Akses Cepat</h2>
-                </div>
-
-                {/* 9 Buttons Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-                  <button
-                    onClick={() => setActiveTab('piket')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Paintbrush className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Piket</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('jadwal')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Monitor className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Jadwal</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('video')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Film className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Video</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('struktur')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <FolderTree className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Struktur</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('aktivitas')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Compass className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Aktivitas</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('siswa')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Users className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Siswa</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('gallery')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <ImageIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Gallery</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('project')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Code className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Project</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('contact')}
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <ContactIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Kelola Contact</span>
-                  </button>
-
-                  <Link
-                    href="/"
-                    target="_blank"
-                    className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs sm:text-sm transition-all text-left shadow-xs hover:-translate-y-0.5"
-                  >
-                    <Eye className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <span>Lihat Website</span>
-                  </Link>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* TAB: KELOLA STRUKTUR (Matching Screenshot 1 & 2) */}
-          {activeTab === 'struktur' && (
-            <div className="space-y-6">
-              {/* Section Header (Matching Screenshot 1) */}
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-                  <FolderTree className="w-6 h-6 text-blue-600" />
-                  <span>Edit Anggota Struktur Organisasi</span>
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Sesuaikan data nama dan foto pengurus kelas dengan tampilan yang lebih fresh.
-                </p>
-              </div>
-
-              {/* Structure Cards Grid (Matching Screenshot 1 & 2) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-12">
-                {structureList.map((m) => (
-                  <div
-                    key={m.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-slate-200/90 flex flex-col"
-                  >
-                    {/* Top Blue Cover Header with Diagonal Cut */}
-                    <div className="relative h-20 bg-gradient-to-r from-blue-600 to-blue-800 overflow-hidden">
-                      <div className="absolute -bottom-4 -left-4 -right-4 h-8 bg-white -rotate-3" />
-                    </div>
-
-                    {/* Centered Circular Avatar */}
-                    <div className="-mt-11 text-center relative z-10 px-4">
-                      <div className="relative w-[90px] h-[90px] rounded-full overflow-hidden border-4 border-white shadow-md mx-auto bg-slate-100">
-                        <Image
-                          src={m.photo}
-                          alt={m.name}
-                          fill
-                          className="object-cover"
-                        />
+                {/* 3. Akses Cepat Card */}
+                <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+                  {/* Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0">
+                        <Zap className="w-4 h-4 fill-amber-500" />
                       </div>
-
-                      {/* Role Pill Badge (Matching Screenshot) */}
-                      <div className="mt-3 mb-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-extrabold text-[11px] uppercase tracking-wider border border-blue-100">
-                        {getRoleIcon(m.role)}
-                        <span>{m.role}</span>
+                      <div>
+                        <h2 className="text-base font-black text-slate-900 tracking-tight">
+                          Modul & Akses Cepat
+                        </h2>
+                        <p className="text-xs text-slate-500">Pintasan navigasi langsung ke seluruh modul kelola kelas</p>
                       </div>
                     </div>
+                    <span className="self-start sm:self-auto text-[11px] font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/80">
+                      10 Modul Tersedia
+                    </span>
+                  </div>
 
-                    {/* Form Fields */}
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSaveMember(m.id);
-                      }}
-                      className="px-5 pb-5 space-y-3 flex-1 flex flex-col"
+                  {/* 10 Buttons Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                    <button
+                      onClick={() => setActiveTab('piket')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-emerald-50/60 border border-slate-200/80 hover:border-emerald-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     >
-                      {/* 1. Name Input */}
-                      <div className="relative">
-                        <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={m.name}
-                          onChange={(e) => handleMemberChange(m.id, 'name', e.target.value)}
-                          placeholder="Nama Lengkap"
-                          required
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all font-medium"
-                        />
+                      <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Paintbrush className="w-4 h-4" />
                       </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-emerald-700 transition-colors">
+                        Kelola Piket
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">MBG & Nyapu</span>
+                    </button>
 
-                      {/* 2. Expertise / Mata Pelajaran Input */}
-                      <div className="relative">
-                        <Star className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={m.expertise || ''}
-                          onChange={(e) => handleMemberChange(m.id, 'expertise', e.target.value)}
-                          placeholder="Keahlian / Mata Pelajaran"
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all font-medium"
-                        />
+                    <button
+                      onClick={() => setActiveTab('struktur')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-indigo-50/60 border border-slate-200/80 hover:border-indigo-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-indigo-100/80 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <FolderTree className="w-4 h-4" />
                       </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-indigo-700 transition-colors">
+                        Kelola Struktur
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Organisasi & Bagan</span>
+                    </button>
 
-                      {/* 3. Ubah Foto Button */}
-                      <label className="flex items-center justify-center gap-2 w-full py-2.5 border border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold cursor-pointer transition-colors">
-                        <ImageIcon className="w-4 h-4 text-slate-400" />
-                        <span>Ubah Foto...</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => handlePhotoChange(m.id, e)}
-                        />
-                      </label>
-
-                      {/* 4. Detail Profil Toggle Button */}
-                      <button
-                        type="button"
-                        onClick={() => toggleExpandMember(m.id)}
-                        className="w-full py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
-                      >
-                        {expandedMembers[m.id] ? (
-                          <>
-                            <ChevronUp className="w-3.5 h-3.5" />
-                            <span>Sembunyikan Detail</span>
-                          </>
-                        ) : (
-                          <>
-                            <ChevronDown className="w-3.5 h-3.5" />
-                            <span>Detail Profil</span>
-                          </>
-                        )}
-                      </button>
-
-                      {/* 5. Expanded Profile Details (Matching Screenshot 2) */}
-                      {expandedMembers[m.id] && (
-                        <div className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                          {/* Deskripsi */}
-                          <div className="relative">
-                            <AlignLeft className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-                            <textarea
-                              rows={3}
-                              value={m.description || ''}
-                              onChange={(e) => handleMemberChange(m.id, 'description', e.target.value)}
-                              placeholder="Deskripsi tentang guru/siswa..."
-                              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white resize-none"
-                            />
-                          </div>
-
-                          {/* Pesan untuk Siswa */}
-                          <div className="relative">
-                            <Quote className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-                            <textarea
-                              rows={2}
-                              value={m.message || ''}
-                              onChange={(e) => handleMemberChange(m.id, 'message', e.target.value)}
-                              placeholder="Pesan untuk siswa..."
-                              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white resize-none"
-                            />
-                          </div>
-
-                          {/* Tahun Ajaran */}
-                          <div className="relative">
-                            <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                              type="text"
-                              value={m.year || ''}
-                              onChange={(e) => handleMemberChange(m.id, 'year', e.target.value)}
-                              placeholder="Tahun Ajaran (contoh: 2026 - 2027)"
-                              className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white"
-                            />
-                          </div>
-
-                          {/* Mata Pelajaran */}
-                          <div className="relative">
-                            <BookOpen className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                              type="text"
-                              value={m.subject || ''}
-                              onChange={(e) => handleMemberChange(m.id, 'subject', e.target.value)}
-                              placeholder="Mata Pelajaran"
-                              className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white"
-                            />
-                          </div>
-
-                          {/* Motto / Fokus */}
-                          <div className="relative">
-                            <Lightbulb className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                              type="text"
-                              value={m.motto || ''}
-                              onChange={(e) => handleMemberChange(m.id, 'motto', e.target.value)}
-                              placeholder="Motto / Fokus"
-                              className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 6. Simpan Button */}
-                      <div className="pt-2 mt-auto">
-                        <button
-                          type="submit"
-                          disabled={savingId === m.id}
-                          className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-blue-500/25 transition-all disabled:opacity-50"
-                        >
-                          <UploadCloud className="w-4 h-4" />
-                          <span>{savingId === m.id ? 'Menyimpan...' : 'Simpan'}</span>
-                        </button>
+                    <button
+                      onClick={() => setActiveTab('aktivitas')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-cyan-50/60 border border-slate-200/80 hover:border-cyan-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-cyan-100/80 text-cyan-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Compass className="w-4 h-4" />
                       </div>
-                    </form>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-cyan-700 transition-colors">
+                        Kelola Aktivitas
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Ekskul & Dicoding</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('jadwal')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-amber-50/60 border border-slate-200/80 hover:border-amber-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-amber-100/80 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Monitor className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-amber-700 transition-colors">
+                        Kelola Jadwal
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Mapel Pelajaran</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('video')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-purple-50/60 border border-slate-200/80 hover:border-purple-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-purple-100/80 text-purple-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Film className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-purple-700 transition-colors">
+                        Kelola Video
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Video Dokumentasi</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('siswa')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-blue-50/60 border border-slate-200/80 hover:border-blue-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-blue-700 transition-colors">
+                        Kelola Siswa
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Biodata & Roster</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('gallery')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-rose-50/60 border border-slate-200/80 hover:border-rose-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-rose-100/80 text-rose-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <ImageIcon className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-rose-700 transition-colors">
+                        Kelola Gallery
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Album & Momen</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('project')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-orange-50/60 border border-slate-200/80 hover:border-orange-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-orange-100/80 text-orange-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Code className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-orange-700 transition-colors">
+                        Kelola Project
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Karya Siswa</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('contact')}
+                      className="group flex flex-col p-4 rounded-2xl bg-slate-50/80 hover:bg-teal-50/60 border border-slate-200/80 hover:border-teal-300 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-teal-100/80 text-teal-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <ContactIcon className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-slate-800 group-hover:text-teal-700 transition-colors">
+                        Kelola Contact
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">Kontak & Sosmed</span>
+                    </button>
+
+                    <Link
+                      href="/"
+                      target="_blank"
+                      className="group flex flex-col p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 hover:from-blue-600 hover:to-indigo-700 border border-slate-800 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg text-white"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-white/10 text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Eye className="w-4 h-4" />
+                      </div>
+                      <span className="font-black text-xs sm:text-sm text-white">
+                        Lihat Website ↗
+                      </span>
+                      <span className="text-[11px] text-slate-300 mt-0.5">Buka Tab Baru</span>
+                    </Link>
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
+            )}
+
+          {/* TAB: KELOLA STRUKTUR (Modern Interactive Modal & Tree/Grid View) */}
+          {activeTab === 'struktur' && (
+            <KelolaStrukturTab
+              structureList={structureList}
+              setStructureList={setStructureList}
+              studentsList={studentsList}
+              upsertStructureMember={upsertStructureMember}
+              uploadFileToStorage={uploadFileToStorage}
+              setSaveSuccessMsg={setSaveSuccessMsg}
+            />
           )}
+
 
           {/* TAB: Kelola Siswa (Matching Screenshots 1, 2, 3, 4, 5) */}
           {activeTab === 'siswa' && (
@@ -3417,6 +3398,46 @@ export default function AdminDashboardPage() {
                       );
                     })}
                   </div>
+
+                  {/* Task Type Filter (MBG vs Nyapu & Angkat Bangku) */}
+                  <div className="mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-slate-800/60">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-400 mr-1 flex-shrink-0">Tugas:</span>
+                    <button
+                      type="button"
+                      onClick={() => setPiketAdminFilter('all')}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer flex-shrink-0 ${
+                        piketAdminFilter === 'all'
+                          ? 'bg-white text-slate-900 shadow-sm'
+                          : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                      }`}
+                    >
+                      <span>Semua Tugas</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPiketAdminFilter('mbg')}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer flex-shrink-0 ${
+                        piketAdminFilter === 'mbg'
+                          ? 'bg-amber-500 text-white shadow-sm'
+                          : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-amber-300'
+                      }`}
+                    >
+                      <span>🍱 Piket MBG</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPiketAdminFilter('kebersihan')}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer flex-shrink-0 ${
+                        piketAdminFilter === 'kebersihan'
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-emerald-300'
+                      }`}
+                    >
+                      <span>🧹 Nyapu & Bangku</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -3432,11 +3453,16 @@ export default function AdminDashboardPage() {
                   {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']
                     .filter((hari) => selectedPiketDay === 'Semua' || selectedPiketDay === hari)
                     .map((hari) => {
-                      const items = piketList.filter((p) => p.hari === hari);
-                      const pj = items[0]?.pj || 'Belum Ditentukan';
+                      const allItems = piketList.filter((p) => p.hari === hari);
+                      const items = allItems.filter((p) => {
+                        if (piketAdminFilter === 'all') return true;
+                        const t = (p.tipe as any) || (p.urutan <= 3 ? 'mbg' : 'kebersihan');
+                        return t === piketAdminFilter;
+                      });
+                      const pj = allItems[0]?.pj || 'Belum Ditentukan';
                       const isToday = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][new Date().getDay()] === hari;
-                      const completedCount = items.filter((item) => piketCompleted[item.id]).length;
-                      const percentComplete = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0;
+                      const completedCount = allItems.filter((item) => piketCompleted[item.id]).length;
+                      const percentComplete = allItems.length > 0 ? Math.round((completedCount / allItems.length) * 100) : 0;
                       const isPiketDayOpen = selectedPiketDay !== 'Semua' || !!openPiketDays[hari];
 
                       // Color themes with high visual richness
@@ -3569,7 +3595,16 @@ export default function AdminDashboardPage() {
                                           <span className="px-1 py-0.2 rounded bg-slate-200 text-slate-600 text-[8px] sm:text-[10px] font-bold flex-shrink-0">
                                             #{idx + 1}
                                           </span>
-                                          <span className="truncate">{isDone ? 'Selesai' : 'Belum Piket'}</span>
+                                          {((item.tipe as any) || (item.urutan <= 3 ? 'mbg' : 'kebersihan')) === 'mbg' ? (
+                                            <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] sm:text-[10px] font-bold">
+                                              🍱 MBG
+                                            </span>
+                                          ) : (
+                                            <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[9px] sm:text-[10px] font-bold">
+                                              🧹 Nyapu
+                                            </span>
+                                          )}
+                                          <span className="truncate">{isDone ? 'Selesai' : 'Belum'}</span>
                                         </div>
                                       </div>
                                     </div>
@@ -3699,6 +3734,56 @@ export default function AdminDashboardPage() {
                         placeholder="Contoh: Alivia & Ainun"
                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 font-medium"
                       />
+                    </div>
+
+                    {/* Jenis / Opsi Piket (MBG vs Nyapu & Angkat Bangku) */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Jenis Tugas Piket <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <label
+                          className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                            piketFormTipe === 'mbg'
+                              ? 'bg-amber-50 border-amber-400 text-amber-900 ring-1 ring-amber-300'
+                              : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="piketTipe"
+                            value="mbg"
+                            checked={piketFormTipe === 'mbg'}
+                            onChange={() => setPiketFormTipe('mbg')}
+                            className="text-amber-600 focus:ring-amber-500"
+                          />
+                          <div className="min-w-0">
+                            <span className="block text-xs font-bold">🍱 Piket MBG</span>
+                            <span className="block text-[10px] text-slate-500 truncate">Makan Bergizi Gratis</span>
+                          </div>
+                        </label>
+
+                        <label
+                          className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                            piketFormTipe === 'kebersihan'
+                              ? 'bg-emerald-50 border-emerald-400 text-emerald-900 ring-1 ring-emerald-300'
+                              : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="piketTipe"
+                            value="kebersihan"
+                            checked={piketFormTipe === 'kebersihan'}
+                            onChange={() => setPiketFormTipe('kebersihan')}
+                            className="text-emerald-600 focus:ring-emerald-500"
+                          />
+                          <div className="min-w-0">
+                            <span className="block text-xs font-bold">🧹 Nyapu & Bangku</span>
+                            <span className="block text-[10px] text-slate-500 truncate">Kebersihan & Bangku</span>
+                          </div>
+                        </label>
+                      </div>
                     </div>
 
                     {/* Footer */}

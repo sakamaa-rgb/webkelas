@@ -52,6 +52,7 @@ export default function JadwalPage() {
   const [studentsList, setStudentsList] = useState<Student[]>(initialStudents);
   const [jadwalList, setJadwalList] = useState<JadwalPelajaran[]>(initialJadwalPelajaran);
   const [piketList, setPiketList] = useState<JadwalPiket[]>(initialJadwalPiket);
+  const [piketTipeFilter, setPiketTipeFilter] = useState<'all' | 'mbg' | 'kebersihan'>('all');
   const [piketCompleted, setPiketCompleted] = useState<Record<number, boolean>>({});
   const [currentTimeMinutes, setCurrentTimeMinutes] = useState<number | null>(null);
   const [currentTimeString, setCurrentTimeString] = useState<string>('');
@@ -351,10 +352,17 @@ export default function JadwalPage() {
       const timeB = parseTimeToMinutes(b.jam_mulai) ?? b.urutan * 100;
       return timeA - timeB;
     });
-  const filteredPiket = piketList.filter((p) => p.hari === selectedDay);
-  const pj = filteredPiket[0]?.pj || '-';
-  const completedCount = filteredPiket.filter((p) => piketCompleted[p.id]).length;
-  const percentComplete = filteredPiket.length > 0 ? Math.round((completedCount / filteredPiket.length) * 100) : 0;
+  const allDayPiket = piketList.filter((p) => p.hari === selectedDay);
+  const filteredPiket = allDayPiket.filter((p) => {
+    if (piketTipeFilter === 'all') return true;
+    const t = p.tipe || (p.urutan <= 3 ? 'mbg' : 'kebersihan');
+    return t === piketTipeFilter;
+  });
+  const mbgCount = allDayPiket.filter((p) => (p.tipe || (p.urutan <= 3 ? 'mbg' : 'kebersihan')) === 'mbg').length;
+  const kebersihanCount = allDayPiket.filter((p) => (p.tipe || (p.urutan <= 3 ? 'mbg' : 'kebersihan')) === 'kebersihan').length;
+  const pj = allDayPiket[0]?.pj || '-';
+  const completedCount = allDayPiket.filter((p) => piketCompleted[p.id]).length;
+  const percentComplete = allDayPiket.length > 0 ? Math.round((completedCount / allDayPiket.length) * 100) : 0;
   
   const daysIndo = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   const todayActual = daysIndo[new Date().getDay()];
@@ -851,7 +859,7 @@ export default function JadwalPage() {
                   <span>Siklus Minggu ke-{getWeekNumber()}</span>
                 </span>
                 <span className="px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-white/15 backdrop-blur-md text-white border border-white/20">
-                  {filteredPiket.length} Petugas Kebersihan
+                  {allDayPiket.length} Petugas ({mbgCount} MBG • {kebersihanCount} Nyapu)
                 </span>
               </div>
             </div>
@@ -861,7 +869,7 @@ export default function JadwalPage() {
               <div className="flex justify-between items-center text-xs font-bold text-white/90 mb-2">
                 <span>Progress Kebersihan Hari {selectedDay}:</span>
                 <span className="font-mono bg-white/20 px-2.5 py-0.5 rounded-full text-[11px]">
-                  {completedCount}/{filteredPiket.length} Selesai ({percentComplete}%)
+                  {completedCount}/{allDayPiket.length} Selesai ({percentComplete}%)
                 </span>
               </div>
               <div className="w-full h-2.5 bg-black/20 rounded-full overflow-hidden p-0.5">
@@ -893,84 +901,207 @@ export default function JadwalPage() {
             </div>
           </div>
 
-          {/* List of piket students with real avatars & interactive checkmark */}
-          {/* Mobile: 2-col grid with vertical portrait cards. Desktop: 3-col horizontal cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5">
-            {filteredPiket.map((piket) => {
-              const isDone = !!piketCompleted[piket.id];
-              const photoUrl = getStudentPhotoByName(piket.nama_siswa);
+          {/* Opsi 2 Kategori Piket: MBG vs Piket Nyapu & Angkatin Bangku */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  Pilih Pembagian Tugas:
+                </span>
+              </div>
 
-              return (
-                <div
-                  key={piket.id}
-                  onClick={() => togglePiket(piket.id)}
-                  className={`rounded-2xl border transition-all duration-200 shadow-xs select-none overflow-hidden ${
-                    isAdmin
-                      ? 'cursor-pointer hover:shadow-lg hover:-translate-y-0.5'
-                      : 'cursor-pointer hover:border-slate-300'
-                  } ${
-                    isDone
-                      ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
-                      : 'bg-white border-slate-200 text-slate-800'
+              {/* Segmented Filter Pills */}
+              <div className="flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-xl overflow-x-auto no-scrollbar">
+                <button
+                  type="button"
+                  onClick={() => setPiketTipeFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                    piketTipeFilter === 'all'
+                      ? 'bg-white text-slate-900 shadow-xs ring-1 ring-slate-200'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
-                  title={
-                    isAdmin
-                      ? `Klik untuk ${isDone ? 'batalkan' : 'centang'} tugas piket`
-                      : 'Hanya Admin yang dapat mencentang tugas piket'
-                  }
                 >
-                  {/* Portrait Photo - full width, 4:5 aspect ratio */}
-                  <div className="relative w-full aspect-[4/5] bg-slate-100">
-                    <Image
-                      src={photoUrl}
-                      alt={piket.nama_siswa}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="object-cover object-top"
-                    />
-                    {/* Overlay gradient + done badge */}
-                    {isDone && (
-                      <div className="absolute inset-0 bg-emerald-600/30 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg">
-                          <Check className="w-7 h-7 stroke-[3]" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <span>Semua Tugas</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700 font-black">
+                    {allDayPiket.length}
+                  </span>
+                </button>
 
-                  {/* Card Footer */}
-                  <div className="p-2.5 flex items-center justify-between gap-1">
-                    <div className="min-w-0 flex-1">
-                      <div className={`text-xs font-bold truncate leading-tight ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
-                        {piket.nama_siswa}
-                      </div>
-                      <div className="text-[10px] text-slate-400 font-medium mt-0.5">
-                        #{piket.urutan}
+                <button
+                  type="button"
+                  onClick={() => setPiketTipeFilter('mbg')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                    piketTipeFilter === 'mbg'
+                      ? 'bg-amber-500 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-amber-700'
+                  }`}
+                >
+                  <span>🍱 Piket MBG</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                    piketTipeFilter === 'mbg' ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}>
+                    {mbgCount}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPiketTipeFilter('kebersihan')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                    piketTipeFilter === 'kebersihan'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-emerald-700'
+                  }`}
+                >
+                  <span>🧹 Nyapu & Angkat Bangku</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                    piketTipeFilter === 'kebersihan' ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}>
+                    {kebersihanCount}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Description Info Banner depending on selected filter */}
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-start gap-2.5 text-xs">
+              {piketTipeFilter === 'mbg' ? (
+                <div className="flex items-start gap-2 text-amber-900 bg-amber-50/80 border border-amber-200/70 p-2.5 rounded-xl w-full">
+                  <span className="text-base flex-shrink-0">🍱</span>
+                  <div>
+                    <strong className="font-bold">Tugas Piket MBG (Makan Bergizi Gratis):</strong>
+                    <p className="text-[11px] text-amber-800/90 mt-0.5 leading-relaxed">
+                      Bertanggung jawab mengambil porsi makan siang kelas, mendistribusikan secara tertib kepada seluruh teman, serta merapikan dan mengembalikan box wadah MBG ke titik pengumpulan.
+                    </p>
+                  </div>
+                </div>
+              ) : piketTipeFilter === 'kebersihan' ? (
+                <div className="flex items-start gap-2 text-emerald-900 bg-emerald-50/80 border border-emerald-200/70 p-2.5 rounded-xl w-full">
+                  <span className="text-base flex-shrink-0">🧹</span>
+                  <div>
+                    <strong className="font-bold">Tugas Piket Nyapu & Angkat Bangku:</strong>
+                    <p className="text-[11px] text-emerald-800/90 mt-0.5 leading-relaxed">
+                      Bertanggung jawab membersihkan lantai kelas, merapikan meja, mengelap papan tulis, membuang sampah, serta menaikkan kursi/bangku ke atas meja pada saat jam pulang.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2 text-slate-600 bg-slate-50 border border-slate-200/60 p-2.5 rounded-xl w-full">
+                  <span className="text-base flex-shrink-0">ℹ️</span>
+                  <div>
+                    <strong className="font-bold text-slate-800">Pembagian 2 Jenis Piket:</strong>
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                      Tugas piket dibagi menjadi 2 tim: <strong>🍱 Tim Piket MBG</strong> (distribusi & wadah makanan) dan <strong>🧹 Tim Nyapu & Angkat Bangku</strong> (kebersihan ruang kelas & bangku).
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* List of piket students with real avatars & interactive checkmark */}
+          {filteredPiket.length === 0 ? (
+            <div className="p-8 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 text-sm">
+              Tidak ada petugas piket untuk kategori ini di hari {selectedDay}.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5">
+              {filteredPiket.map((piket) => {
+                const isDone = !!piketCompleted[piket.id];
+                const photoUrl = getStudentPhotoByName(piket.nama_siswa);
+                const itemTipe = piket.tipe || (piket.urutan <= 3 ? 'mbg' : 'kebersihan');
+                const isMbg = itemTipe === 'mbg';
+
+                return (
+                  <div
+                    key={piket.id}
+                    onClick={() => togglePiket(piket.id)}
+                    className={`rounded-2xl border transition-all duration-200 shadow-xs select-none overflow-hidden ${
+                      isAdmin
+                        ? 'cursor-pointer hover:shadow-lg hover:-translate-y-0.5'
+                        : 'cursor-pointer hover:border-slate-300'
+                    } ${
+                      isDone
+                        ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
+                        : 'bg-white border-slate-200 text-slate-800'
+                    }`}
+                    title={
+                      isAdmin
+                        ? `Klik untuk ${isDone ? 'batalkan' : 'centang'} tugas piket`
+                        : 'Hanya Admin yang dapat mencentang tugas piket'
+                    }
+                  >
+                    {/* Portrait Photo - full width, 4:5 aspect ratio */}
+                    <div className="relative w-full aspect-[4/5] bg-slate-100">
+                      <Image
+                        src={photoUrl}
+                        alt={piket.nama_siswa}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="object-cover object-top"
+                      />
+                      {/* Overlay gradient + done badge */}
+                      {isDone && (
+                        <div className="absolute inset-0 bg-emerald-600/30 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg">
+                            <Check className="w-7 h-7 stroke-[3]" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Pill Badge for Tipe Piket on Top Left of Photo */}
+                      <div className="absolute top-2 left-2 z-10">
+                        {isMbg ? (
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/90 backdrop-blur-xs text-white font-bold text-[9px] sm:text-[10px] shadow-sm flex items-center gap-1">
+                            🍱 MBG
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-600/90 backdrop-blur-xs text-white font-bold text-[9px] sm:text-[10px] shadow-sm flex items-center gap-1">
+                            🧹 Nyapu & Bangku
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      aria-label={`Status piket ${piket.nama_siswa}`}
-                      className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${
-                        isDone
-                          ? 'bg-emerald-500 text-white shadow-sm'
-                          : isAdmin
-                          ? 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-                          : 'bg-slate-100/80 text-slate-300'
-                      }`}
-                    >
-                      {isDone ? (
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      ) : (
-                        <Lock className="w-3 h-3" />
-                      )}
-                    </button>
+                    {/* Card Footer */}
+                    <div className="p-2.5 flex items-center justify-between gap-1">
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-xs font-bold truncate leading-tight ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+                          {piket.nama_siswa}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                          <span>#{piket.urutan}</span>
+                          <span>•</span>
+                          <span className={isMbg ? 'text-amber-600 font-semibold' : 'text-emerald-600 font-semibold'}>
+                            {isMbg ? 'Piket MBG' : 'Nyapu/Bangku'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        aria-label={`Status piket ${piket.nama_siswa}`}
+                        className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${
+                          isDone
+                            ? 'bg-emerald-500 text-white shadow-sm'
+                            : isAdmin
+                            ? 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                            : 'bg-slate-100/80 text-slate-300'
+                        }`}
+                      >
+                        {isDone ? (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        ) : (
+                          <Lock className="w-3 h-3" />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

@@ -12,6 +12,14 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useClassProfile } from '@/context/ClassProfileContext';
+import { 
+  formatInstagramHandle, 
+  formatInstagramUrl, 
+  formatWhatsAppUrl, 
+  formatWhatsAppDisplay, 
+  formatEmailAddress, 
+  formatEmailUrl 
+} from '@/lib/contactHelper';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,11 +33,20 @@ export default function ContactPage() {
   const { profile, contact } = useClassProfile();
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const rawIg = contact.instagram || '@xpplg.3rd';
-  const igHandle = rawIg.replace('@', '').trim();
-  const rawWa = contact.whatsapp || '+6281294862060';
-  const waClean = rawWa.replace(/[^0-9]/g, '');
-  const emailAddr = contact.email || 'classxpplg3@gmail.com';
+  const igHandle = formatInstagramHandle(contact.instagram);
+  const igUrl = formatInstagramUrl(contact.instagram);
+
+  const waDisplay = formatWhatsAppDisplay(contact.whatsapp);
+  const waUrl = formatWhatsAppUrl(
+    contact.whatsapp, 
+    `Halo Admin ${profile.className || 'Kelas XI RPL 2'}, saya ingin menghubungi melalui website.`
+  );
+
+  const emailAddr = formatEmailAddress(contact.email);
+  const emailUrl = formatEmailUrl(
+    contact.email, 
+    `Pesan dari Website Kelas ${profile.className || 'XI RPL 2'}`
+  );
 
   const copyToClipboard = (text: string, fieldName: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -92,7 +109,7 @@ export default function ContactPage() {
 
           {/* Action Button */}
           <a
-            href={`https://instagram.com/${igHandle}`}
+            href={igUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="relative z-10 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-white/25 hover:bg-white text-white hover:text-rose-600 border border-white/40 font-bold text-xs sm:text-sm backdrop-blur-md transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 group/btn"
@@ -120,11 +137,11 @@ export default function ContactPage() {
               WhatsApp
             </h3>
             <div 
-              onClick={(e) => copyToClipboard(rawWa, 'wa', e)}
+              onClick={(e) => copyToClipboard(waDisplay, 'wa', e)}
               className="inline-flex items-center gap-1.5 text-white/95 hover:text-white text-sm sm:text-base font-semibold cursor-pointer py-1 px-3 rounded-full hover:bg-white/15 transition-all"
               title="Klik untuk salin nomor WhatsApp"
             >
-              <span>{rawWa}</span>
+              <span>{waDisplay}</span>
               {copiedField === 'wa' ? (
                 <Check className="w-3.5 h-3.5 text-emerald-200" />
               ) : (
@@ -140,7 +157,7 @@ export default function ContactPage() {
 
           {/* Action Button */}
           <a
-            href={`https://wa.me/${waClean}`}
+            href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="relative z-10 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-white/25 hover:bg-white text-white hover:text-emerald-700 border border-white/40 font-bold text-xs sm:text-sm backdrop-blur-md transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 group/btn"
@@ -188,7 +205,7 @@ export default function ContactPage() {
 
           {/* Action Button */}
           <a
-            href={`mailto:${emailAddr}`}
+            href={emailUrl}
             className="relative z-10 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-white/25 hover:bg-white text-white hover:text-blue-700 border border-white/40 font-bold text-xs sm:text-sm backdrop-blur-md transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 group/btn"
           >
             <span>Kirim email</span>

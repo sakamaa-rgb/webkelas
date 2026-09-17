@@ -42,6 +42,7 @@ export interface JadwalPiket {
   nama_siswa: string;
   urutan: number;
   pj: string;
+  tipe?: 'mbg' | 'kebersihan' | string;
 }
 
 export interface Project {

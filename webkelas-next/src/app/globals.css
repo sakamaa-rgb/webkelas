@@ -1098,5 +1098,72 @@ body {
   }
 }
 
+/* =========================================================================
+   SPECIAL ADMIN DASHBOARD ANIMATIONS & EFFECTS
+   ========================================================================= */
+@keyframes adminOrbPulse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(25px, -20px, 0) scale(1.15);
+    opacity: 0.6;
+  }
+}
 
+@keyframes adminCardShimmer {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-25deg);
+  }
+}
 
+@keyframes liveHeartbeat {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+.animate-admin-orb {
+  animation: adminOrbPulse 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-admin-orb-delayed {
+  animation: adminOrbPulse 12s ease-in-out 3s infinite;
+  will-change: transform, opacity;
+}
+
+.animate-live-heartbeat {
+  animation: liveHeartbeat 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.admin-card-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: translateX(-150%) skewX(-25deg);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.admin-card-shimmer:hover::after {
+  opacity: 1;
+  animation: adminCardShimmer 1.2s ease-out;
+}

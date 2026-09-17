@@ -381,20 +381,20 @@ export default function AktivitasPage() {
           </p>
 
           {/* Main Tab Switcher (Modeled after Jadwal & Piket) */}
-          <div className="flex justify-center">
-            <div className="p-1 sm:p-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 flex gap-1 sm:gap-2 shadow-md max-w-full overflow-x-auto">
+          <div className="flex justify-center px-2">
+            <div className="p-1 sm:p-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 flex gap-1 sm:gap-2 shadow-md max-w-full overflow-x-auto no-scrollbar">
               <button
                 onClick={() => {
                   setActiveMainTab('ekskul');
                   if (typeof window !== 'undefined') window.history.replaceState(null, '', '#ekskul');
                 }}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
+                className={`px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
                   activeMainTab === 'ekskul'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
                     : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
                 }`}
               >
-                <span className="text-base sm:text-lg">🏫</span>
+                <span className="text-sm sm:text-lg">🏫</span>
                 <span>Ekstrakurikuler</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   activeMainTab === 'ekskul' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
@@ -408,13 +408,13 @@ export default function AktivitasPage() {
                   setActiveMainTab('organisasi');
                   if (typeof window !== 'undefined') window.history.replaceState(null, '', '#organisasi');
                 }}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
+                className={`px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
                   activeMainTab === 'organisasi'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
                     : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
                 }`}
               >
-                <span className="text-base sm:text-lg">👥</span>
+                <span className="text-sm sm:text-lg">👥</span>
                 <span>Organisasi Siswa</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   activeMainTab === 'organisasi' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
@@ -428,13 +428,13 @@ export default function AktivitasPage() {
                   setActiveMainTab('dicoding');
                   if (typeof window !== 'undefined') window.history.replaceState(null, '', '#dicoding-journey');
                 }}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
+                className={`px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 sm:gap-2 flex-shrink-0 cursor-pointer ${
                   activeMainTab === 'dicoding'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
                     : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
                 }`}
               >
-                <span className="text-base sm:text-lg">💻</span>
+                <span className="text-sm sm:text-lg">💻</span>
                 <span>Dicoding Journey</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   activeMainTab === 'dicoding' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
@@ -483,7 +483,7 @@ export default function AktivitasPage() {
           </div>
 
           {/* Category Filter Pills (Modeled after Day Buttons in /jadwal) */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 mb-10 px-2">
+          <div className="flex items-center sm:justify-center gap-1.5 sm:gap-2.5 mb-8 sm:mb-10 overflow-x-auto no-scrollbar pb-2 px-2 max-w-full">
             {availableEkskulCategories.map((cat) => {
               const count = cat === 'Semua' 
                 ? ekskulList.length 
@@ -494,7 +494,7 @@ export default function AktivitasPage() {
                 <button
                   key={cat}
                   onClick={() => setSelectedEkskulFilter(cat)}
-                  className={`relative px-3.5 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`relative px-3.5 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 cursor-pointer flex-shrink-0 whitespace-nowrap ${
                     isSelected
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 scale-[1.02]'
                       : 'bg-white text-slate-600 border border-slate-200 hover:border-blue-300 hover:text-blue-600'
@@ -533,7 +533,7 @@ export default function AktivitasPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 items-start">
               {filteredEkskulList.map((item, idx) => {
                 const badgeClasses = (item.badgeColor ? {
                   amber: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -547,10 +547,10 @@ export default function AktivitasPage() {
                 return (
                   <div
                     key={item.id}
-                    className={`group bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl aktivitas-card-hover animate-card-fade-up stagger-${(idx % 6) + 1} flex flex-col overflow-hidden`}
+                    className={`group bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-xl aktivitas-card-hover animate-card-fade-up stagger-${(idx % 6) + 1} flex flex-col overflow-hidden`}
                   >
-                    {/* ADAPTIVE IMAGE FRAME WITH CONFIGURABLE ASPECT RATIO */}
-                    <div style={getFrameRatioStyle(item.orientation)} className="w-full overflow-hidden">
+                    {/* ADAPTIVE IMAGE FRAME WITH CONFIGURABLE ASPECT RATIO (Mobile max-height capped) */}
+                    <div style={getFrameRatioStyle(item.orientation)} className="w-full overflow-hidden max-h-[380px] sm:max-h-[460px] md:max-h-none">
                       <AdaptiveImageFrame
                         src={item.foto}
                         alt={item.nama}
@@ -568,7 +568,7 @@ export default function AktivitasPage() {
                     </div>
 
                     {/* Card Content */}
-                    <div className={`p-5 sm:p-6 flex-1 flex flex-col justify-between ${
+                    <div className={`p-4 sm:p-6 flex-1 flex flex-col justify-between ${
                       photoConfig.cardHeight === 'compact' ? 'space-y-2' : ''
                     }`}>
                       <div>
@@ -634,7 +634,7 @@ export default function AktivitasPage() {
               </p>
 
               {/* Organisasi Filter Pills (Modeled after Day Selector in /jadwal) */}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              <div className="mt-6 flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-2 px-2 max-w-full">
                 {(['Semua', 'MPK', 'OSIS'] as const).map((org) => {
                   const count = org === 'Semua' ? orgList.length : orgList.filter((m) => m.organisasi === org).length;
                   const isSelected = selectedOrgFilter === org;
@@ -642,7 +642,7 @@ export default function AktivitasPage() {
                     <button
                       key={org}
                       onClick={() => setSelectedOrgFilter(org)}
-                      className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer flex-shrink-0 whitespace-nowrap ${
                         isSelected
                           ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 scale-[1.02]'
                           : 'bg-white text-slate-600 border border-slate-200 hover:border-blue-300 hover:text-blue-600'
@@ -661,7 +661,7 @@ export default function AktivitasPage() {
             </div>
 
             {/* 3 Featured Organization Member Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
               {filteredOrgList.map((member, idx) => {
                 const isMpk = member.organisasi === 'MPK';
                 const isMiddle = idx === 1;
@@ -680,8 +680,8 @@ export default function AktivitasPage() {
                     <div className={`h-2.5 w-full ${isMpk ? 'bg-gradient-to-r from-emerald-400 to-teal-500' : 'bg-gradient-to-r from-blue-500 to-indigo-600'}`} />
 
                     {/* Playful Top Badge */}
-                    <div className="p-6 pb-4 flex items-center justify-between">
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <div className="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between">
+                      <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
                         Active Beyond The Classroom
                       </span>
                       <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold flex items-center gap-1.5 ${
@@ -817,9 +817,9 @@ export default function AktivitasPage() {
           <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-4 bottom-12 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500 rounded-full opacity-30" />
 
           {/* Vertical Left Progress Line (Mobile) */}
-          <div className="md:hidden absolute left-5 top-4 bottom-12 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500 rounded-full opacity-30" />
+          <div className="md:hidden absolute left-4 top-4 bottom-12 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500 rounded-full opacity-30" />
 
-          <div className="space-y-12 md:space-y-16">
+          <div className="space-y-8 sm:space-y-12 md:space-y-16">
             {journeyList.map((item, idx) => {
               const isEven = idx % 2 === 0;
 
@@ -832,12 +832,12 @@ export default function AktivitasPage() {
               }[item.badgeType] || 'bg-blue-50 text-blue-700 border-blue-200';
 
               const iconNodes = {
-                flag: <Flag className="w-4 h-4 text-white" />,
-                code: <Code2 className="w-4 h-4 text-white" />,
-                laptop: <Laptop className="w-4 h-4 text-white" />,
-                star: <Star className="w-4 h-4 text-white fill-white" />,
-                trophy: <Trophy className="w-4 h-4 text-white fill-white" />
-              }[item.iconType] || <Sparkles className="w-4 h-4 text-white" />;
+                flag: <Flag className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />,
+                code: <Code2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />,
+                laptop: <Laptop className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />,
+                star: <Star className="w-3.5 h-3.5 md:w-4 md:h-4 text-white fill-white" />,
+                trophy: <Trophy className="w-3.5 h-3.5 md:w-4 md:h-4 text-white fill-white" />
+              }[item.iconType] || <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />;
 
               const nodeBg = {
                 blue: 'bg-blue-600 ring-blue-200',
@@ -850,55 +850,55 @@ export default function AktivitasPage() {
               return (
                 <div
                   key={item.step}
-                  className={`relative flex flex-col md:flex-row items-center gap-6 md:gap-12 ${
+                  className={`relative flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-12 ${
                     isEven ? 'md:flex-row-reverse' : ''
                   }`}
                 >
                   {/* Timeline Checkpoint Node Indicator */}
-                  <div className="absolute left-5 md:left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-4 ${nodeBg} animate-timeline-node transition-transform duration-300 hover:scale-110`}>
+                  <div className="absolute left-4 md:left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
+                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md md:shadow-lg ring-2 md:ring-4 ${nodeBg} animate-timeline-node transition-transform duration-300 hover:scale-110`}>
                       {iconNodes}
                     </div>
-                    <span className="mt-1 px-2 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-black tracking-widest uppercase shadow-xs">
+                    <span className="mt-1 px-1.5 py-0.2 rounded-full bg-slate-900 text-white text-[9px] md:text-[10px] font-black tracking-widest uppercase shadow-xs">
                       {item.step}
                     </span>
                   </div>
 
-                  {/* Content Card Side (Half Width on Desktop) */}
-                  <div className="w-full md:w-1/2 pl-14 md:pl-0">
-                    <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs hover:shadow-xl aktivitas-card-hover animate-card-fade-up">
+                  {/* Content Card Side (Fuller Width on Mobile with pl-10) */}
+                  <div className="w-full md:w-1/2 pl-10 md:pl-0">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-7 shadow-xs hover:shadow-xl aktivitas-card-hover animate-card-fade-up">
                       {/* Top Meta */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${badgeColors}`}>
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5 sm:mb-3">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-black border ${badgeColors}`}>
                           {item.badge}
                         </span>
-                        <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+                        <span className="text-[11px] sm:text-xs font-bold text-slate-400 flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
                           <span>{item.tanggal}</span>
                         </span>
                       </div>
 
                       {/* Step Stage & Title */}
-                      <div className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
+                      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
                         Tahap {item.step} • {item.stageName}
                       </div>
-                      <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
+                      <h3 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight">
                         {item.title}
                       </h3>
 
                       {/* Description */}
-                      <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                      <p className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
                         {item.deskripsi}
                       </p>
 
                       {/* Key Highlights */}
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
+                      <div className="mt-3.5 sm:mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
                         {item.highlights.map((tag, hIdx) => (
                           <span
                             key={hIdx}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-semibold"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[10px] sm:text-[11px] font-semibold"
                           >
-                            <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                            <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
                             <span>{tag}</span>
                           </span>
                         ))}
@@ -906,9 +906,9 @@ export default function AktivitasPage() {
                     </div>
                   </div>
 
-                  {/* Photo Side (Half Width on Desktop) with Adaptive Frame */}
-                  <div className="w-full md:w-1/2 pl-14 md:pl-0">
-                    <div style={getFrameRatioStyle(item.orientation)} className="w-full rounded-3xl overflow-hidden border border-slate-200 shadow-md aktivitas-card-hover animate-card-fade-up">
+                  {/* Photo Side (Half Width on Desktop, Responsive Max-Height on Mobile) */}
+                  <div className="w-full md:w-1/2 pl-10 md:pl-0">
+                    <div style={getFrameRatioStyle(item.orientation)} className="w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-md aktivitas-card-hover animate-card-fade-up max-h-[280px] sm:max-h-[380px] md:max-h-none">
                       <AdaptiveImageFrame
                         src={item.foto}
                         alt={item.title}
@@ -938,24 +938,24 @@ export default function AktivitasPage() {
           ========================================================================= */}
       {lightboxData && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-lightbox-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-lightbox-backdrop"
           onClick={() => setLightboxData(null)}
         >
           <div 
-            className="relative max-w-4xl w-full bg-slate-900 rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden animate-lightbox-content flex flex-col"
+            className="relative max-w-4xl w-full max-h-[92vh] overflow-y-auto bg-slate-900 rounded-3xl border border-slate-700/80 shadow-2xl animate-lightbox-content flex flex-col no-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               onClick={() => setLightboxData(null)}
-              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-black/60 text-white/90 hover:text-white hover:bg-black/90 transition-all border border-white/10"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 p-2 sm:p-2.5 rounded-full bg-black/60 text-white/90 hover:text-white hover:bg-black/90 transition-all border border-white/10"
               aria-label="Tutup"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* Photo Container - Fully Preserving Original Ratio */}
-            <div className="relative w-full h-[55vh] sm:h-[65vh] bg-black flex items-center justify-center">
+            <div className="relative w-full h-[45vh] sm:h-[65vh] bg-black flex items-center justify-center flex-shrink-0">
               <Image
                 src={lightboxData.src}
                 alt={lightboxData.title}
@@ -967,7 +967,7 @@ export default function AktivitasPage() {
             </div>
 
             {/* Lightbox Caption & Info */}
-            <div className="p-5 sm:p-6 bg-slate-900/95 border-t border-slate-800 text-white">
+            <div className="p-4 sm:p-6 bg-slate-900/95 border-t border-slate-800 text-white">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   {lightboxData.badge && (
@@ -986,7 +986,7 @@ export default function AktivitasPage() {
                 </span>
               </div>
 
-              <h4 className="text-lg sm:text-xl font-extrabold text-white">
+              <h4 className="text-base sm:text-xl font-extrabold text-white">
                 {lightboxData.title}
               </h4>
 
@@ -1005,11 +1005,11 @@ export default function AktivitasPage() {
           ========================================================================= */}
       {selectedOrgMember && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-lightbox-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-lightbox-backdrop"
           onClick={() => setSelectedOrgMember(null)}
         >
           <div 
-            className="relative max-w-lg w-full bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden animate-lightbox-content flex flex-col"
+            className="relative max-w-lg w-full max-h-[92vh] overflow-y-auto bg-white rounded-3xl border border-slate-200 shadow-2xl animate-lightbox-content flex flex-col no-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Accent Strip */}
@@ -1018,10 +1018,10 @@ export default function AktivitasPage() {
             {/* Close Button */}
             <button
               onClick={() => setSelectedOrgMember(null)}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
               aria-label="Tutup"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* Modal Body */}

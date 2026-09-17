@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { initialContact } from '@/data/seedData';
-import { getContactInfo } from '@/lib/supabase/dataService';
+import { getContactInfo, upsertContact } from '@/lib/supabase/dataService';
 
 
 export interface ClassProfile {
@@ -80,23 +80,32 @@ export function ClassProfileProvider({ children }: { children: React.ReactNode }
     // Live sync from Supabase cloud database
     getContactInfo().then((info) => {
       if (info) {
-        setProfile((prev) => ({
-          ...prev,
-          className: info.class_name || prev.className,
-          schoolName: info.school_name || prev.schoolName,
-          tagline: info.tagline || prev.tagline,
-          year: info.year || prev.year,
-          description: info.description || prev.description,
-          logo: info.logo || prev.logo
-        }));
-        setContact((prev) => ({
-          ...prev,
-          instagram: info.instagram || prev.instagram,
-          whatsapp: info.whatsapp || prev.whatsapp,
-          email: info.email || prev.email,
-          tiktok: info.tiktok || prev.tiktok,
-          address: info.address || prev.address
-        }));
+        setProfile((prev) => {
+          const updated = {
+            ...prev,
+            className: info.class_name || prev.className,
+            schoolName: info.school_name || prev.schoolName,
+            tagline: info.tagline || prev.tagline,
+            year: info.year || prev.year,
+            description: info.description || prev.description,
+            logo: info.logo || prev.logo
+          };
+          try { localStorage.setItem('class_web_profile', JSON.stringify(updated)); } catch(e){}
+          return updated;
+        });
+
+        setContact((prev) => {
+          const updated = {
+            ...prev,
+            instagram: info.instagram || prev.instagram,
+            whatsapp: info.whatsapp || prev.whatsapp,
+            email: info.email || prev.email,
+            tiktok: info.tiktok || prev.tiktok,
+            address: info.address || prev.address
+          };
+          try { localStorage.setItem('class_web_contact', JSON.stringify(updated)); } catch(e){}
+          return updated;
+        });
       }
     });
 
@@ -106,7 +115,6 @@ export function ClassProfileProvider({ children }: { children: React.ReactNode }
 
     window.addEventListener('storage', handleProfileUpdate);
     window.addEventListener('class_profile_updated', handleProfileUpdate);
-
 
     return () => {
       window.removeEventListener('storage', handleProfileUpdate);
@@ -123,6 +131,9 @@ export function ClassProfileProvider({ children }: { children: React.ReactNode }
       } catch (err) {
         console.error(err);
       }
+      if (updated.logo) {
+        upsertContact({ logo: updated.logo });
+      }
       return updated;
     });
   };
@@ -136,6 +147,11 @@ export function ClassProfileProvider({ children }: { children: React.ReactNode }
       } catch (err) {
         console.error(err);
       }
+      upsertContact({
+        instagram: updated.instagram,
+        whatsapp: updated.whatsapp,
+        email: updated.email
+      });
       return updated;
     });
   };

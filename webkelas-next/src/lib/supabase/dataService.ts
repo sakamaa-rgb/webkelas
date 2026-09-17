@@ -337,7 +337,7 @@ export async function addGuestbookMessage(name: string, kelas: string, message: 
   };
 }
 
-export async function getContactInfo(): Promise<ContactInfo> {
+export async function getContactInfo(): Promise<ContactInfo | null> {
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.from('contact').select('*').limit(1).single();
@@ -351,7 +351,7 @@ export async function getContactInfo(): Promise<ContactInfo> {
       // Fallback
     }
   }
-  return initialContact;
+  return null;
 }
 
 
@@ -566,9 +566,19 @@ export async function deleteSong(id: number) {
 export async function upsertContact(contact: Partial<ContactInfo> & { id?: number }) {
   if (isSupabaseConfigured && supabase) {
     try {
-      const payload = { id: 1, ...contact };
+      // Clean payload: only include valid columns in Supabase 'contact' table (id, instagram, whatsapp, email, logo)
+      // to prevent PostgREST schema cache errors when extra client fields (tiktok, address, class_name) are sent
+      const payload: Record<string, any> = { id: 1 };
+      if (contact.instagram !== undefined) payload.instagram = contact.instagram;
+      if (contact.whatsapp !== undefined) payload.whatsapp = contact.whatsapp;
+      if (contact.email !== undefined) payload.email = contact.email;
+      if (contact.logo !== undefined) payload.logo = contact.logo;
+
       const { data, error } = await supabase.from('contact').upsert([payload]).select();
       if (!error && data) return data[0];
+      if (error) {
+        console.error('Error upserting contact to Supabase:', error.message);
+      }
     } catch (e) {
       console.error('Error upserting contact to Supabase:', e);
     }

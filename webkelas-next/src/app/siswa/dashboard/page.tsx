@@ -610,9 +610,22 @@ export default function SiswaDashboardPage() {
                       <Calendar className="w-4 h-4" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-black text-slate-900 mt-2">
-                    {piketEntry ? `Hari ${piketEntry.hari}` : 'Belum Ditugaskan'}
-                  </h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <h3 className="text-lg font-black text-slate-900">
+                      {piketEntry ? `Hari ${piketEntry.hari}` : 'Belum Ditugaskan'}
+                    </h3>
+                    {piketEntry && (
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                        (piketEntry.tipe || (piketEntry.urutan <= 3 ? 'mbg' : 'kebersihan')) === 'mbg'
+                          ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                          : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      }`}>
+                        {(piketEntry.tipe || (piketEntry.urutan <= 3 ? 'mbg' : 'kebersihan')) === 'mbg'
+                          ? '🍱 Tim MBG'
+                          : '🧹 Tim Nyapu'}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-500 mt-0.5 truncate">
                     {piketEntry ? `PJ: ${piketEntry.pj}` : 'Konfirmasi ke pengurus'}
                   </p>
